@@ -2,7 +2,8 @@ import os
 from fnmatch import fnmatch
 import ntpath
 import pkg_resources
-
+import seaborn as sb
+import matplotlib.plot as plt
 
 def _list_files_in_path(path, pattern="*.stan"):
     """
@@ -88,3 +89,40 @@ def read_files(path, pattern='*.stan', encoding="utf-8", resource=None):
             resource=resource).decode(encoding)
         results[file_data['basename']] = file_data['code']
     return(results)
+
+def plot_coefs(models, element='coefs'):
+    """
+    Plot coefficients for models listed
+
+    Parameters
+    ----------
+
+    models (list):
+        List of model objects
+    element (string, optional):
+        Which element to plot. defaults to 'coefs'.
+        Other options (depending on model type) include: 
+        - 'grp_coefs'
+        - 'baseline_hazard'
+
+    """
+
+    # TODO: check if models object is a list or a single model
+
+    # concatenate data from models given
+    df_list = list()
+    [df_list.append(model[element]) for model in models]
+    df = pd.concat(df_list, ignore_index=True)
+
+    # select hue depending on number of elements
+    if len(df_list)==1:
+        hue = None
+    else:
+        hue = 'model_cohort'
+
+    ## plot coefficients
+    sb.boxplot(x = 'value', y = 'variable', data = df, hue = hue)
+    if hue=='model_cohort':
+        plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+
+
