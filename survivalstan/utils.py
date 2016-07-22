@@ -3,9 +3,10 @@ from fnmatch import fnmatch
 import ntpath
 import pkg_resources
 import seaborn as sb
-import matplotlib.plot as plt
+import matplotlib.pyplot as plt
 from survivalstan import extract_baseline_hazard
 import pandas as pd
+import numpy as np
 
 def _list_files_in_path(path, pattern="*.stan"):
     """
