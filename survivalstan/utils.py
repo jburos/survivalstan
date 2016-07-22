@@ -118,7 +118,7 @@ def _prep_data_for_baseline_hazard(models, element='baseline_hazard'):
     """
     # prepare df containing posterior estimates of baseline hazards
     df_list = list()
-    [df_list.append(extract_baseline_hazard(model) for model in models]
+    [df_list.append(extract_baseline_hazard(model)) for model in models]
     df = pd.concat(df_list)
 
     # add helper variables to df
