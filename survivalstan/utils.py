@@ -4,6 +4,8 @@ import ntpath
 import pkg_resources
 import seaborn as sb
 import matplotlib.plot as plt
+from survivalstan import extract_baseline_hazard
+import pandas as pd
 
 def _list_files_in_path(path, pattern="*.stan"):
     """
@@ -90,7 +92,43 @@ def read_files(path, pattern='*.stan', encoding="utf-8", resource=None):
         results[file_data['basename']] = file_data['code']
     return(results)
 
-def plot_coefs(models, element='coefs'):
+def _prep_data_for_coefs(models, element):
+    """ 
+    Helper function to concatenate/extract data 
+    from a list of model objects.
+
+    See `plot_coefs` for description of data inputs
+    """
+
+    # concatenate data from models given
+    df_list = list()
+    [df_list.append(model[element]) for model in models]
+    df = pd.concat(df_list, ignore_index=True)
+    return 'value', 'variable', df
+
+
+def _prep_data_for_baseline_hazard(models, element='baseline_hazard'):
+    """ 
+    Helper function to concatenate/extract baseline hazard data 
+    from a list of model objects.
+    
+    Note `element` input parameter is ignored here.
+
+    See `plot_coefs` for description of data inputs
+    """
+    # prepare df containing posterior estimates of baseline hazards
+    df_list = list()
+    [df_list.append(extract_baseline_hazard(model) for model in models]
+    df = pd.concat(df_list)
+
+    # add helper variables to df
+    df['timepoint_id'] = df['timepoint_id'].astype('category')
+    df['log_hazard'] = np.log1p(df['baseline_hazard'])
+    df['end_time_id'] = df['end_time'].astype('category')
+    return 'log_hazard', 'end_time_id', df
+
+
+def plot_coefs(models, element='coefs', force_direction=None):
     """
     Plot coefficients for models listed
 
@@ -104,25 +142,46 @@ def plot_coefs(models, element='coefs'):
         Other options (depending on model type) include: 
         - 'grp_coefs'
         - 'baseline_hazard'
+    force_direction (string, optional):
+        Takes values 'h' or 'v'
+            - if 'h': forces horizontal orientation, (`variable` names along the x axis)
+            - if 'v': forces vertical orientation (`variable` names along the y axis)
+        if None (default), coef plots default to 'v' for all plots except baseline hazard.
 
     """
 
     # TODO: check if models object is a list or a single model
 
-    # concatenate data from models given
-    df_list = list()
-    [df_list.append(model[element]) for model in models]
-    df = pd.concat(df_list, ignore_index=True)
+    # prep data from models given
+    if element=='baseline_hazard':
+        value, variable, df = _prep_data_for_baseline_hazard(models, element=element)
+    else:
+        value, variable, df = _prep_data_for_coefs(models=models, element=element)
+
 
     # select hue depending on number of elements
-    if len(df_list)==1:
+    if len(models)==1:
         hue = None
     else:
         hue = 'model_cohort'
 
+    if element=='baseline_hazard':
+        direction = 'h'
+    else:
+        direction = 'v'
+
+    if force_direction:
+        direction = force_direction
+
+    if direction=='h':
+        xval = variable
+        yval = value
+    else:
+        xval = value
+        yval = variable
+
     ## plot coefficients
-    sb.boxplot(x = 'value', y = 'variable', data = df, hue = hue)
+    sb.boxplot(x = xval, y = yval, data = df, hue = hue)
     if hue=='model_cohort':
         plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-
 
