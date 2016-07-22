@@ -220,7 +220,8 @@ def extract_baseline_hazard(results, timepoint_id_col = 'timepoint_id', timepoin
     baseline_coefs = pd.DataFrame(baseline_extract)
     bs_coefs = pd.melt(baseline_coefs, var_name = timepoint_id_col, value_name = 'baseline_hazard')
     end_times = _extract_timepoint_end_times(results, timepoint_id_col = timepoint_id_col, timepoint_end_col = timepoint_end_col)
-    bs_data = pd.merge(bs_coefs, end_times, on = timepoint_id_col) 
+    bs_data = pd.merge(bs_coefs, end_times, on = timepoint_id_col)
+    bs_data['model_cohort'] = results['model_cohort']
     return(bs_data)
 
 ## convert wide survival data to long format
