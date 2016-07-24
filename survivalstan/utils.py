@@ -186,3 +186,58 @@ def plot_coefs(models, element='coefs', force_direction=None):
     if hue=='model_cohort':
         plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 
+
+def extract_params_long(models, element, rename_vars=None, varnames=None):
+    """
+    Helper function to extract & reformat params
+
+    Parameters
+    ----------
+
+    models (list):
+        List of model objects
+    element (string, optional):
+        Which element to plot. defaults to 'coefs'.
+        Other options (depending on model type) include: 
+        - 'grp_coefs'
+        - 'baseline_hazard'
+    rename_vars (dict, optional):
+        - dictionary mapping from integer positions (0, 1, 2) to variable names
+    varnames (list of strings, optional):
+        - list of variable names to apply to columns from the extracted object
+
+    Returns
+    -------
+    Pandas dataframe containing posterior draws per iteration
+
+    """
+    df_list = list()
+    for model in models:
+        df_list.append(_extract_params_from_single_model(
+            model,
+            element = element,
+            rename_vars=rename_vars,
+            varnames=varnames
+            ))
+    df_list = pd.concat(df_list)
+    return(df_list)
+
+
+def _extract_params_from_single_model(model, element, rename_vars=None, varnames=None):
+    if not varnames:
+        df = pd.DataFrame(
+            model['fit'].extract()[element]
+        )
+    else: 
+        df = pd.DataFrame(
+            model['fit'].extract()[element]
+            , columns=varnames
+        )
+    if rename_vars:
+        df.rename(columns = rename_vars, inplace=True)
+    df.reset_index(0, inplace = True)
+    df = df.rename(columns = {'index':'iter'})
+    df = pd.melt(df, id_vars = ['iter'])
+    df['model_cohort'] = model['model_cohort']
+    return(df)
+
