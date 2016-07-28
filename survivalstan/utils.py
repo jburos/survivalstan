@@ -108,7 +108,7 @@ def _prep_data_for_coefs(models, element):
     return 'value', 'variable', df
 
 
-def _prep_data_for_baseline_hazard(models, element='baseline_hazard'):
+def _prep_data_for_baseline_hazard(models, element='baseline'):
     """ 
     Helper function to concatenate/extract baseline hazard data 
     from a list of model objects.
@@ -119,7 +119,7 @@ def _prep_data_for_baseline_hazard(models, element='baseline_hazard'):
     """
     # prepare df containing posterior estimates of baseline hazards
     df_list = list()
-    [df_list.append(extract_baseline_hazard(model)) for model in models]
+    [df_list.append(extract_baseline_hazard(model, element=element)) for model in models]
     df = pd.concat(df_list)
 
     # add helper variables to df
@@ -142,7 +142,7 @@ def plot_coefs(models, element='coefs', force_direction=None):
         Which element to plot. defaults to 'coefs'.
         Other options (depending on model type) include: 
         - 'grp_coefs'
-        - 'baseline_hazard'
+        - 'baseline'
     force_direction (string, optional):
         Takes values 'h' or 'v'
             - if 'h': forces horizontal orientation, (`variable` names along the x axis)
@@ -154,7 +154,7 @@ def plot_coefs(models, element='coefs', force_direction=None):
     # TODO: check if models object is a list or a single model
 
     # prep data from models given
-    if element=='baseline_hazard':
+    if element=='baseline' or element='baseline_raw':
         value, variable, df = _prep_data_for_baseline_hazard(models, element=element)
     else:
         value, variable, df = _prep_data_for_coefs(models=models, element=element)
@@ -166,7 +166,7 @@ def plot_coefs(models, element='coefs', force_direction=None):
     else:
         hue = 'model_cohort'
 
-    if element=='baseline_hazard':
+    if element=='baseline' or element=='baseline_raw':
         direction = 'h'
     else:
         direction = 'v'

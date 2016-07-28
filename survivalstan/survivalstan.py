@@ -212,11 +212,11 @@ def _extract_timepoint_end_times(results, timepoint_end_col = 'end_time', timepo
     end_times = df_nonmiss.loc[~df_nonmiss[[timepoint_id_col]].duplicated()].sort_values(timepoint_id_col)[[timepoint_end_col, timepoint_id_col]]
     return(end_times)
 
-def extract_baseline_hazard(results, timepoint_id_col = 'timepoint_id', timepoint_end_col = 'end_time'):
+def extract_baseline_hazard(results, element='baseline', timepoint_id_col = 'timepoint_id', timepoint_end_col = 'end_time'):
     """ If model results contain a baseline object, extract & summarize it
     """
     ## TODO check if baseline hazard is computable
-    baseline_extract = results['fit'].extract()['baseline']
+    baseline_extract = results['fit'].extract()[element]
     baseline_coefs = pd.DataFrame(baseline_extract)
     bs_coefs = pd.melt(baseline_coefs, var_name = timepoint_id_col, value_name = 'baseline_hazard')
     end_times = _extract_timepoint_end_times(results, timepoint_id_col = timepoint_id_col, timepoint_end_col = timepoint_end_col)
