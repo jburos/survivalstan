@@ -154,7 +154,7 @@ def plot_coefs(models, element='coefs', force_direction=None):
     # TODO: check if models object is a list or a single model
 
     # prep data from models given
-    if element=='baseline' or element='baseline_raw':
+    if element=='baseline' or element=='baseline_raw':
         value, variable, df = _prep_data_for_baseline_hazard(models, element=element)
     else:
         value, variable, df = _prep_data_for_coefs(models=models, element=element)
