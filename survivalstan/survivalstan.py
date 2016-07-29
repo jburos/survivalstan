@@ -91,44 +91,60 @@ def fit_stan_survival_model(df, formula, event_col, model_code,
     else:
         df_nonmiss = x_df
 
-    ## construct ID vars if necessary
-    if timepoint_end_col and not(timepoint_id_col):
-        timepoint_id_col = 'timepoint_id'
-        df_nonmiss[timepoint_id_col] = df_nonmiss[timepoint_end_col].astype('category').cat.codes + 1
-
-    if sample_col and not(sample_id_col):
-        sample_id_col = 'sample_id'
-        df_nonmiss[sample_id_col] = df_nonmiss[sample_col].astype('category').cat.codes + 1
-        
-    if group_col and not(group_id_col):
-        group_id_col = 'group_id'
-        df_nonmiss[group_id_col] = df_nonmiss[group_col].astype('category').cat.codes + 1
-
+    ## prep input dictionary to pass to stan.fit
     survival_model_input_data = {
         'N': len(df_nonmiss.index),
         'x': x_df.as_matrix(),
         'event': df_nonmiss[event_col].values.astype(int),
         'M': len(x_df.columns),
     }
-    
+
     if time_col:
         survival_model_input_data['y'] = df_nonmiss[time_col].values
+
+    ## construct timepoint ID vars & add to input data
+    if timepoint_end_col and not(timepoint_id_col):
+        timepoint_id_col = 'timepoint_id'
+        df_nonmiss[timepoint_id_col] = df_nonmiss[timepoint_end_col].astype('category').cat.codes + 1
+
+    if timepoint_id_col:
+        unique_timepoints = _prep_timepoint_dataframe(df_nonmiss,
+                                                      timepoint_id_col = timepoint_id_col,
+                                                      timepoint_end_col = timepoint_end_col
+                                                      )
+        timepoint_input_data = {
+            't_dur': unique_timepoints['t_dur'],
+            't_obs': unique_timepoints['t_obs'],
+            't': df_nonmiss[timepoint_id_col].values.astype(int),
+            'T': len(df_nonmiss[timepoint_id_col].unique())
+        }
+        survival_model_input_data = dict(survival_model_input_data, **timepoint_id_data)
+
+    if timepoint_end_col:
+        # not required for all models, leave in for legacy
+        survival_model_input_data['obs_t'] = df_nonmiss[timepoint_end_col].values.astype(int)
+
+    ## construct sample ID var & add to input data
+    if sample_col and not(sample_id_col):
+        sample_id_col = 'sample_id'
+        df_nonmiss[sample_id_col] = df_nonmiss[sample_col].astype('category').cat.codes + 1
+
+    if sample_id_col:
+        sample_input_data = {
+            's': df_nonmiss[sample_id_col].values.astype(int),
+            'S': len(df_nonmiss[sample_id_col].unique())
+        }
+        survival_model_input_data = dict(survival_model_input_data, **sample_input_data)
+ 
+    ## construct group ID var & add to input data
+    if group_col and not(group_id_col):
+        group_id_col = 'group_id'
+        df_nonmiss[group_id_col] = df_nonmiss[group_col].astype('category').cat.codes + 1
 
     if group_id_col:
         survival_model_input_data['g'] = df_nonmiss[group_id_col].values.astype(int)
         survival_model_input_data['G'] = len(df_nonmiss[group_id_col].unique())
-    
-    if sample_id_col:
-        survival_model_input_data['s'] = df_nonmiss[sample_id_col].values.astype(int)
-        survival_model_input_data['S'] = len(df_nonmiss[sample_id_col].unique())
-    
-    if timepoint_id_col:
-        survival_model_input_data['t'] = df_nonmiss[timepoint_id_col].values.astype(int)
-        survival_model_input_data['T'] = len(df_nonmiss[timepoint_id_col].unique())
         
-    if timepoint_end_col:
-        survival_model_input_data['obs_t'] = df_nonmiss[timepoint_end_col].values.astype(int)
-
     if stan_data:
         survival_model_input_data = dict(survival_model_input_data, **stan_data)
     
@@ -185,6 +201,34 @@ def fit_stan_survival_model(df, formula, event_col, model_code,
         'loo': loo,
         'model_cohort': model_cohort,
     }
+
+
+def _prep_timepoint_dataframe(df,
+                              timepoint_id_col,
+                              timepoint_end_col):
+    """ Helper function to take a set of timepoints 
+        in observation-level dataframe & return 
+        formatted timepoint_id, end_time, duration 
+
+        Returns
+        ---------
+        pandas dataframe with one record per timepoint_id
+            where timepoint_id is the index
+            sorted on the index, increasing
+
+    """
+    time_df = df.copy()
+    time_df.dropna(how='any', subset=[timepoint_id_col, timepoint_end_col], inplace=True)
+    time_df.loc[:,[timepoint_id_col, timepoint_end_col]].drop_duplicates()
+    time_df[timepoint_end_col] = time_df[timepoint_end_col].astype(np.float32)
+    time_df.set_index(timepoint_id, inplace=True, drop=True)
+    time_df.sort_index(inplace=True)
+    t_durs = time_df.diff(periods=1)
+    t_durs.rename(columns = {timepoint_end_col: 't_dur'}, inplace=True)
+    time_df = time_df.join(t_durs)
+    time_df.fillna(inplace=True, value=time_df.loc[1, timepoint_end_col])
+    return(time_df)
+
 
 def extract_grp_baseline_hazard(results, timepoint_id_col = 'timepoint_id', timepoint_end_col = 'end_time'):
     """ If model results contain a grp_baseline object, extract & summarize it
