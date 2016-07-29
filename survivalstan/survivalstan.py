@@ -204,8 +204,9 @@ def fit_stan_survival_model(df, formula, event_col, model_code,
 
 
 def _prep_timepoint_dataframe(df,
-                              timepoint_id_col,
-                              timepoint_end_col):
+                              timepoint_end_col,
+                              timepoint_id_col = None
+                              ):
     """ Helper function to take a set of timepoints 
         in observation-level dataframe & return 
         formatted timepoint_id, end_time, duration 
@@ -218,6 +219,10 @@ def _prep_timepoint_dataframe(df,
 
     """
     time_df = df.copy()
+    time_df.sort_value(timepoint_end_col, inplace=True)
+    if not(timepoint_id_col):
+        timepoint_id_col = 'timepoint_id'
+        time_df[timepoint_id_col] = time_df[timepoint_end_col].astype('category').cat.codes + 1        
     time_df.dropna(how='any', subset=[timepoint_id_col, timepoint_end_col], inplace=True)
     time_df = time_df.loc[:,[timepoint_id_col, timepoint_end_col]].drop_duplicates()
     time_df[timepoint_end_col] = time_df[timepoint_end_col].astype(np.float32)
