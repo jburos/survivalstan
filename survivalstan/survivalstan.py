@@ -118,7 +118,7 @@ def fit_stan_survival_model(df, formula, event_col, model_code,
             't': df_nonmiss[timepoint_id_col].values.astype(int),
             'T': len(df_nonmiss[timepoint_id_col].unique())
         }
-        survival_model_input_data = dict(survival_model_input_data, **timepoint_id_data)
+        survival_model_input_data = dict(survival_model_input_data, **timepoint_input_data)
 
     if timepoint_end_col:
         # not required for all models, leave in for legacy
@@ -219,9 +219,9 @@ def _prep_timepoint_dataframe(df,
     """
     time_df = df.copy()
     time_df.dropna(how='any', subset=[timepoint_id_col, timepoint_end_col], inplace=True)
-    time_df.loc[:,[timepoint_id_col, timepoint_end_col]].drop_duplicates()
+    time_df = time_df.loc[:,[timepoint_id_col, timepoint_end_col]].drop_duplicates()
     time_df[timepoint_end_col] = time_df[timepoint_end_col].astype(np.float32)
-    time_df.set_index(timepoint_id, inplace=True, drop=True)
+    time_df.set_index(timepoint_id_col, inplace=True, drop=True)
     time_df.sort_index(inplace=True)
     t_durs = time_df.diff(periods=1)
     t_durs.rename(columns = {timepoint_end_col: 't_dur'}, inplace=True)
