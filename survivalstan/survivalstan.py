@@ -114,7 +114,7 @@ def fit_stan_survival_model(df, formula, event_col, model_code,
                                                       )
         timepoint_input_data = {
             't_dur': unique_timepoints['t_dur'],
-            't_obs': unique_timepoints['t_obs'],
+            't_obs': unique_timepoints[timepoint_end_col],
             't': df_nonmiss[timepoint_id_col].values.astype(int),
             'T': len(df_nonmiss[timepoint_id_col].unique())
         }
