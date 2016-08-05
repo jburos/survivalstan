@@ -72,7 +72,6 @@ def fit_stan_survival_model(df, formula, event_col, model_code,
                           df,
                           return_type='dataframe'
                           )
-    x_df = x_df.ix[:, x_df.columns != 'Intercept']
     
     ## construct data frame with all necessary columns
     ## limit to non-missing data 
@@ -90,6 +89,9 @@ def fit_stan_survival_model(df, formula, event_col, model_code,
         df_nonmiss = x_df.join(df[other_cols]).dropna()
     else:
         df_nonmiss = x_df
+
+    if len(x_df.columns)>1:
+        x_df = x_df.ix[:, x_df.columns != 'Intercept']
 
     ## prep input dictionary to pass to stan.fit
     survival_model_input_data = {
@@ -219,7 +221,7 @@ def _prep_timepoint_dataframe(df,
 
     """
     time_df = df.copy()
-    time_df.sort_value(timepoint_end_col, inplace=True)
+    time_df.sort_values(timepoint_end_col, inplace=True)
     if not(timepoint_id_col):
         timepoint_id_col = 'timepoint_id'
         time_df[timepoint_id_col] = time_df[timepoint_end_col].astype('category').cat.codes + 1        
