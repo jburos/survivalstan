@@ -9,7 +9,7 @@ def load_test_dataset():
     ''' Load test dataset from R survival package
     '''
     dataset = statsmodels.datasets.get_rdataset(package = 'survival', dataname = 'flchain' )
-    d  = dataset.data.query('futime > 7').sample(frac = 0.2)
+    d  = dataset.data.query('futime > 7').sample(frac = 0.1)
     d.reset_index(level = 0, inplace = True)
     return(d)
 
@@ -24,6 +24,27 @@ def test_weibull_model():
         time_col = 'futime',
         event_col = 'death',
         formula = 'age + sex',
+        iter = 1000,
+        chains = 2,
+        make_inits = survivalstan.make_weibull_survival_model_inits,
+        seed = 9001
+        )
+    ok_('fit' in testfit)
+    ok_('coefs' in testfit)
+    ok_('loo' in testfit)
+    return(testfit)
+
+def test_null_weibull_model():
+    ''' Test Weibull survival model on test dataset
+    '''
+    d = load_test_dataset()
+    testfit = survivalstan.fit_stan_survival_model(
+        model_cohort = 'test model',
+        model_code = survivalstan.models.weibull_survival_model,
+        df = d,
+        time_col = 'futime',
+        event_col = 'death',
+        formula = '~ 1',
         iter = 1000,
         chains = 2,
         make_inits = survivalstan.make_weibull_survival_model_inits,
