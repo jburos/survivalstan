@@ -4,6 +4,7 @@ import survivalstan
 import random
 from nose.tools import ok_, nottest
 random.seed(9001)
+num_iter = 500
 
 def load_test_dataset():
     ''' Load test dataset from R survival package
@@ -24,7 +25,7 @@ def test_weibull_model():
         time_col = 'futime',
         event_col = 'death',
         formula = 'age + sex',
-        iter = 1000,
+        iter = num_iter,
         chains = 2,
         make_inits = survivalstan.make_weibull_survival_model_inits,
         seed = 9001
@@ -46,7 +47,7 @@ def test_null_weibull_model():
         time_col = 'futime',
         event_col = 'death',
         formula = '~ 1',
-        iter = 1000,
+        iter = num_iter,
         chains = 2,
         make_inits = survivalstan.make_weibull_survival_model_inits,
         seed = 9001
@@ -55,6 +56,7 @@ def test_null_weibull_model():
     ok_('coefs' in testfit)
     ok_('loo' in testfit)
     return(testfit)
+
 
 @nottest
 def test_pem_model():
@@ -70,7 +72,7 @@ def test_pem_model():
         timepoint_end_col = 'end_time',
         event_col = 'end_failure',
         formula = 'age + sex',
-        iter = 1000,
+        iter = num_iter,
         chains = 4,
         seed = 9001
         )
@@ -95,7 +97,7 @@ def test_pem_varcoef_model():
         event_col = 'end_failure',
         group_col = 'chapter',
         formula = 'age + sex',
-        iter = 500,
+        iter = num_iter,
         chains = 4,
         seed = 9001
         )
