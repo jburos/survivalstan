@@ -58,9 +58,8 @@ def test_null_weibull_model():
     return(testfit)
 
 
-@nottest
 def test_pem_model():
-    ''' Test Weibull survival model on test dataset
+    ''' Test PEM unstructured survival model on test dataset
     '''
     d = load_test_dataset()
     dlong = survivalstan.prep_data_long_surv(d, time_col = 'futime', event_col = 'death')
