@@ -34,6 +34,7 @@ def test_weibull_model():
     ok_('loo' in testfit)
     return(testfit)
 
+@nottest
 def test_null_weibull_model():
     ''' Test Weibull survival model on test dataset
     '''
