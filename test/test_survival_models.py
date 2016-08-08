@@ -4,7 +4,7 @@ import survivalstan
 import random
 from nose.tools import ok_, nottest
 random.seed(9001)
-num_iter = 500
+num_iter = 300
 
 def load_test_dataset():
     ''' Load test dataset from R survival package
