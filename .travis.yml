@@ -36,7 +36,7 @@ install:
   - pip install coveralls
 script:
   - ./lint.sh
-  - nosetests -w test -sv --with-coverage --cover-package=survivalstan
+  - travis_wait 350 nosetests -w test -s --with-coverage --cover-package=survivalstan
 after_success:
   coveralls
 deploy:
