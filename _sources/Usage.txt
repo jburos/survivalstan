@@ -16,16 +16,14 @@
   {
    "cell_type": "markdown",
    "metadata": {
-    "nbsphinx-toctree": {
-     "maxdepth": 3,
-     "numbered": true
-    }
+    "nbsphinx-toctree": {}
    },
    "source": [
     "## Example analyses\n",
     "\n",
-    "1. [Basic piecewise-exponential model](examples/Example-using-pem_survival_model.ipynb)\n",
-    "2. [Estimating time-varying effects](examples/Test pem_survival_model_timevarying with simulated data.ipynb)"
+    "[Basic piecewise-exponential model](examples/Example-using-pem_survival_model.ipynb)\n",
+    "\n",
+    "[Estimating time-varying effects](examples/Test pem_survival_model_timevarying with simulated data.ipynb)"
    ]
   },
   {
