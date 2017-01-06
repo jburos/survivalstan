@@ -1,0 +1,652 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &#8212; survivalstan 0.1.2.5 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.2.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="survivalstan 0.1.2.5 documentation" href="../index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">load_ext</span> <span class="n">autoreload</span>
+<span class="o">%</span><span class="n">autoreload</span> <span class="mi">2</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1100038344</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">survivalstan</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">stancache</span> <span class="k">import</span> <span class="n">stancache</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">autoreload</span> <span class="n">extension</span> <span class="ow">is</span> <span class="n">already</span> <span class="n">loaded</span><span class="o">.</span> <span class="n">To</span> <span class="n">reload</span> <span class="n">it</span><span class="p">,</span> <span class="n">use</span><span class="p">:</span>
+  <span class="o">%</span><span class="n">reload_ext</span> <span class="n">autoreload</span>
+</pre></div>
+</div>
+<pre class="literal-block">
+/home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/Cython/Distutils/old_build_ext.py:30: UserWarning: Cython.Distutils.old_build_ext does not properly handle dependencies and is deprecated.
+  &quot;Cython.Distutils.old_build_ext does not properly handle dependencies &quot;
+/home/jacquelineburos/.local/lib/python3.5/site-packages/IPython/html.py:14: ShimWarning: The <cite>IPython.html</cite> package has been deprecated. You should import from <cite>notebook</cite> instead. <cite>IPython.html.widgets</cite> has moved to <cite>ipywidgets</cite>.
+  &quot;<cite>IPython.html.widgets</cite> has moved to <cite>ipywidgets</cite>.&quot;, ShimWarning)
+<a class="reference external" href="INFO:stancache.seed:Setting">INFO:stancache.seed:Setting</a> seed to 1245502385
+</pre>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">survivalstan</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">pem_survival_model_gamma</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">/*</span>  <span class="n">Variable</span> <span class="n">naming</span><span class="p">:</span>
+ <span class="o">//</span> <span class="n">dimensions</span>
+ <span class="n">N</span>          <span class="o">=</span> <span class="n">total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">observations</span> <span class="p">(</span><span class="n">length</span> <span class="n">of</span> <span class="n">data</span><span class="p">)</span>
+ <span class="n">S</span>          <span class="o">=</span> <span class="n">number</span> <span class="n">of</span> <span class="n">sample</span> <span class="n">ids</span>
+ <span class="n">T</span>          <span class="o">=</span> <span class="nb">max</span> <span class="n">timepoint</span> <span class="p">(</span><span class="n">number</span> <span class="n">of</span> <span class="n">timepoint</span> <span class="n">ids</span><span class="p">)</span>
+ <span class="n">M</span>          <span class="o">=</span> <span class="n">number</span> <span class="n">of</span> <span class="n">covariates</span>
+
+ <span class="o">//</span> <span class="n">data</span>
+ <span class="n">s</span>          <span class="o">=</span> <span class="n">sample</span> <span class="nb">id</span> <span class="k">for</span> <span class="n">each</span> <span class="n">obs</span>
+ <span class="n">t</span>          <span class="o">=</span> <span class="n">timepoint</span> <span class="nb">id</span> <span class="k">for</span> <span class="n">each</span> <span class="n">obs</span>
+ <span class="n">event</span>      <span class="o">=</span> <span class="n">integer</span> <span class="n">indicating</span> <span class="k">if</span> <span class="n">there</span> <span class="n">was</span> <span class="n">an</span> <span class="n">event</span> <span class="n">at</span> <span class="n">time</span> <span class="n">t</span> <span class="k">for</span> <span class="n">sample</span> <span class="n">s</span>
+ <span class="n">x</span>          <span class="o">=</span> <span class="n">matrix</span> <span class="n">of</span> <span class="n">real</span><span class="o">-</span><span class="n">valued</span> <span class="n">covariates</span> <span class="n">at</span> <span class="n">time</span> <span class="n">t</span> <span class="k">for</span> <span class="n">sample</span> <span class="n">n</span> <span class="p">[</span><span class="n">N</span><span class="p">,</span> <span class="n">X</span><span class="p">]</span>
+ <span class="n">obs_t</span>      <span class="o">=</span> <span class="n">observed</span> <span class="n">end</span> <span class="n">time</span> <span class="k">for</span> <span class="n">interval</span> <span class="k">for</span> <span class="n">timepoint</span> <span class="k">for</span> <span class="n">that</span> <span class="n">obs</span>
+
+<span class="o">*/</span>
+<span class="o">//</span> <span class="n">Jacqueline</span> <span class="n">Buros</span> <span class="n">Novik</span> <span class="o">&lt;</span><span class="n">jackinovik</span><span class="nd">@gmail</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;</span>
+
+
+<span class="n">data</span> <span class="p">{</span>
+  <span class="nb">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">N</span><span class="p">;</span>
+  <span class="nb">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">S</span><span class="p">;</span>
+  <span class="nb">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">T</span><span class="p">;</span>
+  <span class="nb">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">M</span><span class="p">;</span>
+  <span class="nb">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">N</span><span class="o">&gt;</span> <span class="n">s</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>     <span class="o">//</span> <span class="n">sample</span> <span class="nb">id</span>
+  <span class="nb">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">t</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>     <span class="o">//</span> <span class="n">timepoint</span> <span class="nb">id</span>
+  <span class="nb">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">event</span><span class="p">[</span><span class="n">N</span><span class="p">];</span> <span class="o">//</span> <span class="mi">1</span><span class="p">:</span> <span class="n">event</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">censor</span>
+  <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span> <span class="n">M</span><span class="p">]</span> <span class="n">x</span><span class="p">;</span>                 <span class="o">//</span> <span class="n">explanatory</span> <span class="nb">vars</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">obs_t</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>         <span class="o">//</span> <span class="n">observed</span> <span class="n">end</span> <span class="n">time</span> <span class="k">for</span> <span class="n">each</span> <span class="n">obs</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">t_dur</span><span class="p">[</span><span class="n">T</span><span class="p">];</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">t_obs</span><span class="p">[</span><span class="n">T</span><span class="p">];</span>
+<span class="p">}</span>
+<span class="n">transformed</span> <span class="n">data</span> <span class="p">{</span>
+  <span class="n">real</span> <span class="n">c_unit</span><span class="p">;</span>
+  <span class="n">real</span> <span class="n">r_unit</span><span class="p">;</span>
+  <span class="nb">int</span> <span class="n">n_trans</span><span class="p">[</span><span class="n">S</span><span class="p">,</span> <span class="n">T</span><span class="p">];</span>
+
+  <span class="o">//</span> <span class="n">scale</span> <span class="k">for</span> <span class="n">baseline</span> <span class="n">hazard</span> <span class="n">params</span> <span class="p">(</span><span class="n">fixed</span><span class="p">)</span>
+  <span class="n">c_unit</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">;</span>
+  <span class="n">r_unit</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">;</span>
+
+  <span class="o">//</span> <span class="n">n_trans</span> <span class="n">used</span> <span class="n">to</span> <span class="nb">map</span> <span class="n">each</span> <span class="n">sample</span><span class="o">*</span><span class="n">timepoint</span> <span class="n">to</span> <span class="n">n</span> <span class="p">(</span><span class="n">used</span> <span class="ow">in</span> <span class="n">gen</span> <span class="n">quantities</span><span class="p">)</span>
+  <span class="o">//</span> <span class="nb">map</span> <span class="n">each</span> <span class="n">patient</span><span class="o">/</span><span class="n">timepoint</span> <span class="n">combination</span> <span class="n">to</span> <span class="n">n</span> <span class="n">values</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">n</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">N</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">n_trans</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="n">n</span><span class="p">]]</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="o">//</span> <span class="n">fill</span> <span class="ow">in</span> <span class="n">missing</span> <span class="n">values</span> <span class="k">with</span> <span class="n">n</span> <span class="k">for</span> <span class="nb">max</span> <span class="n">t</span> <span class="k">for</span> <span class="n">that</span> <span class="n">patient</span>
+  <span class="o">//</span> <span class="n">ie</span> <span class="n">assume</span> <span class="s2">&quot;last observed&quot;</span> <span class="n">state</span> <span class="n">applies</span> <span class="n">forward</span> <span class="p">(</span><span class="n">may</span> <span class="n">be</span> <span class="n">problematic</span> <span class="k">for</span> <span class="n">TVC</span><span class="p">)</span>
+  <span class="o">//</span> <span class="n">this</span> <span class="n">allows</span> <span class="n">us</span> <span class="n">to</span> <span class="n">predict</span> <span class="n">failure</span> <span class="n">times</span> <span class="o">&gt;=</span> <span class="n">observed</span> <span class="n">survival</span> <span class="n">times</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">samp</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">S</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nb">int</span> <span class="n">last_value</span><span class="p">;</span>
+      <span class="n">last_value</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="k">for</span> <span class="p">(</span><span class="n">tp</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+          <span class="o">//</span> <span class="n">manual</span> <span class="n">says</span> <span class="n">ints</span> <span class="n">are</span> <span class="n">initialized</span> <span class="n">to</span> <span class="n">neg</span> <span class="n">values</span>
+          <span class="o">//</span> <span class="n">so</span> <span class="o">&lt;=</span><span class="mi">0</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">shorthand</span> <span class="k">for</span> <span class="s2">&quot;unassigned&quot;</span>
+          <span class="k">if</span> <span class="p">(</span><span class="n">n_trans</span><span class="p">[</span><span class="n">samp</span><span class="p">,</span> <span class="n">tp</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">last_value</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+              <span class="n">n_trans</span><span class="p">[</span><span class="n">samp</span><span class="p">,</span> <span class="n">tp</span><span class="p">]</span> <span class="o">=</span> <span class="n">last_value</span><span class="p">;</span>
+          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+              <span class="n">last_value</span> <span class="o">=</span> <span class="n">n_trans</span><span class="p">[</span><span class="n">samp</span><span class="p">,</span> <span class="n">tp</span><span class="p">];</span>
+          <span class="p">}</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="n">parameters</span> <span class="p">{</span>
+  <span class="n">vector</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="n">baseline</span><span class="p">;</span> <span class="o">//</span> <span class="n">unstructured</span> <span class="n">baseline</span> <span class="n">hazard</span> <span class="k">for</span> <span class="n">each</span> <span class="n">timepoint</span> <span class="n">t</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">M</span><span class="p">]</span> <span class="n">beta</span><span class="p">;</span> <span class="o">//</span> <span class="n">beta</span> <span class="k">for</span> <span class="n">each</span> <span class="n">covariate</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">c_raw</span><span class="p">;</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">r_raw</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">transformed</span> <span class="n">parameters</span> <span class="p">{</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">log_hazard</span><span class="p">;</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="n">log_baseline</span><span class="p">;</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">c</span><span class="p">;</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">r</span><span class="p">;</span>
+
+
+  <span class="n">log_baseline</span> <span class="o">=</span> <span class="n">log</span><span class="p">(</span><span class="n">baseline</span><span class="p">);</span>
+
+  <span class="n">r</span> <span class="o">=</span> <span class="n">r_unit</span><span class="o">*</span><span class="n">r_raw</span><span class="p">;</span>
+  <span class="n">c</span> <span class="o">=</span> <span class="n">c_unit</span><span class="o">*</span><span class="n">c_raw</span><span class="p">;</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="n">n</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">N</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">log_hazard</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">,]</span><span class="o">*</span><span class="n">beta</span> <span class="o">+</span> <span class="n">log_baseline</span><span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="n">n</span><span class="p">]];</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="n">model</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">baseline</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">~</span> <span class="n">gamma</span><span class="p">(</span><span class="n">r</span> <span class="o">*</span> <span class="n">t_dur</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">c</span><span class="p">,</span> <span class="n">c</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="n">beta</span> <span class="o">~</span> <span class="n">cauchy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+  <span class="n">event</span> <span class="o">~</span> <span class="n">poisson_log</span><span class="p">(</span><span class="n">log_hazard</span><span class="p">);</span>
+  <span class="n">c_raw</span> <span class="o">~</span> <span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="n">r_raw</span> <span class="o">~</span> <span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="n">generated</span> <span class="n">quantities</span> <span class="p">{</span>
+  <span class="n">real</span> <span class="n">log_lik</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+  <span class="nb">int</span> <span class="n">y_hat_mat</span><span class="p">[</span><span class="n">S</span><span class="p">,</span> <span class="n">T</span><span class="p">];</span> <span class="o">//</span> <span class="n">ppcheck</span> <span class="k">for</span> <span class="n">each</span> <span class="n">S</span><span class="o">*</span><span class="n">T</span> <span class="n">combination</span>
+  <span class="n">real</span> <span class="n">y_hat_time</span><span class="p">[</span><span class="n">S</span><span class="p">];</span>       <span class="o">//</span> <span class="n">predicted</span> <span class="n">failure</span> <span class="n">time</span> <span class="k">for</span> <span class="n">each</span> <span class="n">sample</span>
+  <span class="nb">int</span> <span class="n">y_hat_event</span><span class="p">[</span><span class="n">S</span><span class="p">];</span>      <span class="o">//</span> <span class="n">predicted</span> <span class="n">event</span> <span class="p">(</span><span class="mi">0</span><span class="p">:</span><span class="n">censor</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="n">event</span><span class="p">)</span>
+
+  <span class="o">//</span> <span class="n">log</span><span class="o">-</span><span class="n">likelihood</span><span class="p">,</span> <span class="k">for</span> <span class="n">loo</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">n</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">N</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">log_lik</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">poisson_log_lpmf</span><span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">|</span> <span class="n">log_hazard</span><span class="p">[</span><span class="n">n</span><span class="p">]);</span>
+  <span class="p">}</span>
+
+  <span class="o">//</span> <span class="n">posterior</span> <span class="n">predicted</span> <span class="n">values</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">samp</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">S</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nb">int</span> <span class="n">sample_alive</span><span class="p">;</span>
+      <span class="n">sample_alive</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+      <span class="k">for</span> <span class="p">(</span><span class="n">tp</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">sample_alive</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+              <span class="n">real</span> <span class="n">log_haz</span><span class="p">;</span>
+              <span class="nb">int</span> <span class="n">n</span><span class="p">;</span>
+              <span class="nb">int</span> <span class="n">pred_y</span><span class="p">;</span>
+
+              <span class="o">//</span> <span class="n">determine</span> <span class="n">predicted</span> <span class="n">value</span> <span class="n">of</span> <span class="n">y</span>
+              <span class="n">n</span> <span class="o">=</span> <span class="n">n_trans</span><span class="p">[</span><span class="n">samp</span><span class="p">,</span> <span class="n">tp</span><span class="p">];</span>
+              <span class="n">log_haz</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">,]</span><span class="o">*</span><span class="n">beta</span> <span class="o">+</span> <span class="n">log_baseline</span><span class="p">[</span><span class="n">tp</span><span class="p">];</span>
+              <span class="k">if</span> <span class="p">(</span><span class="n">log_haz</span> <span class="o">&lt;</span> <span class="n">log</span><span class="p">(</span><span class="nb">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">30</span><span class="p">)))</span>
+                  <span class="n">pred_y</span> <span class="o">=</span> <span class="n">poisson_log_rng</span><span class="p">(</span><span class="n">log_haz</span><span class="p">);</span>
+              <span class="k">else</span>
+                  <span class="n">pred_y</span> <span class="o">=</span> <span class="mi">9</span><span class="p">;</span>
+
+              <span class="o">//</span> <span class="n">mark</span> <span class="n">this</span> <span class="n">patient</span> <span class="k">as</span> <span class="n">ineligible</span> <span class="k">for</span> <span class="n">future</span> <span class="n">tps</span>
+              <span class="o">//</span> <span class="n">note</span><span class="p">:</span> <span class="n">deliberately</span> <span class="n">make</span> <span class="mi">9</span><span class="n">s</span> <span class="n">ineligible</span>
+              <span class="k">if</span> <span class="p">(</span><span class="n">pred_y</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="n">sample_alive</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                  <span class="n">y_hat_time</span><span class="p">[</span><span class="n">samp</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_obs</span><span class="p">[</span><span class="n">tp</span><span class="p">];</span>
+                  <span class="n">y_hat_event</span><span class="p">[</span><span class="n">samp</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+              <span class="p">}</span>
+
+              <span class="o">//</span> <span class="n">save</span> <span class="n">predicted</span> <span class="n">value</span> <span class="n">of</span> <span class="n">y</span> <span class="n">to</span> <span class="n">matrix</span>
+              <span class="n">y_hat_mat</span><span class="p">[</span><span class="n">samp</span><span class="p">,</span> <span class="n">tp</span><span class="p">]</span> <span class="o">=</span> <span class="n">pred_y</span><span class="p">;</span>
+          <span class="p">}</span>
+          <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">sample_alive</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+              <span class="n">y_hat_mat</span><span class="p">[</span><span class="n">samp</span><span class="p">,</span> <span class="n">tp</span><span class="p">]</span> <span class="o">=</span> <span class="mi">9</span><span class="p">;</span>
+          <span class="p">}</span>
+      <span class="p">}</span> <span class="o">//</span> <span class="n">end</span> <span class="n">per</span><span class="o">-</span><span class="n">timepoint</span> <span class="n">loop</span>
+
+      <span class="o">//</span> <span class="k">if</span> <span class="n">patient</span> <span class="n">still</span> <span class="n">alive</span> <span class="n">at</span> <span class="nb">max</span>
+      <span class="o">//</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">sample_alive</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+          <span class="n">y_hat_time</span><span class="p">[</span><span class="n">samp</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_obs</span><span class="p">[</span><span class="n">T</span><span class="p">];</span>
+          <span class="n">y_hat_event</span><span class="p">[</span><span class="n">samp</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="p">}</span>
+  <span class="p">}</span> <span class="o">//</span> <span class="n">end</span> <span class="n">per</span><span class="o">-</span><span class="n">sample</span> <span class="n">loop</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached</span><span class="p">(</span>
+    <span class="n">survivalstan</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">sim_data_exp_correlated</span><span class="p">,</span>
+    <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">censor_time</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">rate_form</span><span class="o">=</span><span class="s1">&#39;1 + sex&#39;</span><span class="p">,</span>
+    <span class="n">rate_coefs</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">d</span><span class="p">[</span><span class="s1">&#39;age_centered&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">sim_data_exp_correlated</span><span class="p">:</span> <span class="n">cache_filename</span> <span class="nb">set</span> <span class="n">to</span> <span class="n">sim_data_exp_correlated</span><span class="o">.</span><span class="n">cached</span><span class="o">.</span><span class="n">N_100</span><span class="o">.</span><span class="n">censor_time_20</span><span class="o">.</span><span class="n">rate_coefs_54462717316</span><span class="o">.</span><span class="n">rate_form_1</span> <span class="o">+</span> <span class="n">sex</span><span class="o">.</span><span class="n">pkl</span>
+<span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">sim_data_exp_correlated</span><span class="p">:</span> <span class="n">Loading</span> <span class="n">result</span> <span class="kn">from</span> <span class="nn">cache</span>
+</pre></div>
+</div>
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age</th>
+      <th>sex</th>
+      <th>rate</th>
+      <th>true_t</th>
+      <th>t</th>
+      <th>event</th>
+      <th>index</th>
+      <th>age_centered</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>59</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>20.948771</td>
+      <td>20.000000</td>
+      <td>False</td>
+      <td>0</td>
+      <td>4.18</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>58</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>12.827519</td>
+      <td>12.827519</td>
+      <td>True</td>
+      <td>1</td>
+      <td>3.18</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>61</td>
+      <td>female</td>
+      <td>0.049787</td>
+      <td>27.018886</td>
+      <td>20.000000</td>
+      <td>False</td>
+      <td>2</td>
+      <td>6.18</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>57</td>
+      <td>female</td>
+      <td>0.049787</td>
+      <td>62.220296</td>
+      <td>20.000000</td>
+      <td>False</td>
+      <td>3</td>
+      <td>2.18</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>55</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>10.462045</td>
+      <td>10.462045</td>
+      <td>True</td>
+      <td>4</td>
+      <td>0.18</td>
+    </tr>
+  </tbody>
+</table>
+</div><div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;female&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;female&#39;</span><span class="p">)</span>
+<span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;male&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;male&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">Legend</span> <span class="n">at</span> <span class="mh">0x7f9fac008eb8</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<img alt="examples/Test%20pem_survival_model_gamma%20with%20simulated%20data_files/Test%20pem_survival_model_gamma%20with%20simulated%20data_3_1.png" src="examples/Test%20pem_survival_model_gamma%20with%20simulated%20data_files/Test%20pem_survival_model_gamma%20with%20simulated%20data_3_1.png" />
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">dlong</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached</span><span class="p">(</span>
+    <span class="n">survivalstan</span><span class="o">.</span><span class="n">prep_data_long_surv</span><span class="p">,</span>
+    <span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">prep_data_long_surv</span><span class="p">:</span> <span class="n">cache_filename</span> <span class="nb">set</span> <span class="n">to</span> <span class="n">prep_data_long_surv</span><span class="o">.</span><span class="n">cached</span><span class="o">.</span><span class="n">df_33772694934</span><span class="o">.</span><span class="n">event_col_event</span><span class="o">.</span><span class="n">time_col_t</span><span class="o">.</span><span class="n">pkl</span>
+<span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">prep_data_long_surv</span><span class="p">:</span> <span class="n">Loading</span> <span class="n">result</span> <span class="kn">from</span> <span class="nn">cache</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">dlong</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age</th>
+      <th>sex</th>
+      <th>rate</th>
+      <th>true_t</th>
+      <th>t</th>
+      <th>event</th>
+      <th>index</th>
+      <th>age_centered</th>
+      <th>key</th>
+      <th>end_time</th>
+      <th>end_failure</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>59</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>20.948771</td>
+      <td>20.0</td>
+      <td>False</td>
+      <td>0</td>
+      <td>4.18</td>
+      <td>1</td>
+      <td>20.000000</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>59</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>20.948771</td>
+      <td>20.0</td>
+      <td>False</td>
+      <td>0</td>
+      <td>4.18</td>
+      <td>1</td>
+      <td>12.827519</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>59</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>20.948771</td>
+      <td>20.0</td>
+      <td>False</td>
+      <td>0</td>
+      <td>4.18</td>
+      <td>1</td>
+      <td>10.462045</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>59</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>20.948771</td>
+      <td>20.0</td>
+      <td>False</td>
+      <td>0</td>
+      <td>4.18</td>
+      <td>1</td>
+      <td>0.196923</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>59</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>20.948771</td>
+      <td>20.0</td>
+      <td>False</td>
+      <td>0</td>
+      <td>4.18</td>
+      <td>1</td>
+      <td>9.244121</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div><div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">testfit</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
+    <span class="n">model_cohort</span> <span class="o">=</span> <span class="s1">&#39;test model&#39;</span><span class="p">,</span>
+    <span class="n">model_code</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">pem_survival_model_gamma</span><span class="p">,</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">dlong</span><span class="p">,</span>
+    <span class="n">sample_col</span> <span class="o">=</span> <span class="s1">&#39;index&#39;</span><span class="p">,</span>
+    <span class="n">timepoint_end_col</span> <span class="o">=</span> <span class="s1">&#39;end_time&#39;</span><span class="p">,</span>
+    <span class="n">event_col</span> <span class="o">=</span> <span class="s1">&#39;end_failure&#39;</span><span class="p">,</span>
+    <span class="n">formula</span> <span class="o">=</span> <span class="s1">&#39;~ age_centered + sex&#39;</span><span class="p">,</span>
+    <span class="nb">iter</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">,</span>
+    <span class="n">chains</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="mi">9001</span><span class="p">,</span>
+    <span class="n">FIT_FUN</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached_stan_fit</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span>INFO:stancache.stancache:Step 1: Get compiled model code, possibly from cache
+INFO:stancache.stancache:StanModel: cache_filename set to anon_model.cython_0_25_1.model_code_72990130769.pystan_2_12_0_0.stanmodel.pkl
+INFO:stancache.stancache:StanModel: Loading result from cache
+INFO:stancache.stancache:Step 2: Get posterior draws from model, possibly from cache
+INFO:stancache.stancache:sampling: cache_filename set to anon_model.cython_0_25_1.model_code_72990130769.pystan_2_12_0_0.stanfit.chains_4.data_64545635565.iter_5000.seed_9001.pkl
+INFO:stancache.stancache:sampling: Starting execution
+INFO:stancache.stancache:sampling: Execution completed (0:02:26.153391 elapsed)
+INFO:stancache.stancache:sampling: Saving results to cache
+/home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/stancache/stancache.py:251: UserWarning: Pickling fit objects is an experimental feature!
+The relevant StanModel instance must be pickled along with this fit object.
+When unpickling the StanModel must be unpickled first.
+  pickle.dump(res, open(cache_filepath, &#39;wb&#39;), pickle.HIGHEST_PROTOCOL)
+/home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/stanity/psis.py:228: FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison
+  elif sort == &#39;in-place&#39;:
+/home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/stanity/psis.py:246: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+  bs /= 3 * x[sort[np.floor(n/4 + 0.5) - 1]]
+/home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/stanity/psis.py:262: RuntimeWarning: overflow encountered in exp
+  np.exp(temp, out=temp)
+/home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/stanity/psis.py:246: RuntimeWarning: divide by zero encountered in true_divide
+  bs /= 3 * x[sort[np.floor(n/4 + 0.5) - 1]]
+/home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/stanity/psis.py:250: RuntimeWarning: invalid value encountered in multiply
+  temp = ks[:,None] * x
+/home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/stanity/psis.py:267: RuntimeWarning: invalid value encountered in greater_equal
+  dii = w &gt;= 10 * np.finfo(float).eps
+/home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/stanity/psis.py:282: RuntimeWarning: invalid value encountered in double_scalars
+  sigma = -k / b
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="s1">&#39;lp__&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span>            <span class="n">mean</span>  <span class="n">se_mean</span>        <span class="n">sd</span>         <span class="mf">2.5</span><span class="o">%</span>          <span class="mi">50</span><span class="o">%</span>       <span class="mf">97.5</span><span class="o">%</span>      <span class="n">Rhat</span>
+<span class="n">lp__</span> <span class="o">-</span><span class="mf">1034.96497</span>  <span class="mf">0.18312</span>  <span class="mf">7.354494</span> <span class="o">-</span><span class="mf">1050.563484</span> <span class="o">-</span><span class="mf">1034.543604</span> <span class="o">-</span><span class="mf">1021.53023</span>  <span class="mf">1.000819</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="s1">&#39;log_baseline&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span>                        <span class="n">mean</span>   <span class="n">se_mean</span>          <span class="n">sd</span>        <span class="mf">2.5</span><span class="o">%</span>         <span class="mi">50</span><span class="o">%</span>      <span class="mf">97.5</span><span class="o">%</span>      <span class="n">Rhat</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>    <span class="o">-</span><span class="mf">5.540533</span>  <span class="mf">0.026349</span>    <span class="mf">1.317162</span>   <span class="o">-</span><span class="mf">8.741271</span>   <span class="o">-</span><span class="mf">5.317482</span>  <span class="o">-</span><span class="mf">3.605955</span>  <span class="mf">1.000660</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>    <span class="o">-</span><span class="mf">5.540373</span>  <span class="mf">0.026410</span>    <span class="mf">1.312295</span>   <span class="o">-</span><span class="mf">8.765512</span>   <span class="o">-</span><span class="mf">5.305697</span>  <span class="o">-</span><span class="mf">3.661229</span>  <span class="mf">1.000160</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>    <span class="o">-</span><span class="mf">5.533987</span>  <span class="mf">0.025182</span>    <span class="mf">1.277367</span>   <span class="o">-</span><span class="mf">8.563403</span>   <span class="o">-</span><span class="mf">5.341926</span>  <span class="o">-</span><span class="mf">3.613802</span>  <span class="mf">1.000899</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>    <span class="o">-</span><span class="mf">5.499061</span>  <span class="mf">0.023197</span>    <span class="mf">1.266738</span>   <span class="o">-</span><span class="mf">8.526801</span>   <span class="o">-</span><span class="mf">5.300919</span>  <span class="o">-</span><span class="mf">3.598318</span>  <span class="mf">1.000996</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>    <span class="o">-</span><span class="mf">5.529027</span>  <span class="mf">0.029142</span>    <span class="mf">1.376488</span>   <span class="o">-</span><span class="mf">8.883094</span>   <span class="o">-</span><span class="mf">5.280803</span>  <span class="o">-</span><span class="mf">3.553426</span>  <span class="mf">1.001002</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>    <span class="o">-</span><span class="mf">5.471047</span>  <span class="mf">0.025521</span>    <span class="mf">1.260655</span>   <span class="o">-</span><span class="mf">8.429872</span>   <span class="o">-</span><span class="mf">5.272214</span>  <span class="o">-</span><span class="mf">3.596805</span>  <span class="mf">1.002028</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>    <span class="o">-</span><span class="mf">5.499416</span>  <span class="mf">0.034998</span>    <span class="mf">1.321609</span>   <span class="o">-</span><span class="mf">8.548750</span>   <span class="o">-</span><span class="mf">5.291451</span>  <span class="o">-</span><span class="mf">3.584369</span>  <span class="mf">1.003210</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>    <span class="o">-</span><span class="mf">5.464198</span>  <span class="mf">0.024734</span>    <span class="mf">1.288292</span>   <span class="o">-</span><span class="mf">8.466082</span>   <span class="o">-</span><span class="mf">5.228081</span>  <span class="o">-</span><span class="mf">3.575405</span>  <span class="mf">1.000619</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>    <span class="o">-</span><span class="mf">5.466310</span>  <span class="mf">0.027385</span>    <span class="mf">1.284197</span>   <span class="o">-</span><span class="mf">8.583571</span>   <span class="o">-</span><span class="mf">5.262634</span>  <span class="o">-</span><span class="mf">3.536853</span>  <span class="mf">1.001117</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>    <span class="o">-</span><span class="mf">5.416356</span>  <span class="mf">0.024357</span>    <span class="mf">1.279819</span>   <span class="o">-</span><span class="mf">8.469762</span>   <span class="o">-</span><span class="mf">5.221550</span>  <span class="o">-</span><span class="mf">3.528211</span>  <span class="mf">1.001357</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.440701</span>  <span class="mf">0.027773</span>    <span class="mf">1.306535</span>   <span class="o">-</span><span class="mf">8.676018</span>   <span class="o">-</span><span class="mf">5.228972</span>  <span class="o">-</span><span class="mf">3.541475</span>  <span class="mf">1.001608</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.434051</span>  <span class="mf">0.027698</span>    <span class="mf">1.305317</span>   <span class="o">-</span><span class="mf">8.664646</span>   <span class="o">-</span><span class="mf">5.225114</span>  <span class="o">-</span><span class="mf">3.512998</span>  <span class="mf">0.999949</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.370823</span>  <span class="mf">0.028533</span>    <span class="mf">1.284318</span>   <span class="o">-</span><span class="mf">8.459077</span>   <span class="o">-</span><span class="mf">5.161179</span>  <span class="o">-</span><span class="mf">3.454565</span>  <span class="mf">1.001136</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.393917</span>  <span class="mf">0.024404</span>    <span class="mf">1.280480</span>   <span class="o">-</span><span class="mf">8.626593</span>   <span class="o">-</span><span class="mf">5.192589</span>  <span class="o">-</span><span class="mf">3.486274</span>  <span class="mf">1.000423</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.364330</span>  <span class="mf">0.025443</span>    <span class="mf">1.273700</span>   <span class="o">-</span><span class="mf">8.327442</span>   <span class="o">-</span><span class="mf">5.166064</span>  <span class="o">-</span><span class="mf">3.490194</span>  <span class="mf">1.002779</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.357747</span>  <span class="mf">0.025662</span>    <span class="mf">1.282847</span>   <span class="o">-</span><span class="mf">8.510490</span>   <span class="o">-</span><span class="mf">5.145634</span>  <span class="o">-</span><span class="mf">3.463617</span>  <span class="mf">1.002548</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.378575</span>  <span class="mf">0.027974</span>    <span class="mf">1.302219</span>   <span class="o">-</span><span class="mf">8.521636</span>   <span class="o">-</span><span class="mf">5.152384</span>  <span class="o">-</span><span class="mf">3.489239</span>  <span class="mf">1.003528</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">17</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.295181</span>  <span class="mf">0.026170</span>    <span class="mf">1.249062</span>   <span class="o">-</span><span class="mf">8.246395</span>   <span class="o">-</span><span class="mf">5.115480</span>  <span class="o">-</span><span class="mf">3.442103</span>  <span class="mf">1.004022</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">18</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.346658</span>  <span class="mf">0.027128</span>    <span class="mf">1.301594</span>   <span class="o">-</span><span class="mf">8.462238</span>   <span class="o">-</span><span class="mf">5.129009</span>  <span class="o">-</span><span class="mf">3.403453</span>  <span class="mf">1.002558</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">19</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.293308</span>  <span class="mf">0.027616</span>    <span class="mf">1.280204</span>   <span class="o">-</span><span class="mf">8.270132</span>   <span class="o">-</span><span class="mf">5.103891</span>  <span class="o">-</span><span class="mf">3.405552</span>  <span class="mf">1.000711</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">20</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.312085</span>  <span class="mf">0.024626</span>    <span class="mf">1.318119</span>   <span class="o">-</span><span class="mf">8.478142</span>   <span class="o">-</span><span class="mf">5.086743</span>  <span class="o">-</span><span class="mf">3.394770</span>  <span class="mf">1.000745</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.277845</span>  <span class="mf">0.026557</span>    <span class="mf">1.264723</span>   <span class="o">-</span><span class="mf">8.303782</span>   <span class="o">-</span><span class="mf">5.068627</span>  <span class="o">-</span><span class="mf">3.349496</span>  <span class="mf">1.000715</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">22</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.306103</span>  <span class="mf">0.027747</span>    <span class="mf">1.309989</span>   <span class="o">-</span><span class="mf">8.480791</span>   <span class="o">-</span><span class="mf">5.098819</span>  <span class="o">-</span><span class="mf">3.372876</span>  <span class="mf">1.002474</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">23</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.240126</span>  <span class="mf">0.024418</span>    <span class="mf">1.274211</span>   <span class="o">-</span><span class="mf">8.374662</span>   <span class="o">-</span><span class="mf">5.031179</span>  <span class="o">-</span><span class="mf">3.368183</span>  <span class="mf">1.002631</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">24</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.180366</span>  <span class="mf">0.023456</span>    <span class="mf">1.229393</span>   <span class="o">-</span><span class="mf">8.199401</span>   <span class="o">-</span><span class="mf">4.991827</span>  <span class="o">-</span><span class="mf">3.339248</span>  <span class="mf">1.002037</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">25</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.220781</span>  <span class="mf">0.025189</span>    <span class="mf">1.279213</span>   <span class="o">-</span><span class="mf">8.155421</span>   <span class="o">-</span><span class="mf">5.026628</span>  <span class="o">-</span><span class="mf">3.347359</span>  <span class="mf">0.999862</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">26</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.198388</span>  <span class="mf">0.027133</span>    <span class="mf">1.293306</span>   <span class="o">-</span><span class="mf">8.334439</span>   <span class="o">-</span><span class="mf">4.988685</span>  <span class="o">-</span><span class="mf">3.310959</span>  <span class="mf">1.002848</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">27</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.145882</span>  <span class="mf">0.024486</span>    <span class="mf">1.269478</span>   <span class="o">-</span><span class="mf">8.201074</span>   <span class="o">-</span><span class="mf">4.960108</span>  <span class="o">-</span><span class="mf">3.261169</span>  <span class="mf">1.000358</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">28</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.112184</span>  <span class="mf">0.023308</span>    <span class="mf">1.235079</span>   <span class="o">-</span><span class="mf">8.159944</span>   <span class="o">-</span><span class="mf">4.913842</span>  <span class="o">-</span><span class="mf">3.245869</span>  <span class="mf">1.001038</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">29</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.130311</span>  <span class="mf">0.028653</span>    <span class="mf">1.303939</span>   <span class="o">-</span><span class="mf">8.381742</span>   <span class="o">-</span><span class="mf">4.914959</span>  <span class="o">-</span><span class="mf">3.271805</span>  <span class="mf">1.001287</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">30</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.197454</span>  <span class="mf">0.026676</span>    <span class="mf">1.342558</span>   <span class="o">-</span><span class="mf">8.362530</span>   <span class="o">-</span><span class="mf">4.956216</span>  <span class="o">-</span><span class="mf">3.213312</span>  <span class="mf">1.000961</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">31</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.188365</span>  <span class="mf">0.027795</span>    <span class="mf">1.344816</span>   <span class="o">-</span><span class="mf">8.474813</span>   <span class="o">-</span><span class="mf">4.969168</span>  <span class="o">-</span><span class="mf">3.277665</span>  <span class="mf">1.002005</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">32</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.102617</span>  <span class="mf">0.024780</span>    <span class="mf">1.260118</span>   <span class="o">-</span><span class="mf">8.178528</span>   <span class="o">-</span><span class="mf">4.901117</span>  <span class="o">-</span><span class="mf">3.213594</span>  <span class="mf">1.000780</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">33</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.075221</span>  <span class="mf">0.024387</span>    <span class="mf">1.227845</span>   <span class="o">-</span><span class="mf">7.991722</span>   <span class="o">-</span><span class="mf">4.885576</span>  <span class="o">-</span><span class="mf">3.214388</span>  <span class="mf">1.000436</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">34</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.110409</span>  <span class="mf">0.029528</span>    <span class="mf">1.336298</span>   <span class="o">-</span><span class="mf">8.447845</span>   <span class="o">-</span><span class="mf">4.872393</span>  <span class="o">-</span><span class="mf">3.193095</span>  <span class="mf">1.001111</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">35</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.031990</span>  <span class="mf">0.024814</span>    <span class="mf">1.248103</span>   <span class="o">-</span><span class="mf">8.051273</span>   <span class="o">-</span><span class="mf">4.841412</span>  <span class="o">-</span><span class="mf">3.165030</span>  <span class="mf">1.000698</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">36</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.050843</span>  <span class="mf">0.025298</span>    <span class="mf">1.288200</span>   <span class="o">-</span><span class="mf">8.189802</span>   <span class="o">-</span><span class="mf">4.835042</span>  <span class="o">-</span><span class="mf">3.140867</span>  <span class="mf">1.002413</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">37</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.027862</span>  <span class="mf">0.025181</span>    <span class="mf">1.274591</span>   <span class="o">-</span><span class="mf">7.993631</span>   <span class="o">-</span><span class="mf">4.829429</span>  <span class="o">-</span><span class="mf">3.130617</span>  <span class="mf">1.002734</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">38</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.043253</span>  <span class="mf">0.031843</span>    <span class="mf">1.332076</span>   <span class="o">-</span><span class="mf">8.392334</span>   <span class="o">-</span><span class="mf">4.800582</span>  <span class="o">-</span><span class="mf">3.117772</span>  <span class="mf">1.001792</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">39</span><span class="p">]</span>   <span class="o">-</span><span class="mf">5.009148</span>  <span class="mf">0.027024</span>    <span class="mf">1.286125</span>   <span class="o">-</span><span class="mf">8.114673</span>   <span class="o">-</span><span class="mf">4.801411</span>  <span class="o">-</span><span class="mf">3.083061</span>  <span class="mf">1.001948</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">40</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.977261</span>  <span class="mf">0.022727</span>    <span class="mf">1.253310</span>   <span class="o">-</span><span class="mf">8.021432</span>   <span class="o">-</span><span class="mf">4.786938</span>  <span class="o">-</span><span class="mf">3.099191</span>  <span class="mf">1.000618</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">41</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.973488</span>  <span class="mf">0.026404</span>    <span class="mf">1.297564</span>   <span class="o">-</span><span class="mf">8.165326</span>   <span class="o">-</span><span class="mf">4.762586</span>  <span class="o">-</span><span class="mf">3.063354</span>  <span class="mf">1.000620</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">42</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.976570</span>  <span class="mf">0.026160</span>    <span class="mf">1.289808</span>   <span class="o">-</span><span class="mf">8.134780</span>   <span class="o">-</span><span class="mf">4.785349</span>  <span class="o">-</span><span class="mf">3.061472</span>  <span class="mf">1.000685</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">43</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.919019</span>  <span class="mf">0.025599</span>    <span class="mf">1.277389</span>   <span class="o">-</span><span class="mf">8.050034</span>   <span class="o">-</span><span class="mf">4.700221</span>  <span class="o">-</span><span class="mf">3.016657</span>  <span class="mf">1.001715</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">44</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.900334</span>  <span class="mf">0.025927</span>    <span class="mf">1.293227</span>   <span class="o">-</span><span class="mf">8.049396</span>   <span class="o">-</span><span class="mf">4.679596</span>  <span class="o">-</span><span class="mf">2.980225</span>  <span class="mf">1.000656</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">45</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.907134</span>  <span class="mf">0.025745</span>    <span class="mf">1.276647</span>   <span class="o">-</span><span class="mf">8.046290</span>   <span class="o">-</span><span class="mf">4.690973</span>  <span class="o">-</span><span class="mf">3.021486</span>  <span class="mf">1.001499</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">46</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.855415</span>  <span class="mf">0.023345</span>    <span class="mf">1.255215</span>   <span class="o">-</span><span class="mf">7.826891</span>   <span class="o">-</span><span class="mf">4.654950</span>  <span class="o">-</span><span class="mf">2.972896</span>  <span class="mf">1.001151</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">47</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.832234</span>  <span class="mf">0.021958</span>    <span class="mf">1.254851</span>   <span class="o">-</span><span class="mf">7.809152</span>   <span class="o">-</span><span class="mf">4.639160</span>  <span class="o">-</span><span class="mf">2.926565</span>  <span class="mf">1.001058</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">48</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.798222</span>  <span class="mf">0.024395</span>    <span class="mf">1.255120</span>   <span class="o">-</span><span class="mf">7.870438</span>   <span class="o">-</span><span class="mf">4.580276</span>  <span class="o">-</span><span class="mf">2.924569</span>  <span class="mf">1.000580</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">49</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.838834</span>  <span class="mf">0.029046</span>    <span class="mf">1.346472</span>   <span class="o">-</span><span class="mf">8.135627</span>   <span class="o">-</span><span class="mf">4.612250</span>  <span class="o">-</span><span class="mf">2.866454</span>  <span class="mf">1.001520</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">50</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.760367</span>  <span class="mf">0.024182</span>    <span class="mf">1.265330</span>   <span class="o">-</span><span class="mf">7.845615</span>   <span class="o">-</span><span class="mf">4.552539</span>  <span class="o">-</span><span class="mf">2.875869</span>  <span class="mf">1.000354</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">51</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.737922</span>  <span class="mf">0.024380</span>    <span class="mf">1.249825</span>   <span class="o">-</span><span class="mf">7.791359</span>   <span class="o">-</span><span class="mf">4.524863</span>  <span class="o">-</span><span class="mf">2.860117</span>  <span class="mf">1.000065</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">52</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.751358</span>  <span class="mf">0.028862</span>    <span class="mf">1.327670</span>   <span class="o">-</span><span class="mf">8.044268</span>   <span class="o">-</span><span class="mf">4.540209</span>  <span class="o">-</span><span class="mf">2.862803</span>  <span class="mf">1.000918</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">53</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.685420</span>  <span class="mf">0.023722</span>    <span class="mf">1.284065</span>   <span class="o">-</span><span class="mf">7.852333</span>   <span class="o">-</span><span class="mf">4.469523</span>  <span class="o">-</span><span class="mf">2.795754</span>  <span class="mf">1.001032</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">54</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.695464</span>  <span class="mf">0.025316</span>    <span class="mf">1.294588</span>   <span class="o">-</span><span class="mf">7.810316</span>   <span class="o">-</span><span class="mf">4.503222</span>  <span class="o">-</span><span class="mf">2.782197</span>  <span class="mf">1.000505</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">55</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.662545</span>  <span class="mf">0.027774</span>    <span class="mf">1.317164</span>   <span class="o">-</span><span class="mf">7.848580</span>   <span class="o">-</span><span class="mf">4.440736</span>  <span class="o">-</span><span class="mf">2.771303</span>  <span class="mf">1.000641</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">56</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.669330</span>  <span class="mf">0.030262</span>    <span class="mf">1.321870</span>   <span class="o">-</span><span class="mf">7.914412</span>   <span class="o">-</span><span class="mf">4.434960</span>  <span class="o">-</span><span class="mf">2.743924</span>  <span class="mf">1.000618</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">57</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.620962</span>  <span class="mf">0.025575</span>    <span class="mf">1.282324</span>   <span class="o">-</span><span class="mf">7.585949</span>   <span class="o">-</span><span class="mf">4.400851</span>  <span class="o">-</span><span class="mf">2.737336</span>  <span class="mf">1.003473</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">58</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.564812</span>  <span class="mf">0.025214</span>    <span class="mf">1.287904</span>   <span class="o">-</span><span class="mf">7.671804</span>   <span class="o">-</span><span class="mf">4.338766</span>  <span class="o">-</span><span class="mf">2.704413</span>  <span class="mf">1.001306</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">59</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.562128</span>  <span class="mf">0.030414</span>    <span class="mf">1.350609</span>   <span class="o">-</span><span class="mf">7.910983</span>   <span class="o">-</span><span class="mf">4.324704</span>  <span class="o">-</span><span class="mf">2.648129</span>  <span class="mf">1.000886</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">60</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.542367</span>  <span class="mf">0.032122</span>    <span class="mf">1.338757</span>   <span class="o">-</span><span class="mf">7.768437</span>   <span class="o">-</span><span class="mf">4.320009</span>  <span class="o">-</span><span class="mf">2.624694</span>  <span class="mf">1.002409</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">61</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.480764</span>  <span class="mf">0.025349</span>    <span class="mf">1.287803</span>   <span class="o">-</span><span class="mf">7.550987</span>   <span class="o">-</span><span class="mf">4.280852</span>  <span class="o">-</span><span class="mf">2.593134</span>  <span class="mf">1.001754</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">62</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.430831</span>  <span class="mf">0.024307</span>    <span class="mf">1.228657</span>   <span class="o">-</span><span class="mf">7.382741</span>   <span class="o">-</span><span class="mf">4.239083</span>  <span class="o">-</span><span class="mf">2.589439</span>  <span class="mf">1.001206</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">63</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.395725</span>  <span class="mf">0.023673</span>    <span class="mf">1.273268</span>   <span class="o">-</span><span class="mf">7.384986</span>   <span class="o">-</span><span class="mf">4.209973</span>  <span class="o">-</span><span class="mf">2.479231</span>  <span class="mf">1.000442</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">64</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.346682</span>  <span class="mf">0.025621</span>    <span class="mf">1.266635</span>   <span class="o">-</span><span class="mf">7.426116</span>   <span class="o">-</span><span class="mf">4.141308</span>  <span class="o">-</span><span class="mf">2.442702</span>  <span class="mf">1.002046</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">65</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.312951</span>  <span class="mf">0.024879</span>    <span class="mf">1.298957</span>   <span class="o">-</span><span class="mf">7.481565</span>   <span class="o">-</span><span class="mf">4.094432</span>  <span class="o">-</span><span class="mf">2.411871</span>  <span class="mf">1.001782</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">66</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.272058</span>  <span class="mf">0.023535</span>    <span class="mf">1.271993</span>   <span class="o">-</span><span class="mf">7.300271</span>   <span class="o">-</span><span class="mf">4.066569</span>  <span class="o">-</span><span class="mf">2.414926</span>  <span class="mf">1.001380</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">67</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.278248</span>  <span class="mf">0.024941</span>    <span class="mf">1.301696</span>   <span class="o">-</span><span class="mf">7.406780</span>   <span class="o">-</span><span class="mf">4.063855</span>  <span class="o">-</span><span class="mf">2.381025</span>  <span class="mf">1.001246</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">68</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.239232</span>  <span class="mf">0.022731</span>    <span class="mf">1.255980</span>   <span class="o">-</span><span class="mf">7.282352</span>   <span class="o">-</span><span class="mf">4.042431</span>  <span class="o">-</span><span class="mf">2.363243</span>  <span class="mf">1.000641</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">69</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.220383</span>  <span class="mf">0.023864</span>    <span class="mf">1.257355</span>   <span class="o">-</span><span class="mf">7.227408</span>   <span class="o">-</span><span class="mf">4.033891</span>  <span class="o">-</span><span class="mf">2.300163</span>  <span class="mf">1.000607</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">70</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.174461</span>  <span class="mf">0.033438</span>    <span class="mf">1.387179</span>   <span class="o">-</span><span class="mf">7.389505</span>   <span class="o">-</span><span class="mf">3.925402</span>  <span class="o">-</span><span class="mf">2.265936</span>  <span class="mf">1.002038</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">71</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.090127</span>  <span class="mf">0.022568</span>    <span class="mf">1.252697</span>   <span class="o">-</span><span class="mf">7.085192</span>   <span class="o">-</span><span class="mf">3.892866</span>  <span class="o">-</span><span class="mf">2.207512</span>  <span class="mf">1.002348</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">72</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.110447</span>  <span class="mf">0.027878</span>    <span class="mf">1.315899</span>   <span class="o">-</span><span class="mf">7.399702</span>   <span class="o">-</span><span class="mf">3.860361</span>  <span class="o">-</span><span class="mf">2.205056</span>  <span class="mf">1.001732</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">73</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.056023</span>  <span class="mf">0.027877</span>    <span class="mf">1.311094</span>   <span class="o">-</span><span class="mf">7.247058</span>   <span class="o">-</span><span class="mf">3.837001</span>  <span class="o">-</span><span class="mf">2.137026</span>  <span class="mf">1.001115</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">74</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.023769</span>  <span class="mf">0.024615</span>    <span class="mf">1.255600</span>   <span class="o">-</span><span class="mf">7.067530</span>   <span class="o">-</span><span class="mf">3.820071</span>  <span class="o">-</span><span class="mf">2.142365</span>  <span class="mf">1.001948</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">75</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.049963</span>  <span class="mf">0.026498</span>    <span class="mf">1.295967</span>   <span class="o">-</span><span class="mf">7.201009</span>   <span class="o">-</span><span class="mf">3.854413</span>  <span class="o">-</span><span class="mf">2.140042</span>  <span class="mf">1.000684</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">76</span><span class="p">]</span>   <span class="o">-</span><span class="mf">4.047071</span>  <span class="mf">0.028314</span>    <span class="mf">1.357597</span>   <span class="o">-</span><span class="mf">7.297987</span>   <span class="o">-</span><span class="mf">3.803428</span>  <span class="o">-</span><span class="mf">2.082792</span>  <span class="mf">1.001065</span>
+<span class="n">log_baseline</span><span class="p">[</span><span class="mi">77</span><span class="p">]</span> <span class="o">-</span><span class="mf">322.669893</span>  <span class="mf">5.131864</span>  <span class="mf">200.339993</span> <span class="o">-</span><span class="mf">685.976286</span> <span class="o">-</span><span class="mf">304.462026</span> <span class="o">-</span><span class="mf">18.223910</span>  <span class="mf">1.002720</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_stan_summary</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="s1">&#39;baseline&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">INFO</span><span class="p">:</span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="p">:</span><span class="ne">Warning</span> <span class="o">-</span> <span class="mi">1</span> <span class="n">rows</span> <span class="n">removed</span> <span class="n">due</span> <span class="n">to</span> <span class="n">NaN</span> <span class="n">values</span> <span class="k">for</span> <span class="n">Rhat</span><span class="o">.</span> <span class="n">This</span> <span class="n">may</span> <span class="n">indicate</span> <span class="n">a</span> <span class="n">problem</span> <span class="ow">in</span> <span class="n">your</span> <span class="n">model</span> <span class="n">estimation</span><span class="o">.</span>
+</pre></div>
+</div>
+<img alt="examples/Test%20pem_survival_model_gamma%20with%20simulated%20data_files/Test%20pem_survival_model_gamma%20with%20simulated%20data_9_1.png" src="examples/Test%20pem_survival_model_gamma%20with%20simulated%20data_files/Test%20pem_survival_model_gamma%20with%20simulated%20data_9_1.png" />
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_coefs</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;baseline&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="examples/Test%20pem_survival_model_gamma%20with%20simulated%20data_files/Test%20pem_survival_model_gamma%20with%20simulated%20data_10_0.png" src="examples/Test%20pem_survival_model_gamma%20with%20simulated%20data_files/Test%20pem_survival_model_gamma%20with%20simulated%20data_10_0.png" />
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_coefs</span><span class="p">([</span><span class="n">testfit</span><span class="p">])</span>
+</pre></div>
+</div>
+<img alt="examples/Test%20pem_survival_model_gamma%20with%20simulated%20data_files/Test%20pem_survival_model_gamma%20with%20simulated%20data_11_0.png" src="examples/Test%20pem_survival_model_gamma%20with%20simulated%20data_files/Test%20pem_survival_model_gamma%20with%20simulated%20data_11_0.png" />
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_pp_survival</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;observed&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">Legend</span> <span class="n">at</span> <span class="mh">0x7f9ec3bcba20</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<img alt="examples/Test%20pem_survival_model_gamma%20with%20simulated%20data_files/Test%20pem_survival_model_gamma%20with%20simulated%20data_12_1.png" src="examples/Test%20pem_survival_model_gamma%20with%20simulated%20data_files/Test%20pem_survival_model_gamma%20with%20simulated%20data_12_1.png" />
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_pp_survival</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;sex&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="examples/Test%20pem_survival_model_gamma%20with%20simulated%20data_files/Test%20pem_survival_model_gamma%20with%20simulated%20data_13_0.png" src="examples/Test%20pem_survival_model_gamma%20with%20simulated%20data_files/Test%20pem_survival_model_gamma%20with%20simulated%20data_13_0.png" />
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">ppsurv</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">prep_pp_survival_data</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;sex&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">subplot</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">_plot_pp_survival_data</span><span class="p">(</span><span class="n">ppsurv</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;sex == &quot;male&quot;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+                                          <span class="n">subplot</span><span class="o">=</span><span class="n">subplot</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">_plot_pp_survival_data</span><span class="p">(</span><span class="n">ppsurv</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;sex == &quot;female&quot;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+                                          <span class="n">subplot</span><span class="o">=</span><span class="n">subplot</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;female&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span>
+                                          <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;female&#39;</span><span class="p">)</span>
+<span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;male&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span>
+                                          <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;male&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">Legend</span> <span class="n">at</span> <span class="mh">0x7f9f9714d7f0</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<img alt="examples/Test%20pem_survival_model_gamma%20with%20simulated%20data_files/Test%20pem_survival_model_gamma%20with%20simulated%20data_15_1.png" src="examples/Test%20pem_survival_model_gamma%20with%20simulated%20data_files/Test%20pem_survival_model_gamma%20with%20simulated%20data_15_1.png" />
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/examples/Test pem_survival_model_gamma with simulated data.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Jacki Novik.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="../_sources/examples/Test pem_survival_model_gamma with simulated data.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
