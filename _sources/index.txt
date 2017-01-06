@@ -39,7 +39,7 @@ Features
 Installation
 ------------
 
-Install $survivalstan via pip:
+Install survivalstan via pip:
 
     pip install survivalstan
 
@@ -67,7 +67,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   examples/*
+   examples/Example-using-pem_survival_model.ipynb
 
 Indices and tables
 ==================

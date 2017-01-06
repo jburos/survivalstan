@@ -8,7 +8,7 @@
     
     <title>survivalstan.sim &#8212; survivalstan 0.1.2.5 documentation</title>
     
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -27,16 +27,22 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="top" title="survivalstan 0.1.2.5 documentation" href="../../index.html" />
-    <link rel="up" title="Module code" href="../index.html" />
-   
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
+    <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body role="document">
-  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">survivalstan 0.1.2.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -56,7 +62,7 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">patsy</span>
 
-<div class="viewcode-block" id="sim_data_exp"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.sim.sim_data_exp">[docs]</a><span class="k">def</span> <span class="nf">sim_data_exp</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">censor_time</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
+<div class="viewcode-block" id="sim_data_exp"><a class="viewcode-back" href="../../examples.html#survivalstan.sim.sim_data_exp">[docs]</a><span class="k">def</span> <span class="nf">sim_data_exp</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">censor_time</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">      simulate true lifetimes (t) according to exponential model</span>
 
@@ -93,7 +99,7 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rate_df</span><span class="p">,</span> <span class="n">coefs</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="sim_data_exp_correlated"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.sim.sim_data_exp_correlated">[docs]</a><span class="k">def</span> <span class="nf">sim_data_exp_correlated</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">censor_time</span><span class="p">,</span> <span class="n">rate_form</span> <span class="o">=</span> <span class="s1">&#39;1 + age + sex&#39;</span><span class="p">,</span> <span class="n">rate_coefs</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]):</span>
+<div class="viewcode-block" id="sim_data_exp_correlated"><a class="viewcode-back" href="../../examples.html#survivalstan.sim.sim_data_exp_correlated">[docs]</a><span class="k">def</span> <span class="nf">sim_data_exp_correlated</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">censor_time</span><span class="p">,</span> <span class="n">rate_form</span> <span class="o">=</span> <span class="s1">&#39;1 + age + sex&#39;</span><span class="p">,</span> <span class="n">rate_coefs</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">      simulate true lifetimes (t) according to exponential model</span>
 
@@ -137,15 +143,7 @@
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../index.html">Documentation overview</a><ul>
-  <li><a href="../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+        <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
@@ -160,17 +158,22 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2017, Jacki Novik.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
-      
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">survivalstan 0.1.2.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Jacki Novik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
   </body>
 </html>

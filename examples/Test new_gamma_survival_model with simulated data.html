@@ -8,7 +8,7 @@
     
     <title>Simulate survival data &#8212; survivalstan 0.1.2.5 documentation</title>
     
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -26,25 +26,192 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="survivalstan 0.1.2.5 documentation" href="../index.html" />
-   
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
+    <link rel="top" title="survivalstan 0.1.2.5 documentation" href="../index.html" /> 
   </head>
   <body role="document">
-  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">survivalstan 0.1.2.5 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">load_ext</span> <span class="n">autoreload</span>
-<span class="o">%</span><span class="n">autoreload</span> <span class="mi">2</span>
-<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+</style>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
+<span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1100038344</span><span class="p">)</span>
 <span class="kn">import</span> <span class="nn">survivalstan</span>
@@ -54,19 +221,30 @@
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">autoreload</span> <span class="n">extension</span> <span class="ow">is</span> <span class="n">already</span> <span class="n">loaded</span><span class="o">.</span> <span class="n">To</span> <span class="n">reload</span> <span class="n">it</span><span class="p">,</span> <span class="n">use</span><span class="p">:</span>
-  <span class="o">%</span><span class="n">reload_ext</span> <span class="n">autoreload</span>
-</pre></div>
 </div>
-<pre class="literal-block">
+<div class="nboutput container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<div class="highlight"><pre>
+The autoreload extension is already loaded. To reload it, use:
+  %reload_ext autoreload
+</pre></div></div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="stderr output_area container">
+<div class="highlight"><pre>
 /home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/Cython/Distutils/old_build_ext.py:30: UserWarning: Cython.Distutils.old_build_ext does not properly handle dependencies and is deprecated.
-  &quot;Cython.Distutils.old_build_ext does not properly handle dependencies &quot;
-/home/jacquelineburos/.local/lib/python3.5/site-packages/IPython/html.py:14: ShimWarning: The <cite>IPython.html</cite> package has been deprecated. You should import from <cite>notebook</cite> instead. <cite>IPython.html.widgets</cite> has moved to <cite>ipywidgets</cite>.
-  &quot;<cite>IPython.html.widgets</cite> has moved to <cite>ipywidgets</cite>.&quot;, ShimWarning)
-<a class="reference external" href="INFO:stancache.seed:Setting">INFO:stancache.seed:Setting</a> seed to 1245502385
-</pre>
-<div class="section" id="simulate-survival-data">
-<h1>Simulate survival data<a class="headerlink" href="#simulate-survival-data" title="Permalink to this headline">¶</a></h1>
+  &#34;Cython.Distutils.old_build_ext does not properly handle dependencies &#34;
+/home/jacquelineburos/.local/lib/python3.5/site-packages/IPython/html.py:14: ShimWarning: The `IPython.html` package has been deprecated. You should import from `notebook` instead. `IPython.html.widgets` has moved to `ipywidgets`.
+  &#34;`IPython.html.widgets` has moved to `ipywidgets`.&#34;, ShimWarning)
+INFO:stancache.seed:Setting seed to 1245502385
+</pre></div></div>
+</div>
+<div class="section" id="Simulate-survival-data">
+<h1>Simulate survival data<a class="headerlink" href="#Simulate-survival-data" title="Permalink to this headline">¶</a></h1>
 <p>In order to demonstrate the use of this model, we will first simulate
 some survival data using <code class="docutils literal"><span class="pre">survivalstan.sim.sim_data_exp_correlated</span></code>.
 As the name implies, this function simulates data assuming a constant
@@ -77,7 +255,13 @@ the Exponential survival function.</p>
 simulated value for <code class="docutils literal"><span class="pre">sex</span></code>.</p>
 <p>We also center the <code class="docutils literal"><span class="pre">age</span></code> variable since this will make it easier to
 interpret estimates of the baseline hazard.</p>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached</span><span class="p">(</span>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">d</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached</span><span class="p">(</span>
     <span class="n">survivalstan</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">sim_data_exp_correlated</span><span class="p">,</span>
     <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
     <span class="n">censor_time</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
@@ -87,21 +271,40 @@ interpret estimates of the baseline hazard.</p>
 <span class="n">d</span><span class="p">[</span><span class="s1">&#39;age_centered&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">sim_data_exp_correlated</span><span class="p">:</span> <span class="n">cache_filename</span> <span class="nb">set</span> <span class="n">to</span> <span class="n">sim_data_exp_correlated</span><span class="o">.</span><span class="n">cached</span><span class="o">.</span><span class="n">N_100</span><span class="o">.</span><span class="n">censor_time_20</span><span class="o">.</span><span class="n">rate_coefs_54462717316</span><span class="o">.</span><span class="n">rate_form_1</span> <span class="o">+</span> <span class="n">sex</span><span class="o">.</span><span class="n">pkl</span>
-<span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">sim_data_exp_correlated</span><span class="p">:</span> <span class="n">Loading</span> <span class="n">result</span> <span class="kn">from</span> <span class="nn">cache</span>
-</pre></div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="stderr output_area container">
+<div class="highlight"><pre>
+INFO:stancache.stancache:sim_data_exp_correlated: cache_filename set to sim_data_exp_correlated.cached.N_100.censor_time_20.rate_coefs_54462717316.rate_form_1 + sex.pkl
+INFO:stancache.stancache:sim_data_exp_correlated: Loading result from cache
+</pre></div></div>
 </div>
 <p><a href="#id1"><span class="problematic" id="id2">*</span></a>Aside: In order to make this a more reproducible example, this code is
 using a file-caching function <code class="docutils literal"><span class="pre">stancache.cached</span></code> to wrap a function
 call to <code class="docutils literal"><span class="pre">survivalstan.sim.sim_data_exp_correlated</span></code>. *</p>
 </div>
-<div class="section" id="explore-simulated-data">
-<h1>Explore simulated data<a class="headerlink" href="#explore-simulated-data" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="Explore-simulated-data">
+<h1>Explore simulated data<a class="headerlink" href="#Explore-simulated-data" title="Permalink to this headline">¶</a></h1>
 <p>Here is what these data look like - this is <code class="docutils literal"><span class="pre">per-subject</span></code> or
 <code class="docutils literal"><span class="pre">time-to-event</span></code> form:</p>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
 </pre></div>
 </div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">d</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[5]:
+</pre></div>
+</div>
+<div class="output_area container">
 <div>
 <table border="1" class="dataframe">
   <thead>
@@ -175,23 +378,51 @@ call to <code class="docutils literal"><span class="pre">survivalstan.sim.sim_da
     </tr>
   </tbody>
 </table>
-</div><p><em>It&#8217;s not that obvious from the field names, but in this example
+</div></div>
+</div>
+<p><em>It&#8217;s not that obvious from the field names, but in this example
 &#8220;subjects&#8221; are indexed by the field ``index``.</em></p>
 <p>We can plot these data using <code class="docutils literal"><span class="pre">lifelines</span></code>, or the rudimentary plotting
 functions provided by <code class="docutils literal"><span class="pre">survivalstan</span></code>.</p>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;female&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;female&#39;</span><span class="p">)</span>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;female&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;female&#39;</span><span class="p">)</span>
 <span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;male&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;male&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">Legend</span> <span class="n">at</span> <span class="mh">0x7f64d8063978</span><span class="o">&gt;</span>
+</div>
+<div class="nboutput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[6]:
 </pre></div>
 </div>
-<img alt="examples/Test%20new_gamma_survival_model%20with%20simulated%20data_files/Test%20new_gamma_survival_model%20with%20simulated%20data_10_1.png" src="examples/Test%20new_gamma_survival_model%20with%20simulated%20data_files/Test%20new_gamma_survival_model%20with%20simulated%20data_10_1.png" />
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>&lt;matplotlib.legend.Legend at 0x7f64d8063978&gt;
+</pre></div>
 </div>
-<div class="section" id="model1-original-spec">
-<h1>model1: original spec<a class="headerlink" href="#model1-original-spec" title="Permalink to this headline">¶</a></h1>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">model_code</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../_images/examples_Test_new_gamma_survival_model_with_simulated_data_10_1.png" src="../_images/examples_Test_new_gamma_survival_model_with_simulated_data_10_1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="model1:-original-spec">
+<h1>model1: original spec<a class="headerlink" href="#model1:-original-spec" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">model_code</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">functions {</span>
 <span class="s1">  // Defines the log survival</span>
 <span class="s1">  vector log_S (vector t, real shape, vector rate) {</span>
@@ -253,6 +484,7 @@ functions provided by <code class="docutils literal"><span class="pre">survivals
 <span class="s1">&#39;&#39;&#39;</span>
 </pre></div>
 </div>
+</div>
 <p>Now, we are ready to fit our model using
 <code class="docutils literal"><span class="pre">survivalstan.fit_stan_survival_model</span></code>.</p>
 <p>We pass a few parameters to the fit function, many of which are
@@ -263,7 +495,13 @@ this model fit object. See
 how this works. Also, if you didn&#8217;t want to use the cache, you could
 omit the parameter <code class="docutils literal"><span class="pre">FIT_FUN</span></code> and <code class="docutils literal"><span class="pre">survivalstan</span></code> would use the
 standard pystan functionality.</p>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">testfit</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">testfit</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
     <span class="n">model_cohort</span> <span class="o">=</span> <span class="s1">&#39;model 1&#39;</span><span class="p">,</span>
     <span class="n">model_code</span> <span class="o">=</span> <span class="n">model_code</span><span class="p">,</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span>
@@ -276,34 +514,66 @@ standard pystan functionality.</p>
     <span class="n">FIT_FUN</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached_stan_fit</span><span class="p">,</span>
     <span class="n">drop_intercept</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">Step</span> <span class="mi">1</span><span class="p">:</span> <span class="n">Get</span> <span class="n">compiled</span> <span class="n">model</span> <span class="n">code</span><span class="p">,</span> <span class="n">possibly</span> <span class="kn">from</span> <span class="nn">cache</span>
-<span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">StanModel</span><span class="p">:</span> <span class="n">cache_filename</span> <span class="nb">set</span> <span class="n">to</span> <span class="n">anon_model</span><span class="o">.</span><span class="n">cython_0_25_1</span><span class="o">.</span><span class="n">model_code_14429915565770599621</span><span class="o">.</span><span class="n">pystan_2_12_0_0</span><span class="o">.</span><span class="n">stanmodel</span><span class="o">.</span><span class="n">pkl</span>
-<span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">StanModel</span><span class="p">:</span> <span class="n">Loading</span> <span class="n">result</span> <span class="kn">from</span> <span class="nn">cache</span>
-<span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">Step</span> <span class="mi">2</span><span class="p">:</span> <span class="n">Get</span> <span class="n">posterior</span> <span class="n">draws</span> <span class="kn">from</span> <span class="nn">model</span><span class="p">,</span> <span class="n">possibly</span> <span class="kn">from</span> <span class="nn">cache</span>
-<span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">sampling</span><span class="p">:</span> <span class="n">cache_filename</span> <span class="nb">set</span> <span class="n">to</span> <span class="n">anon_model</span><span class="o">.</span><span class="n">cython_0_25_1</span><span class="o">.</span><span class="n">model_code_14429915565770599621</span><span class="o">.</span><span class="n">pystan_2_12_0_0</span><span class="o">.</span><span class="n">stanfit</span><span class="o">.</span><span class="n">chains_4</span><span class="o">.</span><span class="n">data_25476010973</span><span class="o">.</span><span class="n">iter_5000</span><span class="o">.</span><span class="n">seed_9001</span><span class="o">.</span><span class="n">pkl</span>
-<span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">sampling</span><span class="p">:</span> <span class="n">Loading</span> <span class="n">result</span> <span class="kn">from</span> <span class="nn">cache</span>
-</pre></div>
-</div>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="c1"># 0:00:40.518775 elapsed</span>
-</pre></div>
-</div>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lp__&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">])</span>
-</pre></div>
-</div>
-<div class="highlight-default"><div class="highlight"><pre><span></span>               <span class="n">mean</span>   <span class="n">se_mean</span>        <span class="n">sd</span>        <span class="mf">2.5</span><span class="o">%</span>         <span class="mi">50</span><span class="o">%</span>       <span class="mf">97.5</span><span class="o">%</span>      <span class="n">Rhat</span>
-<span class="n">lp__</span>    <span class="o">-</span><span class="mf">278.113380</span>  <span class="mf">0.021718</span>  <span class="mf">1.358348</span> <span class="o">-</span><span class="mf">281.579969</span> <span class="o">-</span><span class="mf">277.815032</span> <span class="o">-</span><span class="mf">276.424942</span>  <span class="mf">1.000465</span>
-<span class="n">alpha</span>      <span class="mf">1.220129</span>  <span class="mf">0.002561</span>  <span class="mf">0.170488</span>    <span class="mf">0.913076</span>    <span class="mf">1.209632</span>    <span class="mf">1.581949</span>  <span class="mf">1.000245</span>
-<span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>   <span class="o">-</span><span class="mf">2.703902</span>  <span class="mf">0.003699</span>  <span class="mf">0.226779</span>   <span class="o">-</span><span class="mf">3.173168</span>   <span class="o">-</span><span class="mf">2.695839</span>   <span class="o">-</span><span class="mf">2.275841</span>  <span class="mf">1.000271</span>
-<span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>    <span class="mf">0.608266</span>  <span class="mf">0.002897</span>  <span class="mf">0.199169</span>    <span class="mf">0.221442</span>    <span class="mf">0.606373</span>    <span class="mf">1.003776</span>  <span class="mf">1.000226</span>
-<span class="n">beta</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>    <span class="mf">0.006018</span>  <span class="mf">0.000183</span>  <span class="mf">0.014844</span>   <span class="o">-</span><span class="mf">0.023068</span>    <span class="mf">0.005959</span>    <span class="mf">0.035536</span>  <span class="mf">1.000075</span>
+
 </pre></div>
 </div>
 </div>
-<div class="section" id="model2-alternate-version-of-surv-gamma-lpdf">
-<h1>model2: alternate version of surv_gamma_lpdf<a class="headerlink" href="#model2-alternate-version-of-surv-gamma-lpdf" title="Permalink to this headline">¶</a></h1>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">model_code2</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="stderr output_area container">
+<div class="highlight"><pre>
+INFO:stancache.stancache:Step 1: Get compiled model code, possibly from cache
+INFO:stancache.stancache:StanModel: cache_filename set to anon_model.cython_0_25_1.model_code_14429915565770599621.pystan_2_12_0_0.stanmodel.pkl
+INFO:stancache.stancache:StanModel: Loading result from cache
+INFO:stancache.stancache:Step 2: Get posterior draws from model, possibly from cache
+INFO:stancache.stancache:sampling: cache_filename set to anon_model.cython_0_25_1.model_code_14429915565770599621.pystan_2_12_0_0.stanfit.chains_4.data_25476010973.iter_5000.seed_9001.pkl
+INFO:stancache.stancache:sampling: Loading result from cache
+</pre></div></div>
+</div>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># 0:00:40.518775 elapsed</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lp__&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<div class="highlight"><pre>
+               mean   se_mean        sd        2.5%         50%       97.5%      Rhat
+lp__    -278.113380  0.021718  1.358348 -281.579969 -277.815032 -276.424942  1.000465
+alpha      1.220129  0.002561  0.170488    0.913076    1.209632    1.581949  1.000245
+beta[0]   -2.703902  0.003699  0.226779   -3.173168   -2.695839   -2.275841  1.000271
+beta[1]    0.608266  0.002897  0.199169    0.221442    0.606373    1.003776  1.000226
+beta[2]    0.006018  0.000183  0.014844   -0.023068    0.005959    0.035536  1.000075
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="model2:-alternate-version-of-surv_gamma_lpdf">
+<h1>model2: alternate version of surv_gamma_lpdf<a class="headerlink" href="#model2:-alternate-version-of-surv_gamma_lpdf" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">model_code2</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">functions {</span>
 <span class="s1">  // Defines the log survival</span>
 <span class="s1">  real surv_gamma_lpdf (vector t, vector d, real shape, vector rate) {</span>
@@ -345,7 +615,14 @@ standard pystan functionality.</p>
 <span class="s1">&#39;&#39;&#39;</span>
 </pre></div>
 </div>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">testfit2</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">testfit2</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
     <span class="n">model_cohort</span> <span class="o">=</span> <span class="s1">&#39;model 2&#39;</span><span class="p">,</span>
     <span class="n">model_code</span> <span class="o">=</span> <span class="n">model_code2</span><span class="p">,</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span>
@@ -358,34 +635,66 @@ standard pystan functionality.</p>
     <span class="n">FIT_FUN</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached_stan_fit</span><span class="p">,</span>
     <span class="n">drop_intercept</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">Step</span> <span class="mi">1</span><span class="p">:</span> <span class="n">Get</span> <span class="n">compiled</span> <span class="n">model</span> <span class="n">code</span><span class="p">,</span> <span class="n">possibly</span> <span class="kn">from</span> <span class="nn">cache</span>
-<span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">StanModel</span><span class="p">:</span> <span class="n">cache_filename</span> <span class="nb">set</span> <span class="n">to</span> <span class="n">anon_model</span><span class="o">.</span><span class="n">cython_0_25_1</span><span class="o">.</span><span class="n">model_code_9177012762674257483</span><span class="o">.</span><span class="n">pystan_2_12_0_0</span><span class="o">.</span><span class="n">stanmodel</span><span class="o">.</span><span class="n">pkl</span>
-<span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">StanModel</span><span class="p">:</span> <span class="n">Loading</span> <span class="n">result</span> <span class="kn">from</span> <span class="nn">cache</span>
-<span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">Step</span> <span class="mi">2</span><span class="p">:</span> <span class="n">Get</span> <span class="n">posterior</span> <span class="n">draws</span> <span class="kn">from</span> <span class="nn">model</span><span class="p">,</span> <span class="n">possibly</span> <span class="kn">from</span> <span class="nn">cache</span>
-<span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">sampling</span><span class="p">:</span> <span class="n">cache_filename</span> <span class="nb">set</span> <span class="n">to</span> <span class="n">anon_model</span><span class="o">.</span><span class="n">cython_0_25_1</span><span class="o">.</span><span class="n">model_code_9177012762674257483</span><span class="o">.</span><span class="n">pystan_2_12_0_0</span><span class="o">.</span><span class="n">stanfit</span><span class="o">.</span><span class="n">chains_4</span><span class="o">.</span><span class="n">data_25476010973</span><span class="o">.</span><span class="n">iter_5000</span><span class="o">.</span><span class="n">seed_9001</span><span class="o">.</span><span class="n">pkl</span>
-<span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">sampling</span><span class="p">:</span> <span class="n">Loading</span> <span class="n">result</span> <span class="kn">from</span> <span class="nn">cache</span>
-</pre></div>
-</div>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="c1"># 0:00:21.081723 elapsed</span>
-</pre></div>
-</div>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit2</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lp__&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">])</span>
-</pre></div>
-</div>
-<div class="highlight-default"><div class="highlight"><pre><span></span>               <span class="n">mean</span>   <span class="n">se_mean</span>        <span class="n">sd</span>        <span class="mf">2.5</span><span class="o">%</span>         <span class="mi">50</span><span class="o">%</span>       <span class="mf">97.5</span><span class="o">%</span>      <span class="n">Rhat</span>
-<span class="n">lp__</span>    <span class="o">-</span><span class="mf">278.122019</span>  <span class="mf">0.022342</span>  <span class="mf">1.367441</span> <span class="o">-</span><span class="mf">281.523430</span> <span class="o">-</span><span class="mf">277.808097</span> <span class="o">-</span><span class="mf">276.440635</span>  <span class="mf">1.001051</span>
-<span class="n">alpha</span>      <span class="mf">1.218976</span>  <span class="mf">0.002590</span>  <span class="mf">0.171529</span>    <span class="mf">0.906313</span>    <span class="mf">1.208893</span>    <span class="mf">1.586105</span>  <span class="mf">1.000714</span>
-<span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>   <span class="o">-</span><span class="mf">2.704073</span>  <span class="mf">0.003788</span>  <span class="mf">0.228848</span>   <span class="o">-</span><span class="mf">3.187193</span>   <span class="o">-</span><span class="mf">2.693108</span>   <span class="o">-</span><span class="mf">2.287256</span>  <span class="mf">1.000886</span>
-<span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>    <span class="mf">0.604867</span>  <span class="mf">0.002814</span>  <span class="mf">0.201056</span>    <span class="mf">0.208092</span>    <span class="mf">0.605508</span>    <span class="mf">0.993031</span>  <span class="mf">1.000143</span>
-<span class="n">beta</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>    <span class="mf">0.006629</span>  <span class="mf">0.000188</span>  <span class="mf">0.014733</span>   <span class="o">-</span><span class="mf">0.021872</span>    <span class="mf">0.006506</span>    <span class="mf">0.036200</span>  <span class="mf">1.000063</span>
+
 </pre></div>
 </div>
 </div>
-<div class="section" id="model3-use-log-mix-inside-surv-gamma-lpdf">
-<h1>model3: use <code class="docutils literal"><span class="pre">log_mix</span></code> inside surv_gamma_lpdf<a class="headerlink" href="#model3-use-log-mix-inside-surv-gamma-lpdf" title="Permalink to this headline">¶</a></h1>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">model_code3</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="stderr output_area container">
+<div class="highlight"><pre>
+INFO:stancache.stancache:Step 1: Get compiled model code, possibly from cache
+INFO:stancache.stancache:StanModel: cache_filename set to anon_model.cython_0_25_1.model_code_9177012762674257483.pystan_2_12_0_0.stanmodel.pkl
+INFO:stancache.stancache:StanModel: Loading result from cache
+INFO:stancache.stancache:Step 2: Get posterior draws from model, possibly from cache
+INFO:stancache.stancache:sampling: cache_filename set to anon_model.cython_0_25_1.model_code_9177012762674257483.pystan_2_12_0_0.stanfit.chains_4.data_25476010973.iter_5000.seed_9001.pkl
+INFO:stancache.stancache:sampling: Loading result from cache
+</pre></div></div>
+</div>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># 0:00:21.081723 elapsed</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit2</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lp__&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<div class="highlight"><pre>
+               mean   se_mean        sd        2.5%         50%       97.5%      Rhat
+lp__    -278.122019  0.022342  1.367441 -281.523430 -277.808097 -276.440635  1.001051
+alpha      1.218976  0.002590  0.171529    0.906313    1.208893    1.586105  1.000714
+beta[0]   -2.704073  0.003788  0.228848   -3.187193   -2.693108   -2.287256  1.000886
+beta[1]    0.604867  0.002814  0.201056    0.208092    0.605508    0.993031  1.000143
+beta[2]    0.006629  0.000188  0.014733   -0.021872    0.006506    0.036200  1.000063
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="model3:-use-log_mix-inside-surv_gamma_lpdf">
+<h1>model3: use <code class="docutils literal"><span class="pre">log_mix</span></code> inside surv_gamma_lpdf<a class="headerlink" href="#model3:-use-log_mix-inside-surv_gamma_lpdf" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">model_code3</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">functions {</span>
 <span class="s1">  // Defines the log survival</span>
 <span class="s1">  real surv_gamma_lpdf (vector t, vector d, real shape, vector rate) {</span>
@@ -424,7 +733,14 @@ standard pystan functionality.</p>
 <span class="s1">&#39;&#39;&#39;</span>
 </pre></div>
 </div>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">testfit3</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">testfit3</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
     <span class="n">model_cohort</span> <span class="o">=</span> <span class="s1">&#39;model 3&#39;</span><span class="p">,</span>
     <span class="n">model_code</span> <span class="o">=</span> <span class="n">model_code3</span><span class="p">,</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span>
@@ -437,34 +753,66 @@ standard pystan functionality.</p>
     <span class="n">FIT_FUN</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached_stan_fit</span><span class="p">,</span>
     <span class="n">drop_intercept</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">Step</span> <span class="mi">1</span><span class="p">:</span> <span class="n">Get</span> <span class="n">compiled</span> <span class="n">model</span> <span class="n">code</span><span class="p">,</span> <span class="n">possibly</span> <span class="kn">from</span> <span class="nn">cache</span>
-<span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">StanModel</span><span class="p">:</span> <span class="n">cache_filename</span> <span class="nb">set</span> <span class="n">to</span> <span class="n">anon_model</span><span class="o">.</span><span class="n">cython_0_25_1</span><span class="o">.</span><span class="n">model_code_1293841621968646714</span><span class="o">.</span><span class="n">pystan_2_12_0_0</span><span class="o">.</span><span class="n">stanmodel</span><span class="o">.</span><span class="n">pkl</span>
-<span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">StanModel</span><span class="p">:</span> <span class="n">Loading</span> <span class="n">result</span> <span class="kn">from</span> <span class="nn">cache</span>
-<span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">Step</span> <span class="mi">2</span><span class="p">:</span> <span class="n">Get</span> <span class="n">posterior</span> <span class="n">draws</span> <span class="kn">from</span> <span class="nn">model</span><span class="p">,</span> <span class="n">possibly</span> <span class="kn">from</span> <span class="nn">cache</span>
-<span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">sampling</span><span class="p">:</span> <span class="n">cache_filename</span> <span class="nb">set</span> <span class="n">to</span> <span class="n">anon_model</span><span class="o">.</span><span class="n">cython_0_25_1</span><span class="o">.</span><span class="n">model_code_1293841621968646714</span><span class="o">.</span><span class="n">pystan_2_12_0_0</span><span class="o">.</span><span class="n">stanfit</span><span class="o">.</span><span class="n">chains_4</span><span class="o">.</span><span class="n">data_25476010973</span><span class="o">.</span><span class="n">iter_5000</span><span class="o">.</span><span class="n">seed_9001</span><span class="o">.</span><span class="n">pkl</span>
-<span class="n">INFO</span><span class="p">:</span><span class="n">stancache</span><span class="o">.</span><span class="n">stancache</span><span class="p">:</span><span class="n">sampling</span><span class="p">:</span> <span class="n">Loading</span> <span class="n">result</span> <span class="kn">from</span> <span class="nn">cache</span>
-</pre></div>
-</div>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="c1">#0:00:20.284146 elapsed</span>
-</pre></div>
-</div>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit3</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lp__&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">])</span>
-</pre></div>
-</div>
-<div class="highlight-default"><div class="highlight"><pre><span></span>               <span class="n">mean</span>   <span class="n">se_mean</span>        <span class="n">sd</span>        <span class="mf">2.5</span><span class="o">%</span>         <span class="mi">50</span><span class="o">%</span>       <span class="mf">97.5</span><span class="o">%</span>      <span class="n">Rhat</span>
-<span class="n">lp__</span>    <span class="o">-</span><span class="mf">278.092768</span>  <span class="mf">0.021055</span>  <span class="mf">1.344719</span> <span class="o">-</span><span class="mf">281.491359</span> <span class="o">-</span><span class="mf">277.783232</span> <span class="o">-</span><span class="mf">276.425885</span>  <span class="mf">1.000812</span>
-<span class="n">alpha</span>      <span class="mf">1.216429</span>  <span class="mf">0.002640</span>  <span class="mf">0.166944</span>    <span class="mf">0.905732</span>    <span class="mf">1.207800</span>    <span class="mf">1.576275</span>  <span class="mf">1.000432</span>
-<span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>   <span class="o">-</span><span class="mf">2.708385</span>  <span class="mf">0.003770</span>  <span class="mf">0.220966</span>   <span class="o">-</span><span class="mf">3.173480</span>   <span class="o">-</span><span class="mf">2.697460</span>   <span class="o">-</span><span class="mf">2.307317</span>  <span class="mf">1.000622</span>
-<span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>    <span class="mf">0.609834</span>  <span class="mf">0.002799</span>  <span class="mf">0.199563</span>    <span class="mf">0.223234</span>    <span class="mf">0.609396</span>    <span class="mf">1.008451</span>  <span class="mf">1.000295</span>
-<span class="n">beta</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>    <span class="mf">0.006028</span>  <span class="mf">0.000180</span>  <span class="mf">0.014812</span>   <span class="o">-</span><span class="mf">0.022443</span>    <span class="mf">0.006036</span>    <span class="mf">0.036197</span>  <span class="mf">1.000265</span>
+
 </pre></div>
 </div>
 </div>
-<div class="section" id="model4-vectorize-surv-gamma-lpdf">
-<h1>model4: vectorize surv_gamma_lpdf<a class="headerlink" href="#model4-vectorize-surv-gamma-lpdf" title="Permalink to this headline">¶</a></h1>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">model_code4</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="stderr output_area container">
+<div class="highlight"><pre>
+INFO:stancache.stancache:Step 1: Get compiled model code, possibly from cache
+INFO:stancache.stancache:StanModel: cache_filename set to anon_model.cython_0_25_1.model_code_1293841621968646714.pystan_2_12_0_0.stanmodel.pkl
+INFO:stancache.stancache:StanModel: Loading result from cache
+INFO:stancache.stancache:Step 2: Get posterior draws from model, possibly from cache
+INFO:stancache.stancache:sampling: cache_filename set to anon_model.cython_0_25_1.model_code_1293841621968646714.pystan_2_12_0_0.stanfit.chains_4.data_25476010973.iter_5000.seed_9001.pkl
+INFO:stancache.stancache:sampling: Loading result from cache
+</pre></div></div>
+</div>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1">#0:00:20.284146 elapsed</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit3</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lp__&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<div class="highlight"><pre>
+               mean   se_mean        sd        2.5%         50%       97.5%      Rhat
+lp__    -278.092768  0.021055  1.344719 -281.491359 -277.783232 -276.425885  1.000812
+alpha      1.216429  0.002640  0.166944    0.905732    1.207800    1.576275  1.000432
+beta[0]   -2.708385  0.003770  0.220966   -3.173480   -2.697460   -2.307317  1.000622
+beta[1]    0.609834  0.002799  0.199563    0.223234    0.609396    1.008451  1.000295
+beta[2]    0.006028  0.000180  0.014812   -0.022443    0.006036    0.036197  1.000265
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="model4:-vectorize-surv_gamma_lpdf">
+<h1>model4: vectorize surv_gamma_lpdf<a class="headerlink" href="#model4:-vectorize-surv_gamma_lpdf" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [40]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">model_code4</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">functions {</span>
 <span class="s1">    int count_value(vector a, real val) {</span>
 <span class="s1">        int s;</span>
@@ -533,7 +881,14 @@ standard pystan functionality.</p>
 <span class="s1">&#39;&#39;&#39;</span>
 </pre></div>
 </div>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">testfit4</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [41]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">testfit4</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
     <span class="n">model_cohort</span> <span class="o">=</span> <span class="s1">&#39;model 4&#39;</span><span class="p">,</span>
     <span class="n">model_code</span> <span class="o">=</span> <span class="n">model_code4</span><span class="p">,</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span>
@@ -546,9 +901,16 @@ standard pystan functionality.</p>
     <span class="n">FIT_FUN</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached_stan_fit</span><span class="p">,</span>
     <span class="n">drop_intercept</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
+
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span>INFO:stancache.stancache:Step 1: Get compiled model code, possibly from cache
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="stderr output_area container">
+<div class="highlight"><pre>
+INFO:stancache.stancache:Step 1: Get compiled model code, possibly from cache
 INFO:stancache.stancache:StanModel: cache_filename set to anon_model.cython_0_25_1.model_code_16881928540873162731.pystan_2_12_0_0.stanmodel.pkl
 INFO:stancache.stancache:StanModel: Starting execution
 INFO:pystan:COMPILING THE C++ CODE FOR MODEL anon_model_b18a6495e568fcff90662e16a3d2aa85 NOW.
@@ -563,29 +925,71 @@ INFO:stancache.stancache:sampling: Saving results to cache
 The relevant StanModel instance must be pickled along with this fit object.
 When unpickling the StanModel must be unpickled first.
   pickle.dump(res, open(cache_filepath, &#39;wb&#39;), pickle.HIGHEST_PROTOCOL)
+</pre></div></div>
+</div>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [42]:
 </pre></div>
 </div>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="c1"># 0:00:06.245552 elapsed</span>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># 0:00:06.245552 elapsed</span>
 </pre></div>
 </div>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit4</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lp__&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">])</span>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [43]:
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span>               <span class="n">mean</span>   <span class="n">se_mean</span>        <span class="n">sd</span>        <span class="mf">2.5</span><span class="o">%</span>         <span class="mi">50</span><span class="o">%</span>       <span class="mf">97.5</span><span class="o">%</span>      <span class="n">Rhat</span>
-<span class="n">lp__</span>    <span class="o">-</span><span class="mf">278.097416</span>  <span class="mf">0.020380</span>  <span class="mf">1.353386</span> <span class="o">-</span><span class="mf">281.543138</span> <span class="o">-</span><span class="mf">277.782205</span> <span class="o">-</span><span class="mf">276.445123</span>  <span class="mf">0.999867</span>
-<span class="n">alpha</span>      <span class="mf">1.216149</span>  <span class="mf">0.002525</span>  <span class="mf">0.169578</span>    <span class="mf">0.913312</span>    <span class="mf">1.206908</span>    <span class="mf">1.574024</span>  <span class="mf">1.000702</span>
-<span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>   <span class="o">-</span><span class="mf">2.708518</span>  <span class="mf">0.003627</span>  <span class="mf">0.228658</span>   <span class="o">-</span><span class="mf">3.188661</span>   <span class="o">-</span><span class="mf">2.700493</span>   <span class="o">-</span><span class="mf">2.278788</span>  <span class="mf">1.000723</span>
-<span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>    <span class="mf">0.610593</span>  <span class="mf">0.002824</span>  <span class="mf">0.201974</span>    <span class="mf">0.224438</span>    <span class="mf">0.607700</span>    <span class="mf">1.030164</span>  <span class="mf">1.000744</span>
-<span class="n">beta</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>    <span class="mf">0.006211</span>  <span class="mf">0.000171</span>  <span class="mf">0.014493</span>   <span class="o">-</span><span class="mf">0.022229</span>    <span class="mf">0.006113</span>    <span class="mf">0.035095</span>  <span class="mf">1.000222</span>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit4</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lp__&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">])</span>
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<div class="highlight"><pre>
+               mean   se_mean        sd        2.5%         50%       97.5%      Rhat
+lp__    -278.097416  0.020380  1.353386 -281.543138 -277.782205 -276.445123  0.999867
+alpha      1.216149  0.002525  0.169578    0.913312    1.206908    1.574024  1.000702
+beta[0]   -2.708518  0.003627  0.228658   -3.188661   -2.700493   -2.278788  1.000723
+beta[1]    0.610593  0.002824  0.201974    0.224438    0.607700    1.030164  1.000744
+beta[2]    0.006211  0.000171  0.014493   -0.022229    0.006113    0.035095  1.000222
+</pre></div></div>
 </div>
 </div>
 <div class="section" id="compare-coefficient-estimates-for-each-model-spec">
 <h1>compare coefficient estimates for each model spec<a class="headerlink" href="#compare-coefficient-estimates-for-each-model-spec" title="Permalink to this headline">¶</a></h1>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_coefs</span><span class="p">([</span><span class="n">testfit</span><span class="p">,</span> <span class="n">testfit2</span><span class="p">,</span> <span class="n">testfit3</span><span class="p">,</span> <span class="n">testfit4</span><span class="p">])</span>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [44]:
 </pre></div>
 </div>
-<img alt="examples/Test%20new_gamma_survival_model%20with%20simulated%20data_files/Test%20new_gamma_survival_model%20with%20simulated%20data_33_0.png" src="examples/Test%20new_gamma_survival_model%20with%20simulated%20data_files/Test%20new_gamma_survival_model%20with%20simulated%20data_33_0.png" />
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_coefs</span><span class="p">([</span><span class="n">testfit</span><span class="p">,</span> <span class="n">testfit2</span><span class="p">,</span> <span class="n">testfit3</span><span class="p">,</span> <span class="n">testfit4</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../_images/examples_Test_new_gamma_survival_model_with_simulated_data_33_0.png" src="../_images/examples_Test_new_gamma_survival_model_with_simulated_data_33_0.png" />
+</div>
+</div>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -597,20 +1001,14 @@ When unpickling the StanModel must be unpickled first.
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Simulate survival data</a></li>
-<li><a class="reference internal" href="#explore-simulated-data">Explore simulated data</a></li>
-<li><a class="reference internal" href="#model1-original-spec">model1: original spec</a></li>
-<li><a class="reference internal" href="#model2-alternate-version-of-surv-gamma-lpdf">model2: alternate version of surv_gamma_lpdf</a></li>
-<li><a class="reference internal" href="#model3-use-log-mix-inside-surv-gamma-lpdf">model3: use <code class="docutils literal"><span class="pre">log_mix</span></code> inside surv_gamma_lpdf</a></li>
-<li><a class="reference internal" href="#model4-vectorize-surv-gamma-lpdf">model4: vectorize surv_gamma_lpdf</a></li>
+<li><a class="reference internal" href="#Explore-simulated-data">Explore simulated data</a></li>
+<li><a class="reference internal" href="#model1:-original-spec">model1: original spec</a></li>
+<li><a class="reference internal" href="#model2:-alternate-version-of-surv_gamma_lpdf">model2: alternate version of surv_gamma_lpdf</a></li>
+<li><a class="reference internal" href="#model3:-use-log_mix-inside-surv_gamma_lpdf">model3: use <code class="docutils literal"><span class="pre">log_mix</span></code> inside surv_gamma_lpdf</a></li>
+<li><a class="reference internal" href="#model4:-vectorize-surv_gamma_lpdf">model4: vectorize surv_gamma_lpdf</a></li>
 <li><a class="reference internal" href="#compare-coefficient-estimates-for-each-model-spec">compare coefficient estimates for each model spec</a></li>
 </ul>
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  </ul></li>
-</ul>
-</div>
+
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -632,20 +1030,21 @@ When unpickling the StanModel must be unpickled first.
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2017, Jacki Novik.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
-      
-      |
-      <a href="../_sources/examples/Test new_gamma_survival_model with simulated data.txt"
-          rel="nofollow">Page source</a>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">survivalstan 0.1.2.5 documentation</a> &#187;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Jacki Novik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
   </body>
 </html>
