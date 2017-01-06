@@ -1,0 +1,761 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>survivalstan.utils &#8212; survivalstan 0.1.2.5 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.2.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="survivalstan 0.1.2.5 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for survivalstan.utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">fnmatch</span> <span class="k">import</span> <span class="n">fnmatch</span>
+<span class="kn">import</span> <span class="nn">ntpath</span>
+<span class="kn">import</span> <span class="nn">pkg_resources</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sb</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">survivalstan</span> <span class="k">import</span> <span class="n">extract_baseline_hazard</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">lifelines.utils</span> <span class="k">import</span> <span class="n">survival_table_from_events</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">mpatches</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_summarize_survival</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">time_col</span><span class="p">,</span> <span class="n">event_col</span><span class="p">,</span> <span class="n">evaluate_at</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1">## prepare survival table</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">survival_table_from_events</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">time_col</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="n">event_col</span><span class="p">])</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1">## normalize survival as fraction of initial_n</span>
+    <span class="n">table</span><span class="p">[</span><span class="s1">&#39;initial_n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;event_at&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">,</span><span class="s1">&#39;at_risk&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">table</span><span class="p">[</span><span class="s1">&#39;survival&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;at_risk&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;initial_n&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1">## handle timepoints if given</span>
+    <span class="k">if</span> <span class="n">evaluate_at</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">evaluate_times</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;event_at&#39;</span><span class="p">:</span> <span class="n">evaluate_at</span><span class="p">})</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">evaluate_times</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;event_at&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;event_at&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;ffill&#39;</span><span class="p">)</span>
+        <span class="n">table</span><span class="p">[</span><span class="s1">&#39;keep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s1">&#39;event_at&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">evaluate_at</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">table</span><span class="p">[</span><span class="s1">&#39;keep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;keep&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">,[</span><span class="s1">&#39;event_at&#39;</span><span class="p">,</span><span class="s1">&#39;survival&#39;</span><span class="p">]]</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;event_at&#39;</span><span class="p">:</span> <span class="n">time_col</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">table</span>
+
+
+<div class="viewcode-block" id="extract_time_betas"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.utils.extract_time_betas">[docs]</a><span class="k">def</span> <span class="nf">extract_time_betas</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;beta_time&#39;</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">_extract_time_betas_single_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="n">element</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">value_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">_extract_time_betas_single_model</span><span class="p">(</span><span class="n">stanmodel</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;beta_time&#39;</span><span class="p">,</span> <span class="n">coefs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                     <span class="n">value_name</span><span class="o">=</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="n">timepoint_id_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                     <span class="n">timepoint_end_col</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">timepoint_id_col</span><span class="p">:</span>
+        <span class="n">timepoint_id_col</span> <span class="o">=</span> <span class="n">stanmodel</span><span class="p">[</span><span class="s1">&#39;timepoint_id_col&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">timepoint_end_col</span><span class="p">:</span>
+        <span class="n">timepoint_end_col</span> <span class="o">=</span> <span class="n">stanmodel</span><span class="p">[</span><span class="s1">&#39;timepoint_end_col&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">timepoint_id_col</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">timepoint_end_col</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;timepoint_id_col and timepoint_end_col are required, but were either not given or were not set by stan model&#39;</span><span class="p">)</span>
+    <span class="n">time_betas</span> <span class="o">=</span> <span class="n">stanmodel</span><span class="p">[</span><span class="s1">&#39;fit&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extract</span><span class="p">()[</span><span class="n">element</span><span class="p">]</span>
+    
+    <span class="c1"># determine coef names</span>
+    <span class="n">coef_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">stanmodel</span><span class="p">[</span><span class="s1">&#39;x_names&#39;</span><span class="p">])</span>
+    <span class="n">num_coefs</span> <span class="o">=</span> <span class="n">time_betas</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coef_names</span><span class="p">)</span> <span class="o">!=</span> <span class="n">num_coefs</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Num coefs does not equal number of coef names. Please report this as a bug&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;num_coefs set to </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_coefs</span><span class="p">))</span>
+    
+    <span class="c1"># determine which coefs to extract</span>
+    <span class="n">plot_coefs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_coefs</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">coefs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plot_coefs</span> <span class="o">=</span> <span class="p">[</span><span class="n">val</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">plot_coefs</span> <span class="k">if</span> <span class="n">coef_names</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="ow">in</span> <span class="n">coefs</span><span class="p">]</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;plot_coefs set to </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">plot_coefs</span><span class="p">))))</span>
+    
+    <span class="c1"># extract time-betas for each coef</span>
+    <span class="n">time_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">plot_coefs</span><span class="p">:</span>
+        <span class="n">tb_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">time_betas</span><span class="p">[:,</span><span class="n">i</span><span class="p">,:])</span>
+        <span class="n">tb_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">tb_df</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="n">timepoint_id_col</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">value_name</span><span class="p">)</span>
+        <span class="n">tb_df</span><span class="p">[</span><span class="s1">&#39;coef&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coef_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">time_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tb_df</span><span class="p">)</span>
+    <span class="n">time_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">time_data</span><span class="p">)</span>
+    <span class="n">timepoint_data</span> <span class="o">=</span> <span class="n">stanmodel</span><span class="p">[</span><span class="s1">&#39;df&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,[</span><span class="n">timepoint_id_col</span><span class="p">,</span> <span class="n">timepoint_end_col</span><span class="p">]]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+    <span class="n">time_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">time_data</span><span class="p">,</span> <span class="n">timepoint_data</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">timepoint_id_col</span><span class="p">)</span>
+    <span class="n">time_data</span><span class="p">[</span><span class="s1">&#39;exp(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value_name</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">time_data</span><span class="p">[</span><span class="n">value_name</span><span class="p">])</span>
+    <span class="n">time_data</span><span class="p">[</span><span class="s1">&#39;model_cohort&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stanmodel</span><span class="p">[</span><span class="s1">&#39;model_cohort&#39;</span><span class="p">]</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">time_data</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_get_timepoint_cols</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">timepoint_id_col</span><span class="p">,</span> <span class="n">timepoint_end_col</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">timepoint_id_col</span><span class="p">:</span>
+        <span class="n">timepoint_id_col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">([</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;timepoint_id_col&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">timepoint_id_col</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;timepoint_id_col is not uniform for all models. Please reformat data and set timepoint_id_col manually&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">timepoint_id_col</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">timepoint_id_col</span> <span class="o">=</span> <span class="n">timepoint_id_col</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">timepoint_end_col</span><span class="p">:</span>
+        <span class="n">timepoint_end_col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">([</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;timepoint_end_col&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">timepoint_end_col</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;timepoint_end_col is not uniform for all models. Please reformat data and set timepoint_end_col manually&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">timepoint_end_col</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">timepoint_end_col</span> <span class="o">=</span> <span class="n">timepoint_end_col</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">timepoint_id_col</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">timepoint_end_col</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;timepoint_id_col and timepoint_end_col are required, but were either not given or were not set by model&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">timepoint_id_col</span><span class="p">,</span> <span class="n">timepoint_end_col</span><span class="p">)</span>
+    
+<span class="k">def</span> <span class="nf">_plot_time_betas</span><span class="p">(</span><span class="n">models</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;beta_time&#39;</span><span class="p">,</span>
+                     <span class="n">coefs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;exp(beta)&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                     <span class="n">timepoint_id_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timepoint_end_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;timepoint_end_col&#39;</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> 
+                     <span class="n">subplot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_ticks</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">extract_time_betas</span><span class="p">(</span><span class="n">models</span><span class="o">=</span><span class="n">models</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="n">element</span><span class="p">,</span> <span class="n">coefs</span><span class="o">=</span><span class="n">coefs</span><span class="p">,</span>
+                                     <span class="n">value_name</span><span class="o">=</span><span class="n">value_name</span><span class="p">,</span> <span class="n">timepoint_id_col</span><span class="o">=</span><span class="n">timepoint_id_col</span><span class="p">,</span>
+                                     <span class="n">timepoint_end_col</span><span class="o">=</span><span class="n">timepoint_end_col</span><span class="p">)</span>
+        <span class="n">timepoint_id_col</span><span class="p">,</span> <span class="n">timepoint_end_col</span> <span class="o">=</span> <span class="n">_get_timepoint_cols</span><span class="p">(</span><span class="n">models</span><span class="o">=</span><span class="n">models</span><span class="p">,</span>
+                                                              <span class="n">timepoint_id_col</span><span class="o">=</span><span class="n">timepoint_id_col</span><span class="p">,</span>
+                                                              <span class="n">timepoint_end_col</span><span class="o">=</span><span class="n">timepoint_end_col</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;timepoint_id_col set to </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">timepoint_id_col</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;timepoint_end_col set to </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">timepoint_end_col</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">timepoint_id_col</span><span class="p">:</span>
+            <span class="n">timepoint_id_col</span> <span class="o">=</span> <span class="s1">&#39;timepoint_id&#39;</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;timepoint_end_col&#39;</span><span class="p">:</span>
+        <span class="n">time_col</span> <span class="o">=</span> <span class="n">timepoint_end_col</span>
+    <span class="k">elif</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;timepoint_id_col&#39;</span><span class="p">:</span>
+        <span class="n">time_col</span> <span class="o">=</span> <span class="n">timepoint_id_col</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">time_col</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;time_col set to </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time_col</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">time_col</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;time_col is not defined - specify name of column using `x`&#39;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ylabel</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">coefs</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">coefs</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> for </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">coefs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">time_col</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">subplot</span><span class="p">:</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">subplot</span>
+    <span class="k">if</span> <span class="n">ticks_at</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">time_col</span><span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">())</span>
+        <span class="n">x_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">time_col</span><span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">step_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">step_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_max</span> <span class="o">-</span> <span class="n">x_min</span><span class="p">)</span><span class="o">/</span><span class="n">num_ticks</span>
+        <span class="n">ticks_at</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">x_min</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">x_max</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step_size</span><span class="p">)</span>
+    <span class="n">time_beta_plot</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span>
+        <span class="n">column</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+        <span class="n">by</span><span class="o">=</span><span class="n">time_col</span><span class="p">,</span>
+        <span class="n">whis</span><span class="o">=</span><span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">],</span>
+        <span class="n">positions</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">time_col</span><span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(),</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+        <span class="n">return_type</span><span class="o">=</span><span class="s1">&#39;dict&#39;</span><span class="p">,</span>
+        <span class="n">showcaps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">patch_artist</span><span class="o">=</span><span class="n">fill</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">(</span><span class="n">ticks_at</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">(</span>
+         <span class="p">[</span><span class="s2">r&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ticks_at</span><span class="p">])</span>
+    
+    <span class="k">if</span> <span class="n">ylim</span><span class="p">:</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">dict</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">time_beta_plot</span><span class="p">[</span><span class="n">y</span><span class="p">][</span><span class="s1">&#39;boxes&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">time_beta_plot</span><span class="p">[</span><span class="n">y</span><span class="p">][</span><span class="s1">&#39;medians&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">time_beta_plot</span><span class="p">[</span><span class="n">y</span><span class="p">][</span><span class="s1">&#39;whiskers&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="plot_time_betas"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.utils.plot_time_betas">[docs]</a><span class="k">def</span> <span class="nf">plot_time_betas</span><span class="p">(</span><span class="n">models</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;beta_time&#39;</span><span class="p">,</span>
+                    <span class="n">y</span><span class="o">=</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="n">trans</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">coefs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;timepoint_end_col&#39;</span><span class="p">,</span>
+                    <span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;model_cohort&#39;</span><span class="p">,</span><span class="s1">&#39;coef&#39;</span><span class="p">],</span> <span class="n">timepoint_id_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timepoint_end_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                    <span class="n">subplot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span>
+                    <span class="n">num_ticks</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">pal</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">value_name</span><span class="o">=</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">extract_time_betas</span><span class="p">(</span><span class="n">models</span><span class="o">=</span><span class="n">models</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="n">element</span><span class="p">,</span> <span class="n">coefs</span><span class="o">=</span><span class="n">coefs</span><span class="p">,</span>
+                                     <span class="n">value_name</span><span class="o">=</span><span class="n">value_name</span><span class="p">,</span> <span class="n">timepoint_id_col</span><span class="o">=</span><span class="n">timepoint_id_col</span><span class="p">,</span>
+                                     <span class="n">timepoint_end_col</span><span class="o">=</span><span class="n">timepoint_end_col</span><span class="p">)</span>
+        <span class="n">timepoint_id_col</span><span class="p">,</span> <span class="n">timepoint_end_col</span> <span class="o">=</span> <span class="n">_get_timepoint_cols</span><span class="p">(</span><span class="n">models</span><span class="o">=</span><span class="n">models</span><span class="p">,</span>
+                                                              <span class="n">timepoint_id_col</span><span class="o">=</span><span class="n">timepoint_id_col</span><span class="p">,</span>
+                                                              <span class="n">timepoint_end_col</span><span class="o">=</span><span class="n">timepoint_end_col</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;timepoint_id_col set to </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">timepoint_id_col</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;timepoint_end_col set to </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">timepoint_end_col</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">trans</span><span class="p">:</span>
+        <span class="n">trans_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">trans</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">trans_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">trans</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">y</span><span class="p">])</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">trans_name</span>
+    <span class="k">if</span> <span class="n">by</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pal</span><span class="p">:</span>
+            <span class="n">num_grps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="n">by</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">by</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+            <span class="n">pal</span> <span class="o">=</span> <span class="n">_get_color_palette</span><span class="p">(</span><span class="n">num_grps</span><span class="p">)</span>
+        <span class="n">legend_handles</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">subplot</span><span class="p">:</span>
+            <span class="n">subplot</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">grp</span><span class="p">,</span> <span class="n">grp_df</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">by</span><span class="p">):</span>
+            <span class="n">_plot_time_betas</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">grp_df</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+                             <span class="n">timepoint_id_col</span><span class="o">=</span><span class="n">timepoint_id_col</span><span class="p">,</span> <span class="n">timepoint_end_col</span><span class="o">=</span><span class="n">timepoint_end_col</span><span class="p">,</span>
+                             <span class="n">num_ticks</span><span class="o">=</span><span class="n">num_ticks</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="n">step_size</span><span class="p">,</span> <span class="n">ticks_at</span><span class="o">=</span><span class="n">ticks_at</span><span class="p">,</span>
+                             <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">pal</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">subplot</span><span class="o">=</span><span class="n">subplot</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">fill</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">legend_handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">pal</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">grp</span><span class="p">))</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">legend_handles</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_plot_time_betas</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">num_ticks</span><span class="o">=</span><span class="n">num_ticks</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="n">step_size</span><span class="p">,</span> <span class="n">ticks_at</span><span class="o">=</span><span class="n">ticks_at</span><span class="p">,</span>
+                         <span class="n">timepoint_id_col</span><span class="o">=</span><span class="n">timepoint_id_col</span><span class="p">,</span> <span class="n">timepoint_end_col</span><span class="o">=</span><span class="n">timepoint_end_col</span><span class="p">,</span>
+                         <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">subplot</span><span class="o">=</span><span class="n">subplot</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">fill</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">_get_sample_ids_single_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">sample_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_id_col</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sample_col</span><span class="p">:</span>
+        <span class="n">sample_col</span> <span class="o">=</span> <span class="n">model</span><span class="p">[</span><span class="s1">&#39;sample_col&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sample_col</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;sample_col was not given and is also not provided to the model. This is a required input&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sample_id_col</span><span class="p">:</span>
+        <span class="n">sample_id_col</span> <span class="o">=</span> <span class="n">model</span><span class="p">[</span><span class="s1">&#39;sample_id_col&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sample_id_col</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;sample_id_col was not given and is also not provided to the model. This is a required input&#39;</span><span class="p">)</span>
+    <span class="n">patient_sample_ids</span> <span class="o">=</span> <span class="n">model</span><span class="p">[</span><span class="s1">&#39;df&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,[</span><span class="n">sample_col</span><span class="p">,</span> <span class="n">sample_id_col</span><span class="p">]]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">sample_id_col</span><span class="p">)</span>
+    <span class="n">patient_sample_ids</span><span class="p">[</span><span class="s1">&#39;model_cohort&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="p">[</span><span class="s1">&#39;model_cohort&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">patient_sample_ids</span>
+
+
+<div class="viewcode-block" id="get_sample_ids"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.utils.get_sample_ids">[docs]</a><span class="k">def</span> <span class="nf">get_sample_ids</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">sample_col</span><span class="o">=</span><span class="s1">&#39;patient_id&#39;</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">_get_sample_ids_single_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">sample_col</span><span class="o">=</span><span class="n">sample_col</span><span class="p">)</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_prep_pp_data_single_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">time_element</span><span class="o">=</span><span class="s1">&#39;y_hat_time&#39;</span><span class="p">,</span> <span class="n">event_element</span><span class="o">=</span><span class="s1">&#39;y_hat_event&#39;</span><span class="p">,</span>
+                               <span class="n">sample_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;event_time&#39;</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event_status&#39;</span><span class="p">,</span>
+                               <span class="n">join_with</span><span class="o">=</span><span class="s1">&#39;df_all&#39;</span><span class="p">,</span> <span class="n">sample_id_col</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">patient_sample_ids</span> <span class="o">=</span> <span class="n">_get_sample_ids_single_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">sample_col</span><span class="o">=</span><span class="n">sample_col</span><span class="p">,</span> <span class="n">sample_id_col</span><span class="o">=</span><span class="n">sample_id_col</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sample_col</span><span class="p">:</span>
+        <span class="n">sample_col</span> <span class="o">=</span> <span class="n">model</span><span class="p">[</span><span class="s1">&#39;sample_col&#39;</span><span class="p">]</span>
+    <span class="n">pp_event_time</span> <span class="o">=</span> <span class="n">extract_params_long</span><span class="p">(</span><span class="n">models</span><span class="o">=</span><span class="p">[</span><span class="n">model</span><span class="p">],</span>
+                                       <span class="n">element</span><span class="o">=</span><span class="n">time_element</span><span class="p">,</span>
+                                       <span class="n">varnames</span><span class="o">=</span><span class="n">patient_sample_ids</span><span class="p">[</span><span class="n">sample_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                                       <span class="p">)</span>
+    <span class="n">pp_event_time</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">time_col</span><span class="p">,</span> <span class="s1">&#39;variable&#39;</span><span class="p">:</span> <span class="n">sample_col</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pp_event_status</span> <span class="o">=</span> <span class="n">extract_params_long</span><span class="p">(</span><span class="n">models</span><span class="o">=</span><span class="p">[</span><span class="n">model</span><span class="p">],</span>
+                                       <span class="n">element</span><span class="o">=</span><span class="n">event_element</span><span class="p">,</span>
+                                       <span class="n">varnames</span><span class="o">=</span><span class="n">patient_sample_ids</span><span class="p">[</span><span class="n">sample_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                                       <span class="p">)</span>
+    <span class="n">pp_event_status</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">event_col</span><span class="p">,</span> <span class="s1">&#39;variable&#39;</span><span class="p">:</span> <span class="n">sample_col</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pp_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">pp_event_time</span><span class="p">,</span> <span class="n">pp_event_status</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;iter&#39;</span><span class="p">,</span> <span class="n">sample_col</span><span class="p">,</span> <span class="s1">&#39;model_cohort&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">join_with</span><span class="p">:</span>
+            <span class="n">pp_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">pp_data</span><span class="p">,</span> <span class="n">model</span><span class="p">[</span><span class="n">join_with</span><span class="p">],</span> <span class="n">on</span><span class="o">=</span><span class="n">sample_col</span><span class="p">,</span> <span class="n">suffixes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;_original&#39;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">pp_data</span>
+
+
+<div class="viewcode-block" id="prep_pp_data"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.utils.prep_pp_data">[docs]</a><span class="k">def</span> <span class="nf">prep_pp_data</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">time_element</span><span class="o">=</span><span class="s1">&#39;y_hat_time&#39;</span><span class="p">,</span> <span class="n">event_element</span><span class="o">=</span><span class="s1">&#39;y_hat_event&#39;</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event_status&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;event_time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">_prep_pp_data_single_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">event_element</span><span class="o">=</span><span class="n">event_element</span><span class="p">,</span> <span class="n">time_element</span><span class="o">=</span><span class="n">time_element</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="n">event_col</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="n">time_col</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">]</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="n">time_col</span><span class="p">,</span> <span class="s1">&#39;iter&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="prep_pp_survival_data"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.utils.prep_pp_survival_data">[docs]</a><span class="k">def</span> <span class="nf">prep_pp_survival_data</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">time_element</span><span class="o">=</span><span class="s1">&#39;y_hat_time&#39;</span><span class="p">,</span> <span class="n">event_element</span><span class="o">=</span><span class="s1">&#39;y_hat_event&#39;</span><span class="p">,</span>
+                         <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;event_time&#39;</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event_status&#39;</span><span class="p">,</span>
+                         <span class="n">by</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">pp_data</span> <span class="o">=</span> <span class="n">prep_pp_data</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">time_element</span><span class="o">=</span><span class="n">time_element</span><span class="p">,</span> <span class="n">event_element</span><span class="o">=</span><span class="n">event_element</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="n">time_col</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="n">event_col</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;iter&#39;</span><span class="p">,</span> <span class="s1">&#39;model_cohort&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">by</span><span class="p">:</span>
+        <span class="n">groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">by</span><span class="p">)</span>
+    <span class="n">pp_surv</span> <span class="o">=</span> <span class="n">pp_data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+         <span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">_summarize_survival</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="n">time_col</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="n">event_col</span><span class="p">))</span>
+    <span class="n">pp_surv</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pp_surv</span></div>
+
+<span class="k">def</span> <span class="nf">_plot_pp_survival_data</span><span class="p">(</span><span class="n">pp_surv</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;event_time&#39;</span><span class="p">,</span> <span class="n">survival_col</span><span class="o">=</span><span class="s1">&#39;survival&#39;</span><span class="p">,</span>
+                           <span class="n">num_ticks</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subplot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                           <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Survival %&#39;</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Days&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;posterior predictions&#39;</span><span class="p">,</span>
+                           <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">pp_surv</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">time_col</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">subplot</span><span class="p">:</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">subplot</span>
+    <span class="k">if</span> <span class="n">ticks_at</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">pp_surv</span><span class="p">[</span><span class="n">time_col</span><span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">())</span>
+        <span class="n">x_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">pp_surv</span><span class="p">[</span><span class="n">time_col</span><span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">step_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">step_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_max</span> <span class="o">-</span> <span class="n">x_min</span><span class="p">)</span><span class="o">/</span><span class="n">num_ticks</span>
+        <span class="n">ticks_at</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">x_min</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">x_max</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step_size</span><span class="p">)</span>
+    <span class="n">survival_plot</span> <span class="o">=</span> <span class="n">pp_surv</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span>
+        <span class="n">column</span><span class="o">=</span><span class="n">survival_col</span><span class="p">,</span>
+        <span class="n">by</span><span class="o">=</span><span class="n">time_col</span><span class="p">,</span>
+        <span class="n">whis</span><span class="o">=</span><span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">],</span>
+        <span class="n">positions</span><span class="o">=</span><span class="n">pp_surv</span><span class="p">[</span><span class="n">time_col</span><span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(),</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+        <span class="n">return_type</span><span class="o">=</span><span class="s1">&#39;dict&#39;</span><span class="p">,</span>
+        <span class="n">showcaps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">patch_artist</span><span class="o">=</span><span class="n">fill</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">(</span><span class="n">ticks_at</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">(</span>
+         <span class="p">[</span><span class="s2">r&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ticks_at</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="nb">dict</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">survival_plot</span><span class="p">[</span><span class="n">survival_col</span><span class="p">][</span><span class="s1">&#39;boxes&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">survival_plot</span><span class="p">[</span><span class="n">survival_col</span><span class="p">][</span><span class="s1">&#39;medians&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">survival_plot</span><span class="p">[</span><span class="n">survival_col</span><span class="p">][</span><span class="s1">&#39;whiskers&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_color_palette</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Pick a color palette given number of values</span>
+<span class="sd">        Returns an array containing color inputs for each value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">color_list</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Set1</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">color_list</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">color_list</span>
+
+<div class="viewcode-block" id="plot_pp_survival"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.utils.plot_pp_survival">[docs]</a><span class="k">def</span> <span class="nf">plot_pp_survival</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">time_element</span><span class="o">=</span><span class="s1">&#39;y_hat_time&#39;</span><span class="p">,</span> <span class="n">event_element</span><span class="o">=</span><span class="s1">&#39;y_hat_event&#39;</span><span class="p">,</span>
+                     <span class="n">num_ticks</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;event_time&#39;</span><span class="p">,</span>
+                     <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event_status&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">pal</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">subplot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">pp_surv</span> <span class="o">=</span> <span class="n">prep_pp_survival_data</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">time_element</span><span class="o">=</span><span class="n">time_element</span><span class="p">,</span>
+                                    <span class="n">event_element</span><span class="o">=</span><span class="n">event_element</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="n">time_col</span><span class="p">,</span>
+                                    <span class="n">event_col</span><span class="o">=</span><span class="n">event_col</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="n">by</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">by</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pal</span><span class="p">:</span>
+            <span class="n">num_grps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp_surv</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="n">by</span><span class="p">)[</span><span class="n">by</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+            <span class="n">pal</span> <span class="o">=</span> <span class="n">_get_color_palette</span><span class="p">(</span><span class="n">num_grps</span><span class="p">)</span>
+        <span class="n">legend_handles</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">subplot</span><span class="p">:</span>
+            <span class="n">subplot</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">grp</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">pp_surv</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">by</span><span class="p">):</span>
+            <span class="n">_plot_pp_survival_data</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">num_ticks</span><span class="o">=</span><span class="n">num_ticks</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="n">step_size</span><span class="p">,</span> <span class="n">ticks_at</span><span class="o">=</span><span class="n">ticks_at</span><span class="p">,</span>
+                                  <span class="n">time_col</span><span class="o">=</span><span class="n">time_col</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">pal</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">subplot</span><span class="o">=</span><span class="n">subplot</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">fill</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">legend_handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">pal</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">grp</span><span class="p">))</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">legend_handles</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_plot_pp_survival_data</span><span class="p">(</span><span class="n">pp_surv</span><span class="p">,</span> <span class="n">num_ticks</span><span class="o">=</span><span class="n">num_ticks</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="n">step_size</span><span class="p">,</span>
+                               <span class="n">ticks_at</span><span class="o">=</span><span class="n">ticks_at</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="n">time_col</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">fill</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_observed_survival"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.utils.plot_observed_survival">[docs]</a><span class="k">def</span> <span class="nf">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">event_col</span><span class="p">,</span> <span class="n">time_col</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;observed&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">actual_surv</span> <span class="o">=</span> <span class="n">_summarize_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="n">time_col</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="n">event_col</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">actual_surv</span><span class="p">[</span><span class="n">time_col</span><span class="p">],</span> <span class="n">actual_surv</span><span class="p">[</span><span class="s1">&#39;survival&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">_list_files_in_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s2">&quot;*.stan&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    indexes a directory of stan files</span>
+<span class="sd">    returns as dictionary containing contents of files</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">subdirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">fnmatch</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_read_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">resource</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    reads file contents from disk</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filepath (string):</span>
+<span class="sd">        path to file (can be relative or absolute)</span>
+<span class="sd">    resource (string, optional):</span>
+<span class="sd">        if given, path is relative to package install root</span>
+<span class="sd">        used to load stan files provided by packages</span>
+<span class="sd">        (e.g. those within a package library)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    The specifics of the return type depend on the value of `resource`.</span>
+<span class="sd">        - if resource is None, returns contents of file as a character string</span>
+<span class="sd">        - otherwise, returns a &quot;resource_string&quot; which</span>
+<span class="sd">            acts as a character string but technically isn&#39;t one.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">resource</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">myfile</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">myfile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_string</span><span class="p">(</span>
+            <span class="n">resource</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span>
+
+
+<div class="viewcode-block" id="read_files"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.utils.read_files">[docs]</a><span class="k">def</span> <span class="nf">read_files</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.stan&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">resource</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads file contents from a directory path into memory. Returns a </span>
+<span class="sd">    dictionary of file names: file contents.</span>
+
+<span class="sd">    Is intended to be used to load a directory of stan files into an object.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path (string):</span>
+<span class="sd">        directory path (can be relative or absolute)</span>
+<span class="sd">    pattern (string, optional):</span>
+<span class="sd">        regex pattern applied to files on import</span>
+<span class="sd">        defaults to &quot;*.stan&quot;</span>
+<span class="sd">    encoding (string, optional):</span>
+<span class="sd">        encoding to use when importing files</span>
+<span class="sd">        defaults to &quot;UTF-8&quot;</span>
+<span class="sd">    resource (string, optional):</span>
+<span class="sd">        if given, path is relative to package install root</span>
+<span class="sd">        used to load stan files provided by packages</span>
+<span class="sd">        (e.g. those within a package library)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    The specifics of the return type depend on the value of `resource`.</span>
+<span class="sd">        - if resource is None, returns contents of file as a character string</span>
+<span class="sd">        - otherwise, returns a &quot;resource_string&quot; which</span>
+<span class="sd">            acts as a character string but technically isn&#39;t one.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">_list_files_in_path</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="n">pattern</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="n">file_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">file_data</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">file</span>
+        <span class="n">file_data</span><span class="p">[</span><span class="s1">&#39;basename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ntpath</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="n">file_data</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_read_file</span><span class="p">(</span>
+            <span class="n">file</span><span class="p">,</span>
+            <span class="n">resource</span><span class="o">=</span><span class="n">resource</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="n">file_data</span><span class="p">[</span><span class="s1">&#39;basename&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">file_data</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">_prep_data_for_coefs</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Helper function to concatenate/extract data </span>
+<span class="sd">    from a list of model objects.</span>
+
+<span class="sd">    See `plot_coefs` for description of data inputs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># concatenate data from models given</span>
+    <span class="n">df_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="p">[</span><span class="n">df_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="n">element</span><span class="p">])</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">]</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_list</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="s1">&#39;variable&#39;</span><span class="p">,</span> <span class="n">df</span>
+
+
+<span class="k">def</span> <span class="nf">_prep_data_for_baseline_hazard</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;baseline&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Helper function to concatenate/extract baseline hazard data </span>
+<span class="sd">    from a list of model objects.</span>
+<span class="sd">    </span>
+<span class="sd">    Note `element` input parameter is ignored here.</span>
+
+<span class="sd">    See `plot_coefs` for description of data inputs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># prepare df containing posterior estimates of baseline hazards</span>
+    <span class="n">df_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="p">[</span><span class="n">df_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">extract_baseline_hazard</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="n">element</span><span class="p">))</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">]</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_list</span><span class="p">)</span>
+
+    <span class="c1"># add helper variables to df</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;timepoint_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;timepoint_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;log_hazard&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;baseline_hazard&#39;</span><span class="p">])</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;end_time_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s1">&#39;log_hazard&#39;</span><span class="p">,</span> <span class="s1">&#39;end_time_id&#39;</span><span class="p">,</span> <span class="n">df</span>
+
+
+<div class="viewcode-block" id="plot_coefs"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.utils.plot_coefs">[docs]</a><span class="k">def</span> <span class="nf">plot_coefs</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;coefs&#39;</span><span class="p">,</span> <span class="n">force_direction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trans</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot coefficients for models listed</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    models (list):</span>
+<span class="sd">        List of model objects</span>
+<span class="sd">    element (string, optional):</span>
+<span class="sd">        Which element to plot. defaults to &#39;coefs&#39;.</span>
+<span class="sd">        Other options (depending on model type) include: </span>
+<span class="sd">        - &#39;grp_coefs&#39;</span>
+<span class="sd">        - &#39;baseline&#39;</span>
+<span class="sd">        - &#39;beta_time&#39;</span>
+<span class="sd">    force_direction (string, optional):</span>
+<span class="sd">        Takes values &#39;h&#39; or &#39;v&#39;</span>
+<span class="sd">            - if &#39;h&#39;: forces horizontal orientation, (`variable` names along the x axis)</span>
+<span class="sd">            - if &#39;v&#39;: forces vertical orientation (`variable` names along the y axis)</span>
+<span class="sd">        if None (default), coef plots default to &#39;v&#39; for all plots except baseline hazard.</span>
+<span class="sd">    trans (function, optional):</span>
+<span class="sd">        If present, transforms value of `value` column</span>
+<span class="sd">            - example: np.exp to plot exp(beta)</span>
+<span class="sd">        if None (default), plots raw value</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># TODO: check if models object is a list or a single model</span>
+    
+    <span class="k">if</span> <span class="n">element</span><span class="o">==</span><span class="s1">&#39;beta_time&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">plot_time_betas</span><span class="p">(</span><span class="n">models</span><span class="o">=</span><span class="n">models</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="n">element</span><span class="p">,</span> <span class="n">trans</span><span class="o">=</span><span class="n">trans</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    
+    <span class="c1"># prep data from models given</span>
+    <span class="k">if</span> <span class="n">element</span><span class="o">==</span><span class="s1">&#39;baseline&#39;</span> <span class="ow">or</span> <span class="n">element</span><span class="o">==</span><span class="s1">&#39;baseline_raw&#39;</span><span class="p">:</span>
+        <span class="n">value</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">df</span> <span class="o">=</span> <span class="n">_prep_data_for_baseline_hazard</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="n">element</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">value</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">df</span> <span class="o">=</span> <span class="n">_prep_data_for_coefs</span><span class="p">(</span><span class="n">models</span><span class="o">=</span><span class="n">models</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="n">element</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">trans</span><span class="p">:</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="n">trans</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">value</span><span class="p">])</span>
+
+    <span class="c1"># select hue depending on number of elements</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">hue</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">hue</span> <span class="o">=</span> <span class="s1">&#39;model_cohort&#39;</span>
+
+    <span class="k">if</span> <span class="n">element</span><span class="o">==</span><span class="s1">&#39;baseline&#39;</span> <span class="ow">or</span> <span class="n">element</span><span class="o">==</span><span class="s1">&#39;baseline_raw&#39;</span><span class="p">:</span>
+        <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;h&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;v&#39;</span>
+
+    <span class="k">if</span> <span class="n">force_direction</span><span class="p">:</span>
+        <span class="n">direction</span> <span class="o">=</span> <span class="n">force_direction</span>
+
+    <span class="k">if</span> <span class="n">direction</span><span class="o">==</span><span class="s1">&#39;h&#39;</span><span class="p">:</span>
+        <span class="n">xval</span> <span class="o">=</span> <span class="n">variable</span>
+        <span class="n">yval</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">xval</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">yval</span> <span class="o">=</span> <span class="n">variable</span>
+
+    <span class="c1">## plot coefficients</span>
+    <span class="n">sb</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">xval</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">yval</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span> <span class="n">hue</span> <span class="o">=</span> <span class="n">hue</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">hue</span><span class="o">==</span><span class="s1">&#39;model_cohort&#39;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.05</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">borderaxespad</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="extract_params_long"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.utils.extract_params_long">[docs]</a><span class="k">def</span> <span class="nf">extract_params_long</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">rename_vars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">varnames</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function to extract &amp; reformat params</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    models (list):</span>
+<span class="sd">        List of model objects</span>
+<span class="sd">    element (string, optional):</span>
+<span class="sd">        Which element to plot. defaults to &#39;coefs&#39;.</span>
+<span class="sd">        Other options (depending on model type) include: </span>
+<span class="sd">        - &#39;grp_coefs&#39;</span>
+<span class="sd">        - &#39;baseline_hazard&#39;</span>
+<span class="sd">    rename_vars (dict, optional):</span>
+<span class="sd">        - dictionary mapping from integer positions (0, 1, 2) to variable names</span>
+<span class="sd">    varnames (list of strings, optional):</span>
+<span class="sd">        - list of variable names to apply to columns from the extracted object</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Pandas dataframe containing posterior draws per iteration</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+        <span class="n">df_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_extract_params_from_single_model</span><span class="p">(</span>
+            <span class="n">model</span><span class="p">,</span>
+            <span class="n">element</span> <span class="o">=</span> <span class="n">element</span><span class="p">,</span>
+            <span class="n">rename_vars</span><span class="o">=</span><span class="n">rename_vars</span><span class="p">,</span>
+            <span class="n">varnames</span><span class="o">=</span><span class="n">varnames</span>
+            <span class="p">))</span>
+    <span class="n">df_list</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_list</span><span class="p">)</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">df_list</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_extract_params_from_single_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">rename_vars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">varnames</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">varnames</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">model</span><span class="p">[</span><span class="s1">&#39;fit&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extract</span><span class="p">()[</span><span class="n">element</span><span class="p">]</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">model</span><span class="p">[</span><span class="s1">&#39;fit&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extract</span><span class="p">()[</span><span class="n">element</span><span class="p">]</span>
+            <span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">varnames</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">rename_vars</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="n">rename_vars</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;index&#39;</span><span class="p">:</span><span class="s1">&#39;iter&#39;</span><span class="p">})</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">id_vars</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;iter&#39;</span><span class="p">])</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;model_cohort&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="p">[</span><span class="s1">&#39;model_cohort&#39;</span><span class="p">]</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="filter_stan_summary"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.utils.filter_stan_summary">[docs]</a><span class="k">def</span> <span class="nf">filter_stan_summary</span><span class="p">(</span><span class="n">stan_fit</span><span class="p">,</span> <span class="n">pars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">remove_nan</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Filter stan fit summary, for the set of parameters in `pars`.</span>
+<span class="sd">        See ?pystan.summary for details about summary stats given.</span>
+<span class="sd">    </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        stan_fit: </span>
+<span class="sd">            StanFit object for which posterior draws are desired to be summarized</span>
+<span class="sd">        pars: (list, optional)</span>
+<span class="sd">            list of strings used to filter parameters. Passed directly to `pystan.summary`.</span>
+<span class="sd">            default: return all parameters</span>
+<span class="sd">        remove_nan: (bool, optional)</span>
+<span class="sd">            whether to remove (and report on) NaN values for Rhat. These are problematic for distplot.</span>
+
+<span class="sd">        Returns </span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas dataframe containing summary stats for posterior draws of selected parameters</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stan_fit</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stan_fit</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;More than one model passed to `filter_stan_summary`. Using only the first.&#39;</span><span class="p">)</span>
+        <span class="n">stan_fit</span> <span class="o">=</span> <span class="n">stan_fit</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;fit&#39;</span><span class="p">]</span>
+        <span class="c1">## else: assume stan_fit was passed correctly</span>
+    <span class="k">if</span> <span class="n">pars</span><span class="p">:</span>
+        <span class="n">fitsum</span> <span class="o">=</span> <span class="n">stan_fit</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">pars</span><span class="o">=</span><span class="n">pars</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fitsum</span> <span class="o">=</span> <span class="n">stan_fit</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">fitsum</span><span class="p">[</span><span class="s1">&#39;summary&#39;</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">fitsum</span><span class="p">[</span><span class="s1">&#39;summary_colnames&#39;</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">fitsum</span><span class="p">[</span><span class="s1">&#39;summary_rownames&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">remove_nan</span><span class="p">:</span>
+        <span class="c1">## most of NaN values are Rhat</span>
+        <span class="c1">## remove &amp; report on their frequency if remove_nan == True</span>
+        <span class="n">df_nan_rows</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">isnull</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">df_nan_rows</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Warning - </span><span class="si">{}</span><span class="s1"> rows removed due to NaN values for Rhat. This may indicate a problem in your model estimation.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">df_nan_rows</span><span class="p">[</span><span class="n">df_nan_rows</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()))</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df_nan_rows</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span><span class="s1">&#39;se_mean&#39;</span><span class="p">,</span><span class="s1">&#39;sd&#39;</span><span class="p">,</span><span class="s1">&#39;2.5%&#39;</span><span class="p">,</span><span class="s1">&#39;50%&#39;</span><span class="p">,</span><span class="s1">&#39;97.5%&#39;</span><span class="p">,</span><span class="s1">&#39;Rhat&#39;</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="print_stan_summary"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.utils.print_stan_summary">[docs]</a><span class="k">def</span> <span class="nf">print_stan_summary</span><span class="p">(</span><span class="n">stan_fit</span><span class="p">,</span> <span class="n">pars</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Convenience function to print stan fit summary, for the set of parameters in `pars`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        stan_fit: </span>
+<span class="sd">            StanFit object for which posterior draws are desired to be summarized</span>
+<span class="sd">        pars: (optional)</span>
+<span class="sd">            list of strings used to filter parameters. Passed directly to `pystan.summary`.</span>
+<span class="sd">            default: return all parameters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">filter_stan_summary</span><span class="p">(</span><span class="n">stan_fit</span><span class="o">=</span><span class="n">stan_fit</span><span class="p">,</span> <span class="n">pars</span><span class="o">=</span><span class="n">pars</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="plot_stan_summary"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.utils.plot_stan_summary">[docs]</a><span class="k">def</span> <span class="nf">plot_stan_summary</span><span class="p">(</span><span class="n">stan_fit</span><span class="p">,</span> <span class="n">pars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;Rhat&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Plot distribution of values in stan fit summary, for the set of parameters in `pars`.</span>
+
+<span class="sd">        Primary use case is to summarize Rhat estimates for set of parameters, as a quick check of convergence.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        stan_fit: </span>
+<span class="sd">            StanFit object for which posterior draws are desired to be summarized</span>
+<span class="sd">        pars: (list of str, optional)</span>
+<span class="sd">            list of strings used to filter parameters. Passed directly to `pystan.summary`.</span>
+<span class="sd">            default: return all parameters</span>
+<span class="sd">        metric: (str, optional)</span>
+<span class="sd">            the name of the metric to plot, as one of: [&#39;mean&#39;,&#39;se_mean&#39;,&#39;sd&#39;,&#39;2.5%&#39;,&#39;50%&#39;,&#39;97.5%&#39;,&#39;Rhat&#39;]</span>
+<span class="sd">            default: `Rhat`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">filter_stan_summary</span><span class="p">(</span><span class="n">stan_fit</span><span class="o">=</span><span class="n">stan_fit</span><span class="p">,</span> <span class="n">pars</span><span class="o">=</span><span class="n">pars</span><span class="p">,</span> <span class="n">remove_nan</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid metric (</span><span class="si">{}</span><span class="s1">). Should be one of </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)))</span>
+    <span class="n">sb</span><span class="o">.</span><span class="n">distplot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">metric</span><span class="p">])</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Jacki Novik.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
