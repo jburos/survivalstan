@@ -67,7 +67,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   examples/Example-using-pem_survival_model.ipynb
+   Usage.ipynb
 
 Indices and tables
 ==================

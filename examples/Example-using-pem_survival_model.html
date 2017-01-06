@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>The model &#8212; survivalstan 0.1.2.5 documentation</title>
+    <title>1. The model &#8212; survivalstan 0.1.2.5 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -27,7 +27,9 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="survivalstan 0.1.2.5 documentation" href="../index.html" />
-    <link rel="prev" title="survivalstan" href="../index.html" /> 
+    <link rel="up" title="Getting started" href="../Usage.html" />
+    <link rel="next" title="12. superficial check of convergence" href="Test pem_survival_model_timevarying with simulated data.html" />
+    <link rel="prev" title="Getting started" href="../Usage.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -40,9 +42,13 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../index.html" title="survivalstan"
+          <a href="Test pem_survival_model_timevarying with simulated data.html" title="12. superficial check of convergence"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../Usage.html" title="Getting started"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">survivalstan 0.1.2.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">survivalstan 0.1.2.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../Usage.html" accesskey="U">Getting started</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -248,7 +254,7 @@ INFO:stancache.seed:Setting seed to 1245502385
 </pre></div></div>
 </div>
 <div class="section" id="The-model">
-<h1>The model<a class="headerlink" href="#The-model" title="Permalink to this headline">¶</a></h1>
+<h1>1. The model<a class="headerlink" href="#The-model" title="Permalink to this headline">¶</a></h1>
 <p>This style of modeling is often called the &#8220;piecewise exponential
 model&#8221;, or PEM. It is the simplest case where we estimate the <em>hazard</em>
 of an event occurring in a time period as the outcome, rather than
@@ -282,7 +288,7 @@ piece.</p>
 <p>There are several variations on the PEM model implemented in
 <code class="docutils literal"><span class="pre">survivalstan</span></code>. In this notebook, we are exploring just one of them.</p>
 <div class="section" id="A-note-about-data-formatting">
-<h2>A note about data formatting<a class="headerlink" href="#A-note-about-data-formatting" title="Permalink to this headline">¶</a></h2>
+<h2>1.1. A note about data formatting<a class="headerlink" href="#A-note-about-data-formatting" title="Permalink to this headline">¶</a></h2>
 <p>When we model <em>Survival</em>, we typically operate on data in time-to-event
 form. In this form, we have one record per <code class="docutils literal"><span class="pre">Subject</span></code> (ie, per
 patient). Each record contains <code class="docutils literal"><span class="pre">[event_status,</span> <span class="pre">time_to_event]</span></code> as the
@@ -302,7 +308,7 @@ recieve data in this structure.</p>
 </div>
 </div>
 <div class="section" id="Stan-code-for-the-model">
-<h1>Stan code for the model<a class="headerlink" href="#Stan-code-for-the-model" title="Permalink to this headline">¶</a></h1>
+<h1>2. Stan code for the model<a class="headerlink" href="#Stan-code-for-the-model" title="Permalink to this headline">¶</a></h1>
 <p>This model is provided in <code class="docutils literal"><span class="pre">survivalstan.models.pem_survival_model</span></code>.
 Let&#8217;s take a look at the stan code.</p>
 <div class="nbinput container">
@@ -466,7 +472,7 @@ generated quantities {
 </div>
 </div>
 <div class="section" id="Simulate-survival-data">
-<h1>Simulate survival data<a class="headerlink" href="#Simulate-survival-data" title="Permalink to this headline">¶</a></h1>
+<h1>3. Simulate survival data<a class="headerlink" href="#Simulate-survival-data" title="Permalink to this headline">¶</a></h1>
 <p>In order to demonstrate the use of this model, we will first simulate
 some survival data using <code class="docutils literal"><span class="pre">survivalstan.sim.sim_data_exp_correlated</span></code>.
 As the name implies, this function simulates data assuming a constant
@@ -508,7 +514,7 @@ using a file-caching function <code class="docutils literal"><span class="pre">s
 call to <code class="docutils literal"><span class="pre">survivalstan.sim.sim_data_exp_correlated</span></code>. *</p>
 </div>
 <div class="section" id="Explore-simulated-data">
-<h1>Explore simulated data<a class="headerlink" href="#Explore-simulated-data" title="Permalink to this headline">¶</a></h1>
+<h1>4. Explore simulated data<a class="headerlink" href="#Explore-simulated-data" title="Permalink to this headline">¶</a></h1>
 <p>Here is what these data look like - this is <code class="docutils literal"><span class="pre">per-subject</span></code> or
 <code class="docutils literal"><span class="pre">time-to-event</span></code> form:</p>
 <div class="nbinput container">
@@ -637,7 +643,7 @@ functions provided by <code class="docutils literal"><span class="pre">survivals
 </div>
 </div>
 <div class="section" id="Transform-to-long-or-per-timepoint-form">
-<h1>Transform to <code class="docutils literal"><span class="pre">long</span></code> or <code class="docutils literal"><span class="pre">per-timepoint</span></code> form<a class="headerlink" href="#Transform-to-long-or-per-timepoint-form" title="Permalink to this headline">¶</a></h1>
+<h1>5. Transform to <code class="docutils literal"><span class="pre">long</span></code> or <code class="docutils literal"><span class="pre">per-timepoint</span></code> form<a class="headerlink" href="#Transform-to-long-or-per-timepoint-form" title="Permalink to this headline">¶</a></h1>
 <p>Finally, since this is a PEM model, we transform our data to <code class="docutils literal"><span class="pre">long</span></code> or
 <code class="docutils literal"><span class="pre">per-timepoint</span></code> form.</p>
 <div class="nbinput container">
@@ -1560,7 +1566,7 @@ per subject (<code class="docutils literal"><span class="pre">index</span></code
 </div>
 </div>
 <div class="section" id="Fit-stan-model">
-<h1>Fit stan model<a class="headerlink" href="#Fit-stan-model" title="Permalink to this headline">¶</a></h1>
+<h1>6. Fit stan model<a class="headerlink" href="#Fit-stan-model" title="Permalink to this headline">¶</a></h1>
 <p>Now, we are ready to fit our model using
 <code class="docutils literal"><span class="pre">survivalstan.fit_stan_survival_model</span></code>.</p>
 <p>We pass a few parameters to the fit function, many of which are
@@ -1621,7 +1627,7 @@ When unpickling the StanModel must be unpickled first.
 </div>
 </div>
 <div class="section" id="Superficial-review-of-convergence">
-<h1>Superficial review of convergence<a class="headerlink" href="#Superficial-review-of-convergence" title="Permalink to this headline">¶</a></h1>
+<h1>7. Superficial review of convergence<a class="headerlink" href="#Superficial-review-of-convergence" title="Permalink to this headline">¶</a></h1>
 <p>We will note here some top-level summaries of posterior draws &#8211; this is
 a minimal example so it&#8217;s unlikely that this model converged very well.</p>
 <p>In practice, you would want to do a lot more investigation of
@@ -1766,7 +1772,7 @@ get a sense of similarity among the chains for particular parameters.</p>
 </div>
 </div>
 <div class="section" id="Plot-posterior-estimates-of-parameters">
-<h1>Plot posterior estimates of parameters<a class="headerlink" href="#Plot-posterior-estimates-of-parameters" title="Permalink to this headline">¶</a></h1>
+<h1>8. Plot posterior estimates of parameters<a class="headerlink" href="#Plot-posterior-estimates-of-parameters" title="Permalink to this headline">¶</a></h1>
 <p>We can use <code class="docutils literal"><span class="pre">plot_coefs</span></code> to summarize posterior estimates of
 parameters.</p>
 <p>In this basic <code class="docutils literal"><span class="pre">pem_survival_model</span></code>, we estimate a parameter for
@@ -1826,7 +1832,7 @@ the value we used for our simulation (0.5).</p>
 </div>
 </div>
 <div class="section" id="Posterior-predictive-checking">
-<h1>Posterior predictive checking<a class="headerlink" href="#Posterior-predictive-checking" title="Permalink to this headline">¶</a></h1>
+<h1>9. Posterior predictive checking<a class="headerlink" href="#Posterior-predictive-checking" title="Permalink to this headline">¶</a></h1>
 <p>Finally, <code class="docutils literal"><span class="pre">survivalstan</span></code> provides some utilities for posterior
 predictive checking.</p>
 <p>The goal of posterior-predictive checking is to compare the uncertainty
@@ -1907,7 +1913,7 @@ provided they are included in the original dataframe provided to
 </div>
 </div>
 <div class="section" id="Building-up-the-plot-semi-manually,-for-more-customization">
-<h1>Building up the plot semi-manually, for more customization<a class="headerlink" href="#Building-up-the-plot-semi-manually,-for-more-customization" title="Permalink to this headline">¶</a></h1>
+<h1>10. Building up the plot semi-manually, for more customization<a class="headerlink" href="#Building-up-the-plot-semi-manually,-for-more-customization" title="Permalink to this headline">¶</a></h1>
 <p>We can also access the utility methods within <code class="docutils literal"><span class="pre">survivalstan.utils</span></code> to
 more or less produce the same plot. This sequence is intended to both
 illustrate how the above-described plot was constructed, and expose some
@@ -2048,7 +2054,7 @@ intervals with observed values.</p>
 </div>
 </div>
 <div class="section" id="Use-plotly-to-summarize-posterior-predicted-values">
-<h1>Use plotly to summarize posterior predicted values<a class="headerlink" href="#Use-plotly-to-summarize-posterior-predicted-values" title="Permalink to this headline">¶</a></h1>
+<h1>11. Use plotly to summarize posterior predicted values<a class="headerlink" href="#Use-plotly-to-summarize-posterior-predicted-values" title="Permalink to this headline">¶</a></h1>
 <p>First, we will precompute 50th and 95th posterior intervals for each
 observed timepoint, by group.</p>
 <div class="nbinput nblast container">
@@ -2205,25 +2211,28 @@ directly</em></p>
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">The model</a><ul>
-<li><a class="reference internal" href="#A-note-about-data-formatting">A note about data formatting</a></li>
+<li><a class="reference internal" href="#">1. The model</a><ul>
+<li><a class="reference internal" href="#A-note-about-data-formatting">1.1. A note about data formatting</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#Stan-code-for-the-model">Stan code for the model</a></li>
-<li><a class="reference internal" href="#Simulate-survival-data">Simulate survival data</a></li>
-<li><a class="reference internal" href="#Explore-simulated-data">Explore simulated data</a></li>
-<li><a class="reference internal" href="#Transform-to-long-or-per-timepoint-form">Transform to <code class="docutils literal"><span class="pre">long</span></code> or <code class="docutils literal"><span class="pre">per-timepoint</span></code> form</a></li>
-<li><a class="reference internal" href="#Fit-stan-model">Fit stan model</a></li>
-<li><a class="reference internal" href="#Superficial-review-of-convergence">Superficial review of convergence</a></li>
-<li><a class="reference internal" href="#Plot-posterior-estimates-of-parameters">Plot posterior estimates of parameters</a></li>
-<li><a class="reference internal" href="#Posterior-predictive-checking">Posterior predictive checking</a></li>
-<li><a class="reference internal" href="#Building-up-the-plot-semi-manually,-for-more-customization">Building up the plot semi-manually, for more customization</a></li>
-<li><a class="reference internal" href="#Use-plotly-to-summarize-posterior-predicted-values">Use plotly to summarize posterior predicted values</a></li>
+<li><a class="reference internal" href="#Stan-code-for-the-model">2. Stan code for the model</a></li>
+<li><a class="reference internal" href="#Simulate-survival-data">3. Simulate survival data</a></li>
+<li><a class="reference internal" href="#Explore-simulated-data">4. Explore simulated data</a></li>
+<li><a class="reference internal" href="#Transform-to-long-or-per-timepoint-form">5. Transform to <code class="docutils literal"><span class="pre">long</span></code> or <code class="docutils literal"><span class="pre">per-timepoint</span></code> form</a></li>
+<li><a class="reference internal" href="#Fit-stan-model">6. Fit stan model</a></li>
+<li><a class="reference internal" href="#Superficial-review-of-convergence">7. Superficial review of convergence</a></li>
+<li><a class="reference internal" href="#Plot-posterior-estimates-of-parameters">8. Plot posterior estimates of parameters</a></li>
+<li><a class="reference internal" href="#Posterior-predictive-checking">9. Posterior predictive checking</a></li>
+<li><a class="reference internal" href="#Building-up-the-plot-semi-manually,-for-more-customization">10. Building up the plot semi-manually, for more customization</a></li>
+<li><a class="reference internal" href="#Use-plotly-to-summarize-posterior-predicted-values">11. Use plotly to summarize posterior predicted values</a></li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../index.html"
-                        title="previous chapter">survivalstan</a></p>
+  <p class="topless"><a href="../Usage.html"
+                        title="previous chapter">Getting started</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Test pem_survival_model_timevarying with simulated data.html"
+                        title="next chapter">12. superficial check of convergence</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -2255,9 +2264,13 @@ directly</em></p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../index.html" title="survivalstan"
+          <a href="Test pem_survival_model_timevarying with simulated data.html" title="12. superficial check of convergence"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../Usage.html" title="Getting started"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">survivalstan 0.1.2.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">survivalstan 0.1.2.5 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../Usage.html" >Getting started</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
