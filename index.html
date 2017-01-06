@@ -44,19 +44,8 @@
             
   <div class="section" id="survivalstan">
 <h1>$survivalstan<a class="headerlink" href="#survivalstan" title="Permalink to this headline">¶</a></h1>
-<p>$survivalstan is a library of Survival Models implemented in <cite>Stan &lt;http://mc-stan.org&gt;</cite>
-with accompanying functions to make Bayesian survival modeling easier.</p>
-<p>Typical workflow:</p>
-<blockquote>
-<div><p># import survivalstan
-import survivalstan</p>
-<p># .. prep your data</p>
-<p># fit your model
-fit1 = survivalstan.fit_stan_survival_model(...)</p>
-<p># inspect output
-survivalstan.utils.plot_stan_summary([fit1], metric=&#8217;Rhat&#8217;)
-survivalstan.utils.plot_coefs([fit1])</p>
-</div></blockquote>
+<p>Survivalstan is a library of Survival Models written in <a class="reference external" href="http://mc-stan.org">Stan</a></p>
+<p>It also contains a number of utility functions helpful when doing survival analysis.</p>
 <div class="section" id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <ul>
@@ -74,15 +63,15 @@ survivalstan.utils.plot_coefs([fit1])</p>
 </li>
 <li><p class="first">Extensible framework - bring your own Stan code, or edit the models provided</p>
 </li>
-<li><p class="first">Uses <cite>pandas &lt;https://pandas.pydata.org&gt;</cite> data frames &amp; <cite>patsy &lt;https://pypi.python.org/pypi/patsy&gt;</cite> formulas</p>
+<li><p class="first">Uses <a class="reference external" href="https://pandas.pydata.org">pandas</a> data frames &amp; <a class="reference external" href="https://pypi.python.org/pypi/patsy">patsy</a> formulas</p>
 </li>
-<li><p class="first">Graphical posterior predictive checking (currently PEM models only)</p>
+<li><p class="first">Graphical posterior predictive checking</p>
 </li>
-<li><p class="first">Plot posterior estimates of key parameters using <cite>seaborn &lt;https://pypi.python.org/pypi/seaborn&gt;</cite></p>
+<li><p class="first">Plot posterior estimates of key parameters using <a class="reference external" href="https://pypi.python.org/pypi/seaborn">seaborn</a></p>
 </li>
-<li><p class="first">Annotated posterior draws of parameter estimates, as <cite>pandas &lt;http://pandas.pydata.org&gt;</cite> dataframes</p>
+<li><p class="first">Annotated posterior draws of parameter estimates, as <a class="reference external" href="http://pandas.pydata.org">pandas</a> dataframes</p>
 </li>
-<li><p class="first">Supports caching via as <cite>stancache &lt;http://github.com/jburos/stancache&gt;</cite> or <cite>pystan-cache &lt;https://github.com/paulkernfeld/pystan-cache&gt;</cite></p>
+<li><p class="first">Supports caching via as <a class="reference external" href="http://github.com/jburos/stancache">stancache</a> or <a class="reference external" href="https://github.com/paulkernfeld/pystan-cache">pystan-cache</a></p>
 </li>
 </ul>
 </div>
