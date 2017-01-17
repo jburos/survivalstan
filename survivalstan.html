@@ -82,19 +82,10 @@
           
             
             
-                <!-- Local TOC -->
-                <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">survivalstan package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-survivalstan.models">survivalstan.models module</a></li>
-<li><a class="reference internal" href="#module-survivalstan.sim">survivalstan.sim module</a></li>
-<li><a class="reference internal" href="#module-survivalstan.survivalstan">survivalstan.survivalstan module</a></li>
-<li><a class="reference internal" href="#module-survivalstan.utils">survivalstan.utils module</a></li>
-<li><a class="reference internal" href="#module-survivalstan">Module contents</a></li>
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="Usage.html">Getting started</a></li>
 </ul>
-</li>
-</ul>
-</div>
+
             
           
         </div>
@@ -181,36 +172,44 @@
 </div>
 <div class="section" id="module-survivalstan.sim">
 <span id="survivalstan-sim-module"></span><h2>survivalstan.sim module<a class="headerlink" href="#module-survivalstan.sim" title="Permalink to this headline">¶</a></h2>
-<p>Functions to simulate failure-time data 
+<p>Functions to simulate failure-time data
 for testing &amp; model checking purposes</p>
 <dl class="function">
 <dt id="survivalstan.sim.sim_data_exp">
 <code class="descclassname">survivalstan.sim.</code><code class="descname">sim_data_exp</code><span class="sig-paren">(</span><em>N</em>, <em>censor_time</em>, <em>rate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/sim.html#sim_data_exp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.sim.sim_data_exp" title="Permalink to this definition">¶</a></dt>
 <dd><p>simulate true lifetimes (t) according to exponential model</p>
-<blockquote>
-<div><p>N: (int) number of observations 
-censor_time: (float) uniform censor time for each observation</p>
-<blockquote>
-<div><blockquote>
-<div>rate: (float, positive) hazard rate used to parameterize failure times</div></blockquote>
-<dl class="docutils">
-<dt>pandas DataFrame with N observations, and 3 columns:</dt>
-<dd><ul class="first last">
-<li><p class="first">true_t: &#8220;actual&#8221; simulated failure time</p>
-</li>
-<li><p class="first">t: observed failure/censor time, given censor_time</p>
-</li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>N</strong> (<em>(int) number of observations</em>) &#8211; </li>
+<li><strong>censor_time</strong> (<em>(float) uniform censor time for each observation</em>) &#8211; <p>rate: (float, positive) hazard rate used to parameterize failure times</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><ul class="first">
+<li>true_t: &#8220;actual&#8221; simulated failure time</li>
+<li>t: observed failure/censor time, given censor_time</li>
 <li><dl class="first docutils">
 <dt>event: boolean indicating if failure event was observed (TRUE)</dt>
-<dd><p class="first last">or censored (FALSE)</p>
-</dd>
+<dd>or censored (FALSE)</dd>
 </dl>
 </li>
 </ul>
-</dd>
-</dl>
-</div></blockquote>
-</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">rtype:</th><td class="field-body">pandas DataFrame with N observations, and 3 columns</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -219,33 +218,33 @@ censor_time: (float) uniform censor time for each observation</p>
 <dd><blockquote>
 <div><p>simulate true lifetimes (t) according to exponential model</p>
 <blockquote>
-<div>N: (int) number of observations 
+<div>N: (int) number of observations
 censor_time: (float) uniform censor time for each observation
 rate_form: names of variables to use when estimating rate. defaults to <cite>&#8216;1 + age + sex&#8217;</cite>
 rate_coefs: inputs to rate-calc (coefs used to estimate log-rate). defaults to <cite>[-3, 0.3, 0]</cite></div></blockquote>
 </div></blockquote>
-<dl class="docutils">
-<dt>pandas DataFrame with N observations, and 3 columns:</dt>
-<dd><ul class="first last">
-<li><p class="first">true_t: &#8220;actual&#8221; simulated failure time</p>
-</li>
-<li><p class="first">t: observed failure/censor time, given censor_time</p>
-</li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul>
+<li>true_t: &#8220;actual&#8221; simulated failure time</li>
+<li>t: observed failure/censor time, given censor_time</li>
 <li><dl class="first docutils">
 <dt>event: boolean indicating if failure event was observed (TRUE)</dt>
-<dd><p class="first last">or censored (FALSE)</p>
-</dd>
+<dd>or censored (FALSE)</dd>
 </dl>
 </li>
-<li><p class="first">age: simulated age in years (poisson random variable, expectation = 55)</p>
-</li>
-<li><p class="first">sex: simulated sex, as &#8216;female&#8217; or &#8216;male&#8217; (uniform 50/50 split)</p>
-</li>
-<li><p class="first">rate: simulated rate value for each obs</p>
-</li>
+<li>age: simulated age in years (poisson random variable, expectation = 55)</li>
+<li>sex: simulated sex, as &#8216;female&#8217; or &#8216;male&#8217; (uniform 50/50 split)</li>
+<li>rate: simulated rate value for each obs</li>
 </ul>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">pandas DataFrame with N observations, and 3 columns</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -267,20 +266,29 @@ rate_coefs: inputs to rate-calc (coefs used to estimate log-rate). defaults to <
 <dt id="survivalstan.survivalstan.fit_stan_survival_model">
 <code class="descclassname">survivalstan.survivalstan.</code><code class="descname">fit_stan_survival_model</code><span class="sig-paren">(</span><em>df</em>, <em>formula</em>, <em>event_col</em>, <em>model_code=None</em>, <em>file=None</em>, <em>model_cohort='survival model'</em>, <em>time_col=None</em>, <em>sample_id_col=None</em>, <em>sample_col=None</em>, <em>group_id_col=None</em>, <em>group_col=None</em>, <em>timepoint_id_col=None</em>, <em>timepoint_end_col=None</em>, <em>make_inits=None</em>, <em>stan_data=None</em>, <em>grp_coef_type=None</em>, <em>FIT_FUN=&lt;function fit&gt;</em>, <em>drop_intercept=True</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/survivalstan.html#fit_stan_survival_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.survivalstan.fit_stan_survival_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function prepares inputs appropriate for stan model model code, and fits that model using Stan.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>df</strong> (<em>pandas DataFrame</em>) &#8211; The data frame containing input data to Survival model.</li>
+<li><strong>formula</strong> (<em>chr</em>) &#8211; Patsy formula to use for covariates. E.g &#8216;met_status + pd_l1&#8217;</li>
+<li><strong>event_col</strong> (<em>chr</em>) &#8211; name of column containing event status. Will be coerced to int</li>
+<li><strong>model_code</strong> (<em>chr</em>) &#8211; stan model code to use.</li>
+<li><strong>file</strong> (<em>chr</em>) &#8211; path to stan file (if model_code not given).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="docutils">
-<dt>Args:</dt>
-<dd>df (pandas DataFrame):  The data frame containing input data to Survival model.
-formula (chr): Patsy formula to use for covariates. E.g &#8216;met_status + pd_l1&#8217;
-event_col (chr): name of column containing event status. Will be coerced to int
-model_code (chr): stan model code to use.
-file (chr): path to stan file (if model_code not given).</dd>
 <dt>Kwargs:</dt>
 <dd><p class="first">model_cohort (chr): description of this model fit, to be used when plotting or summarizing output
 time_col (chr): name of column containing event time &#8211; used for parameteric (Weibull) model
 sample_id_col (chr): name of column containing numeric sample ids (1-indexed &amp; sequential)
 sample_col (chr): name of column containing sample descriptions - will be converted to an ID
 group_id_col (chr): name of column containing numeric group ids (1-indexed &amp; sequential)
-group_col (chr): name of column containing group descriptions - will be converted to an ID 
+group_col (chr): name of column containing group descriptions - will be converted to an ID
 timepoint_id_col (chr): name of column containing timepoint ids (1-indexed &amp; sequential)
 timepoint_end_col (chr): name of column containing end times for each timepoint (will be converted to an ID)
 stan_data (dict): extra params passed to stan data object
@@ -297,22 +305,28 @@ grp_coef_type (chr): type of group coef specified, if using a varying-coef model
 </div></blockquote>
 <p class="last">drop_intercept (bool): whether to drop the intercept term from the model matrix (default: True)</p>
 </dd>
-<dt>Returns:</dt>
-<dd><p class="first">dictionary of results objects.  Contents:</p>
-<div class="last highlight-default"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">:</span> <span class="n">Pandas</span> <span class="n">data</span> <span class="n">frame</span> <span class="n">containing</span> <span class="nb">input</span> <span class="n">data</span><span class="p">,</span> <span class="n">filtered</span> <span class="n">to</span> <span class="n">non</span><span class="o">-</span><span class="n">missing</span> <span class="n">obs</span> <span class="o">&amp;</span> <span class="k">with</span> <span class="n">ID</span> <span class="n">variables</span> <span class="n">created</span>
-<span class="n">x_df</span><span class="p">:</span> <span class="n">Covariate</span> <span class="n">matrix</span> <span class="n">passed</span> <span class="n">to</span> <span class="n">Stan</span>
-<span class="n">x_names</span><span class="p">:</span> <span class="n">Column</span> <span class="n">names</span> <span class="k">for</span> <span class="n">the</span> <span class="n">covariate</span> <span class="n">matrix</span> <span class="n">passed</span> <span class="n">to</span> <span class="n">Stan</span>
-<span class="n">data</span><span class="p">:</span> <span class="n">List</span> <span class="n">passed</span> <span class="n">to</span> <span class="n">Stan</span> <span class="o">-</span> <span class="n">contains</span> <span class="n">dimensions</span><span class="p">,</span> <span class="n">etc</span><span class="o">.</span>
-<span class="n">fit</span><span class="p">:</span> <span class="n">pystan</span> <span class="n">fit</span> <span class="nb">object</span> <span class="n">returned</span> <span class="kn">from</span> <span class="nn">Stan</span> <span class="n">call</span>
-<span class="n">coefs</span><span class="p">:</span> <span class="n">posterior</span> <span class="n">draws</span> <span class="k">for</span> <span class="n">coefficient</span> <span class="n">values</span>
-<span class="n">loo</span><span class="p">:</span> <span class="n">psis</span><span class="o">-</span><span class="n">loo</span> <span class="nb">object</span> <span class="n">returned</span> <span class="k">for</span> <span class="n">fit</span> <span class="n">model</span><span class="o">.</span> <span class="n">Used</span> <span class="k">for</span> <span class="n">model</span> <span class="n">comparison</span> <span class="o">&amp;</span> <span class="n">summary</span>
-<span class="n">model_cohort</span><span class="p">:</span> <span class="n">description</span> <span class="n">of</span> <span class="n">this</span> <span class="n">model</span> <span class="ow">and</span><span class="o">/</span><span class="ow">or</span> <span class="n">cohort</span> <span class="n">on</span> <span class="n">which</span> <span class="n">the</span> <span class="n">model</span> <span class="n">was</span> <span class="n">fit</span>
-</pre></div>
-</div>
-</dd>
-<dt>Raises:</dt>
-<dd>AttributeError, KeyError</dd>
 </dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">:<blockquote>
+<div>df: Pandas data frame containing input data, filtered to non-missing obs &amp; with ID variables created
+x_df: Covariate matrix passed to Stan
+x_names: Column names for the covariate matrix passed to Stan
+data: List passed to Stan - contains dimensions, etc.
+fit: pystan fit object returned from Stan call
+coefs: posterior draws for coefficient values
+loo: psis-loo object returned for fit model. Used for model comparison &amp; summary
+model_cohort: description of this model and/or cohort on which the model was fit</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dictionary of results objects.  Contents</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">AttributeError, KeyError</td>
+</tr>
+</tbody>
+</table>
 <p>Generic helper function for fitting variety of survival models using Stan.</p>
 <p>Example:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">testfit</span> <span class="o">=</span> <span class="n">fit_stan_survival_model</span><span class="p">(</span>
@@ -350,26 +364,35 @@ grp_coef_type (chr): type of group coef specified, if using a varying-coef model
 <dt id="survivalstan.utils.extract_params_long">
 <code class="descclassname">survivalstan.utils.</code><code class="descname">extract_params_long</code><span class="sig-paren">(</span><em>models</em>, <em>element</em>, <em>rename_vars=None</em>, <em>varnames=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/utils.html#extract_params_long"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.utils.extract_params_long" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper function to extract &amp; reformat params</p>
-<dl class="docutils">
-<dt>models (list):</dt>
-<dd>List of model objects</dd>
-<dt>element (string, optional):</dt>
-<dd>Which element to plot. defaults to &#8216;coefs&#8217;.
-Other options (depending on model type) include: 
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>(list)</strong> (<a class="reference internal" href="#module-survivalstan.models" title="survivalstan.models"><em>models</em></a>) &#8211; List of model objects</li>
+<li><strong>(string, optional)</strong> (<em>element</em>) &#8211; Which element to plot. defaults to &#8216;coefs&#8217;.
+Other options (depending on model type) include:
 - &#8216;grp_coefs&#8217;
-- &#8216;baseline_hazard&#8217;</dd>
-<dt>rename_vars (dict, optional):</dt>
-<dd><ul class="first last simple">
+- &#8216;baseline_hazard&#8217;</li>
+<li><strong>(dict, optional)</strong> (<em>rename_vars</em>) &#8211; <ul>
 <li>dictionary mapping from integer positions (0, 1, 2) to variable names</li>
 </ul>
-</dd>
-<dt>varnames (list of strings, optional):</dt>
-<dd><ul class="first last simple">
+</li>
+<li><strong>(list of strings, optional)</strong> (<em>varnames</em>) &#8211; <ul>
 <li>list of variable names to apply to columns from the extracted object</li>
 </ul>
-</dd>
-</dl>
-<p>Pandas dataframe containing posterior draws per iteration</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Pandas dataframe containing posterior draws per iteration</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -382,16 +405,26 @@ Other options (depending on model type) include:
 <code class="descclassname">survivalstan.utils.</code><code class="descname">filter_stan_summary</code><span class="sig-paren">(</span><em>stan_fit</em>, <em>pars=None</em>, <em>remove_nan=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/utils.html#filter_stan_summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.utils.filter_stan_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter stan fit summary, for the set of parameters in <cite>pars</cite>.
 See ?pystan.summary for details about summary stats given.</p>
-<dl class="docutils">
-<dt>stan_fit: </dt>
-<dd>StanFit object for which posterior draws are desired to be summarized</dd>
-<dt>pars: (list, optional)</dt>
-<dd>list of strings used to filter parameters. Passed directly to <cite>pystan.summary</cite>.
-default: return all parameters</dd>
-<dt>remove_nan: (bool, optional)</dt>
-<dd>whether to remove (and report on) NaN values for Rhat. These are problematic for distplot.</dd>
-</dl>
-<p>pandas dataframe containing summary stats for posterior draws of selected parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>stan_fit</strong> &#8211; StanFit object for which posterior draws are desired to be summarized</li>
+<li><strong>pars</strong> (<em>(list, optional)</em>) &#8211; list of strings used to filter parameters. Passed directly to <cite>pystan.summary</cite>.
+default: return all parameters</li>
+<li><strong>remove_nan</strong> (<em>(bool, optional)</em>) &#8211; whether to remove (and report on) NaN values for Rhat. These are problematic for distplot.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pandas dataframe containing summary stats for posterior draws of selected parameters</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -403,37 +436,41 @@ default: return all parameters</dd>
 <dt id="survivalstan.utils.plot_coefs">
 <code class="descclassname">survivalstan.utils.</code><code class="descname">plot_coefs</code><span class="sig-paren">(</span><em>models</em>, <em>element='coefs'</em>, <em>force_direction=None</em>, <em>trans=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/utils.html#plot_coefs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.utils.plot_coefs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot coefficients for models listed</p>
-<dl class="docutils">
-<dt>models (list):</dt>
-<dd>List of model objects</dd>
-<dt>element (string, optional):</dt>
-<dd>Which element to plot. defaults to &#8216;coefs&#8217;.
-Other options (depending on model type) include: 
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>(list)</strong> (<a class="reference internal" href="#module-survivalstan.models" title="survivalstan.models"><em>models</em></a>) &#8211; List of model objects</li>
+<li><strong>(string, optional)</strong> (<em>force_direction</em>) &#8211; Which element to plot. defaults to &#8216;coefs&#8217;.
+Other options (depending on model type) include:
 - &#8216;grp_coefs&#8217;
 - &#8216;baseline&#8217;
-- &#8216;beta_time&#8217;</dd>
-<dt>force_direction (string, optional):</dt>
-<dd><dl class="first docutils">
+- &#8216;beta_time&#8217;</li>
+<li><strong>(string, optional)</strong> &#8211; <dl class="docutils">
 <dt>Takes values &#8216;h&#8217; or &#8216;v&#8217;</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>if &#8216;h&#8217;: forces horizontal orientation, (<cite>variable</cite> names along the x axis)</li>
 <li>if &#8216;v&#8217;: forces vertical orientation (<cite>variable</cite> names along the y axis)</li>
 </ul>
 </dd>
 </dl>
-<p class="last">if None (default), coef plots default to &#8216;v&#8217; for all plots except baseline hazard.</p>
-</dd>
-<dt>trans (function, optional):</dt>
-<dd><dl class="first docutils">
+<p>if None (default), coef plots default to &#8216;v&#8217; for all plots except baseline hazard.</p>
+</li>
+<li><strong>(function, optional)</strong> (<em>trans</em>) &#8211; <dl class="docutils">
 <dt>If present, transforms value of <cite>value</cite> column</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>example: np.exp to plot exp(beta)</li>
 </ul>
 </dd>
 </dl>
-<p class="last">if None (default), plots raw value</p>
-</dd>
-</dl>
+<p>if None (default), plots raw value</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -451,16 +488,21 @@ Other options (depending on model type) include:
 <code class="descclassname">survivalstan.utils.</code><code class="descname">plot_stan_summary</code><span class="sig-paren">(</span><em>stan_fit</em>, <em>pars=None</em>, <em>metric='Rhat'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/utils.html#plot_stan_summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.utils.plot_stan_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot distribution of values in stan fit summary, for the set of parameters in <cite>pars</cite>.</p>
 <p>Primary use case is to summarize Rhat estimates for set of parameters, as a quick check of convergence.</p>
-<dl class="docutils">
-<dt>stan_fit: </dt>
-<dd>StanFit object for which posterior draws are desired to be summarized</dd>
-<dt>pars: (list of str, optional)</dt>
-<dd>list of strings used to filter parameters. Passed directly to <cite>pystan.summary</cite>.
-default: return all parameters</dd>
-<dt>metric: (str, optional)</dt>
-<dd>the name of the metric to plot, as one of: [&#8216;mean&#8217;,&#8217;se_mean&#8217;,&#8217;sd&#8217;,&#8216;2.5%&#8217;,&#8216;50%&#8217;,&#8216;97.5%&#8217;,&#8217;Rhat&#8217;]
-default: <cite>Rhat</cite></dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stan_fit</strong> &#8211; StanFit object for which posterior draws are desired to be summarized</li>
+<li><strong>pars</strong> (<em>(list of str, optional)</em>) &#8211; list of strings used to filter parameters. Passed directly to <cite>pystan.summary</cite>.
+default: return all parameters</li>
+<li><strong>metric</strong> (<em>(str, optional)</em>) &#8211; the name of the metric to plot, as one of: [&#8216;mean&#8217;,&#8217;se_mean&#8217;,&#8217;sd&#8217;,&#8216;2.5%&#8217;,&#8216;50%&#8217;,&#8216;97.5%&#8217;,&#8217;Rhat&#8217;]
+default: <cite>Rhat</cite></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -482,38 +524,44 @@ default: <cite>Rhat</cite></dd>
 <dt id="survivalstan.utils.print_stan_summary">
 <code class="descclassname">survivalstan.utils.</code><code class="descname">print_stan_summary</code><span class="sig-paren">(</span><em>stan_fit</em>, <em>pars=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/utils.html#print_stan_summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.utils.print_stan_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function to print stan fit summary, for the set of parameters in <cite>pars</cite>.</p>
-<dl class="docutils">
-<dt>stan_fit: </dt>
-<dd>StanFit object for which posterior draws are desired to be summarized</dd>
-<dt>pars: (optional)</dt>
-<dd>list of strings used to filter parameters. Passed directly to <cite>pystan.summary</cite>.
-default: return all parameters</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stan_fit</strong> &#8211; StanFit object for which posterior draws are desired to be summarized</li>
+<li><strong>pars</strong> (<em>(optional)</em>) &#8211; list of strings used to filter parameters. Passed directly to <cite>pystan.summary</cite>.
+default: return all parameters</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="survivalstan.utils.read_files">
 <code class="descclassname">survivalstan.utils.</code><code class="descname">read_files</code><span class="sig-paren">(</span><em>path</em>, <em>pattern='*.stan'</em>, <em>encoding='utf-8'</em>, <em>resource=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/utils.html#read_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.utils.read_files" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reads file contents from a directory path into memory. Returns a 
+<dd><p>Reads file contents from a directory path into memory. Returns a
 dictionary of file names: file contents.</p>
 <p>Is intended to be used to load a directory of stan files into an object.</p>
-<dl class="docutils">
-<dt>path (string):</dt>
-<dd>directory path (can be relative or absolute)</dd>
-<dt>pattern (string, optional):</dt>
-<dd>regex pattern applied to files on import
-defaults to &#8220;<a href="#id1"><span class="problematic" id="id2">*</span></a>.stan&#8221;</dd>
-<dt>encoding (string, optional):</dt>
-<dd>encoding to use when importing files
-defaults to &#8220;UTF-8&#8221;</dd>
-<dt>resource (string, optional):</dt>
-<dd>if given, path is relative to package install root
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>(string)</strong> (<em>path</em>) &#8211; directory path (can be relative or absolute)</li>
+<li><strong>(string, optional)</strong> (<em>resource</em>) &#8211; regex pattern applied to files on import
+defaults to &#8220;<a href="#id1"><span class="problematic" id="id2">*</span></a>.stan&#8221;</li>
+<li><strong>(string, optional)</strong> &#8211; encoding to use when importing files
+defaults to &#8220;UTF-8&#8221;</li>
+<li><strong>(string, optional)</strong> &#8211; if given, path is relative to package install root
 used to load stan files provided by packages
-(e.g. those within a package library)</dd>
-</dl>
-<dl class="docutils">
-<dt>The specifics of the return type depend on the value of <cite>resource</cite>.</dt>
-<dd><ul class="first last">
+(e.g. those within a package library)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><ul>
 <li><p class="first">if resource is None, returns contents of file as a character string</p>
 </li>
 <li><dl class="first docutils">
@@ -523,8 +571,14 @@ used to load stan files provided by packages
 </dl>
 </li>
 </ul>
-</dd>
-</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">The specifics of the return type depend on the value of <cite>resource</cite>.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
