@@ -70,6 +70,12 @@ Contents:
 
    Usage.ipynb
    Examples.ipynb
+   modules.rst
+
+Examples
+--------
+
+- :doc:`examples/Example-using-pem_survival_model.ipynb`
 
 Indices and tables
 ==================
