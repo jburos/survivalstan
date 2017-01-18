@@ -20,6 +20,8 @@
     }
    },
    "source": [
+    "# Example notebooks\n",
+    "\n",
     "* [PEM survival model with unstructured hazard](Example-using-pem_survival_model.ipynb)\n",
     "* [PEM survival model with gamma hazard](Test pem_survival_model_gamma with simulated data.ipynb)\n",
     "* [PEM survival model with randomwalk hazard](Test pem_survival_model_randomwalk with simulated data.ipynb)\n",
