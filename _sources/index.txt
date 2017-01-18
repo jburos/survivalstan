@@ -13,6 +13,6 @@
    home.rst
    Usage.ipynb
    Examples.ipynb
-   modules.rst
+   api.rst
 
 
