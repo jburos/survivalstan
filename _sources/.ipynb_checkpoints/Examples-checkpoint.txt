@@ -1,0 +1,54 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Worked examples\n",
+    "\n",
+    "Each of the following notebooks walks through an analysis of simulated data.\n",
+    "\n",
+    "Please submit feedback or comments as an [issue](http://github.com/hammerlab/survivalstan/issues) or on [gitter:survivalstan]().\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "nbsphinx-toctree": {
+     "maxdepth": 2
+    }
+   },
+   "source": [
+    "* [PEM survival model with unstructured hazard](Example-using-pem_survival_model.ipynb)\n",
+    "* [PEM survival model with gamma hazard](Test pem_survival_model_gamma with simulated data.ipynb)\n",
+    "* [PEM survival model with randomwalk hazard](Test pem_survival_model_randomwalk with simulated data.ipynb)\n",
+    "* [PEM survival model with time-dependent effects](Test pem_survival_model_timevarying with simulated data.ipynb)\n",
+    "* [User-supplied PEM survival model with gamma hazard](Test new_gamm_survival_model with simulated data.ipynb)\n"
+   ]
+  }
+ ],
+ "metadata": {
+  "anaconda-cloud": {},
+  "celltoolbar": "Edit Metadata",
+  "kernelspec": {
+   "display_name": "Python [conda env:newbladder2]",
+   "language": "python",
+   "name": "conda-env-newbladder2-py"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 2
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython2",
+   "version": "2.7.13"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 1
+}

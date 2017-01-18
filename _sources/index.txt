@@ -69,7 +69,7 @@ Contents:
    :glob:
 
    Usage.ipynb
-   examples.rst
+   Examples.ipynb
 
 Indices and tables
 ==================
