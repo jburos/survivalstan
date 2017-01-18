@@ -1,4 +1,4 @@
-survivalstan
+API
 ============
 
 .. toctree::
