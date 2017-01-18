@@ -84,12 +84,6 @@
             
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../Usage.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Example-using-pem_survival_model.html">Fitting a piecewise-exponential model (PEM) to simulated data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Test new_gamma_survival_model with simulated data.html">Optimizing Stan code for a user-provided Gamma model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Test pem_survival_model_gamma with simulated data.html">Estimating a PEM survival model with Gamma baseline hazard</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Test pem_survival_model_randomwalk with simulated data.html">PEM survival model with random-walk baseline hazard</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../Test pem_survival_model_timevarying with simulated data.html">A PEM Survival Model with Time-Dependent Effects</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">survivalstan</a></li>
 </ul>
 
             
@@ -330,16 +324,16 @@ div.nboutput div.output_area.stderr {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
-<span class="o">%</span><span class="k">autoreload</span> 2
-<span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">13847942484</span><span class="p">)</span>
-<span class="kn">import</span> <span class="nn">survivalstan</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">stancache</span> <span class="k">import</span> <span class="n">stancache</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span></span>%load_ext autoreload
+%autoreload 2
+%matplotlib inline
+import random
+random.seed(13847942484)
+import survivalstan
+import numpy as np
+import pandas as pd
+from stancache import stancache
+from matplotlib import pyplot as plt
 </pre></div>
 </div>
 </div>
@@ -366,7 +360,7 @@ The autoreload extension is already loaded. To reload it, use:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="nb">print</span><span class="p">(</span><span class="n">survivalstan</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">pem_survival_model_timevarying</span><span class="p">)</span>
+<span></span>print(survivalstan.models.pem_survival_model_timevarying)
 </pre></div>
 </div>
 </div>
@@ -596,15 +590,15 @@ generated quantities {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">d</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached</span><span class="p">(</span>
-    <span class="n">survivalstan</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">sim_data_exp_correlated</span><span class="p">,</span>
-    <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-    <span class="n">censor_time</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-    <span class="n">rate_form</span><span class="o">=</span><span class="s1">&#39;1 + sex&#39;</span><span class="p">,</span>
-    <span class="n">rate_coefs</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
-<span class="p">)</span>
-<span class="n">d</span><span class="p">[</span><span class="s1">&#39;age_centered&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-<span class="n">d</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span></span>d = stancache.cached(
+    survivalstan.sim.sim_data_exp_correlated,
+    N=100,
+    censor_time=20,
+    rate_form=&#39;1 + sex&#39;,
+    rate_coefs=[-3, 0.5],
+)
+d[&#39;age_centered&#39;] = d[&#39;age&#39;] - d[&#39;age&#39;].mean()
+d.head()
 </pre></div>
 </div>
 </div>
@@ -704,9 +698,9 @@ INFO:stancache.stancache:sim_data_exp_correlated: Loading result from cache
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;female&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;female&#39;</span><span class="p">)</span>
-<span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;male&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;male&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span></span>survivalstan.utils.plot_observed_survival(df=d[d[&#39;sex&#39;]==&#39;female&#39;], event_col=&#39;event&#39;, time_col=&#39;t&#39;, label=&#39;female&#39;)
+survivalstan.utils.plot_observed_survival(df=d[d[&#39;sex&#39;]==&#39;male&#39;], event_col=&#39;event&#39;, time_col=&#39;t&#39;, label=&#39;male&#39;)
+plt.legend()
 </pre></div>
 </div>
 </div>
@@ -733,11 +727,11 @@ INFO:stancache.stancache:sim_data_exp_correlated: Loading result from cache
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">dlong</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached</span><span class="p">(</span>
-    <span class="n">survivalstan</span><span class="o">.</span><span class="n">prep_data_long_surv</span><span class="p">,</span>
-    <span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span>
-<span class="p">)</span>
-<span class="n">dlong</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="s1">&#39;end_time&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span></span>dlong = stancache.cached(
+    survivalstan.prep_data_long_surv,
+    df=d, event_col=&#39;event&#39;, time_col=&#39;t&#39;
+)
+dlong.sort_values([&#39;index&#39;, &#39;end_time&#39;], inplace=True)
 </pre></div>
 </div>
 </div>
@@ -756,7 +750,7 @@ INFO:stancache.stancache:prep_data_long_surv: Loading result from cache
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">dlong</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span></span>dlong.head()
 </pre></div>
 </div>
 </div>
@@ -865,19 +859,19 @@ INFO:stancache.stancache:prep_data_long_surv: Loading result from cache
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">testfit</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
-    <span class="n">model_cohort</span> <span class="o">=</span> <span class="s1">&#39;test model&#39;</span><span class="p">,</span>
-    <span class="n">model_code</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">pem_survival_model_timevarying</span><span class="p">,</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">dlong</span><span class="p">,</span>
-    <span class="n">sample_col</span> <span class="o">=</span> <span class="s1">&#39;index&#39;</span><span class="p">,</span>
-    <span class="n">timepoint_end_col</span> <span class="o">=</span> <span class="s1">&#39;end_time&#39;</span><span class="p">,</span>
-    <span class="n">event_col</span> <span class="o">=</span> <span class="s1">&#39;end_failure&#39;</span><span class="p">,</span>
-    <span class="n">formula</span> <span class="o">=</span> <span class="s1">&#39;~ age_centered + sex&#39;</span><span class="p">,</span>
-    <span class="nb">iter</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
-    <span class="n">chains</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="n">seed</span> <span class="o">=</span> <span class="mi">9001</span><span class="p">,</span>
-    <span class="n">FIT_FUN</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached_stan_fit</span><span class="p">,</span>
-    <span class="p">)</span>
+<span></span>testfit = survivalstan.fit_stan_survival_model(
+    model_cohort = &#39;test model&#39;,
+    model_code = survivalstan.models.pem_survival_model_timevarying,
+    df = dlong,
+    sample_col = &#39;index&#39;,
+    timepoint_end_col = &#39;end_time&#39;,
+    event_col = &#39;end_failure&#39;,
+    formula = &#39;~ age_centered + sex&#39;,
+    iter = 10000,
+    chains = 4,
+    seed = 9001,
+    FIT_FUN = stancache.cached_stan_fit,
+    )
 </pre></div>
 </div>
 </div>
@@ -908,7 +902,7 @@ INFO:stancache.stancache:sampling: Loading result from cache
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="s1">&#39;lp__&#39;</span><span class="p">)</span>
+<span></span>survivalstan.utils.print_stan_summary([testfit], pars=&#39;lp__&#39;)
 </pre></div>
 </div>
 </div>
@@ -927,7 +921,7 @@ lp__  407.328012  15.738683  101.998321  214.786192  407.532163  606.393469  1.0
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_stan_summary</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="s1">&#39;log_baseline&#39;</span><span class="p">)</span>
+<span></span>survivalstan.utils.plot_stan_summary([testfit], pars=&#39;log_baseline&#39;)
 </pre></div>
 </div>
 </div>
@@ -947,7 +941,7 @@ lp__  407.328012  15.738683  101.998321  214.786192  407.532163  606.393469  1.0
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_coefs</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;baseline&#39;</span><span class="p">)</span>
+<span></span>survivalstan.utils.plot_coefs([testfit], element=&#39;baseline&#39;)
 </pre></div>
 </div>
 </div>
@@ -964,7 +958,7 @@ lp__  407.328012  15.738683  101.998321  214.786192  407.532163  606.393469  1.0
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_coefs</span><span class="p">([</span><span class="n">testfit</span><span class="p">])</span>
+<span></span>survivalstan.utils.plot_coefs([testfit])
 </pre></div>
 </div>
 </div>
@@ -984,9 +978,9 @@ lp__  407.328012  15.738683  101.998321  214.786192  407.532163  606.393469  1.0
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_pp_survival</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;observed&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span></span>survivalstan.utils.plot_pp_survival([testfit], fill=False)
+survivalstan.utils.plot_observed_survival(df=d, event_col=&#39;event&#39;, time_col=&#39;t&#39;, color=&#39;green&#39;, label=&#39;observed&#39;)
+plt.legend()
 </pre></div>
 </div>
 </div>
@@ -1013,7 +1007,7 @@ lp__  407.328012  15.738683  101.998321  214.786192  407.532163  606.393469  1.0
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_pp_survival</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;sex&#39;</span><span class="p">)</span>
+<span></span>survivalstan.utils.plot_pp_survival([testfit], by=&#39;sex&#39;)
 </pre></div>
 </div>
 </div>
@@ -1030,7 +1024,7 @@ lp__  407.328012  15.738683  101.998321  214.786192  407.532163  606.393469  1.0
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_pp_survival</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="n">pal</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">])</span>
+<span></span>survivalstan.utils.plot_pp_survival([testfit], by=&#39;sex&#39;, pal=[&#39;red&#39;, &#39;blue&#39;])
 </pre></div>
 </div>
 </div>
@@ -1045,7 +1039,7 @@ coefficient in the model.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_coefs</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;beta_time&#39;</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">])</span>
+<span></span>survivalstan.utils.plot_coefs([testfit], element=&#39;beta_time&#39;, ylim=[-1, 2.5])
 </pre></div>
 </div>
 </div>
@@ -1065,7 +1059,7 @@ coefficient in the model.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_time_betas</span><span class="p">(</span><span class="n">models</span><span class="o">=</span><span class="p">[</span><span class="n">testfit</span><span class="p">],</span> <span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;coef&#39;</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;exp(beta)&#39;</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+<span></span>survivalstan.utils.plot_time_betas(models=[testfit], by=[&#39;coef&#39;], y=&#39;exp(beta)&#39;, ylim=[0, 10])
 </pre></div>
 </div>
 </div>
@@ -1084,8 +1078,8 @@ plot them yourself.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">testfit</span><span class="p">[</span><span class="s1">&#39;time_beta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">extract_time_betas</span><span class="p">([</span><span class="n">testfit</span><span class="p">])</span>
-<span class="n">testfit</span><span class="p">[</span><span class="s1">&#39;time_beta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span></span>testfit[&#39;time_beta&#39;] = survivalstan.utils.extract_time_betas([testfit])
+testfit[&#39;time_beta&#39;].head()
 </pre></div>
 </div>
 </div>
@@ -1166,8 +1160,8 @@ interest at a time.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">first_beta</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">extract_time_betas</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">coefs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sex[T.male]&#39;</span><span class="p">])</span>
-<span class="n">first_beta</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span></span>first_beta = survivalstan.utils.extract_time_betas([testfit], coefs=[&#39;sex[T.male]&#39;])
+first_beta.head()
 </pre></div>
 </div>
 </div>
@@ -1246,8 +1240,8 @@ interest at a time.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">first_beta</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;timepoint_id&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;beta&#39;</span><span class="p">)</span>
+<span></span>import seaborn as sns
+sns.boxplot(data=first_beta, x=&#39;timepoint_id&#39;, y=&#39;beta&#39;)
 </pre></div>
 </div>
 </div>
@@ -1274,7 +1268,7 @@ interest at a time.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_time_betas</span><span class="p">(</span><span class="n">models</span><span class="o">=</span><span class="p">[</span><span class="n">testfit</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;end_time&#39;</span><span class="p">,</span> <span class="n">coefs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sex[T.male]&#39;</span><span class="p">])</span>
+<span></span>survivalstan.utils.plot_time_betas(models=[testfit], y=&#39;beta&#39;, x=&#39;end_time&#39;, coefs=[&#39;sex[T.male]&#39;])
 </pre></div>
 </div>
 </div>
@@ -1293,7 +1287,7 @@ interest at a time.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_time_betas</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">first_beta</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;coef&#39;</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;end_time&#39;</span><span class="p">)</span>
+<span></span>survivalstan.utils.plot_time_betas(df=first_beta, by=[&#39;coef&#39;], y=&#39;beta&#39;, x=&#39;end_time&#39;)
 </pre></div>
 </div>
 </div>

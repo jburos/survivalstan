@@ -34,8 +34,7 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="survivalstan 0.1.2.5 documentation" href="index.html"/>
-        <link rel="next" title="Fitting a piecewise-exponential model (PEM) to simulated data" href="examples/Example-using-pem_survival_model.html"/>
-        <link rel="prev" title="survivalstan: Survival Models in Stan" href="index.html"/> 
+        <link rel="prev" title="survivalstan" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -87,22 +86,20 @@
                 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Typical-workflow">Typical workflow</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Some-thoughts">Some thoughts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Obtain-or-simulate-data">Obtain or simulate data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Select-the-survival-model-you-want-to-fit">Select the survival model you want to fit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Transform-data-into-a-format-suitable-for-your-model">Transform data into a format suitable for your model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Fit-your-model-to-your-data:-fit_stan_survival_model">Fit your model to your data: <code class="docutils literal"><span class="pre">fit_stan_survival_model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Check-model-fit-&amp;-posterior-predictive-checking">Check model fit &amp; posterior predictive checking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Update-the-model-(go-back-to-#-2)">Update the model (go back to # 2)</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="examples/Example-using-pem_survival_model.html">Fitting a piecewise-exponential model (PEM) to simulated data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html">Simulate survival data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#Explore-simulated-data">Explore simulated data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#model1:-original-spec">model1: original spec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#model2:-alternate-version-of-surv_gamma_lpdf">model2: alternate version of surv_gamma_lpdf</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#model3:-use-log_mix-inside-surv_gamma_lpdf">model3: use <code class="docutils literal"><span class="pre">log_mix</span></code> inside surv_gamma_lpdf</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#model4:-vectorize-surv_gamma_lpdf">model4: vectorize surv_gamma_lpdf</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#compare-coefficient-estimates-for-each-model-spec">compare coefficient estimates for each model spec</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html">superficial check of convergence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html#summarize-coefficient-estimates">summarize coefficient estimates</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html#posterior-predictive-checks">posterior-predictive checks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html#summarize-time-varying-effect-of-sex-on-survival">summarize time-varying effect of sex on survival</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html#accessing-lower-level-functions-for-plotting-effects-over-time">accessing lower-level functions for plotting effects over time</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">survivalstan</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
             
@@ -343,6 +340,117 @@ div.nboutput div.output_area.stderr {
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">survivalstan</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="Typical-workflow">
+<h2>Typical workflow<a class="headerlink" href="#Typical-workflow" title="Permalink to this headline">¶</a></h2>
+<p>At a high level, the Survival modeling workflow proceeds in several
+steps:</p>
+<ol class="arabic simple">
+<li>Obtain or simulate data: <code class="docutils literal"><span class="pre">survivalstan.sim</span></code></li>
+<li>Select model to fit: <code class="docutils literal"><span class="pre">survivalstan.models</span></code></li>
+<li>Transform data, if required by your model:
+<code class="docutils literal"><span class="pre">survivalstan.prep_data_long_surv</span></code></li>
+<li>Fit model to data: <code class="docutils literal"><span class="pre">survivalstan.fit_stan_survival_model</span></code></li>
+<li>Check model fit<ul>
+<li><code class="docutils literal"><span class="pre">survivalstan.utils.print_stan_summary</span></code></li>
+<li><code class="docutils literal"><span class="pre">survivalstan.utils.plot_pp_survival</span></code></li>
+</ul>
+</li>
+<li>Review inferences from model<ul>
+<li><code class="docutils literal"><span class="pre">survivalstan.utils.plot_coefs</span></code>, etc</li>
+</ul>
+</li>
+<li>Update model: rince and repeat!</li>
+</ol>
+<div class="section" id="Some-thoughts">
+<h3>Some thoughts<a class="headerlink" href="#Some-thoughts" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>Most if not all survivalstan functions accept a list of models.</strong><ul>
+<li>It&#8217;s rare to analyze your data with one and only one model.</li>
+<li>Often you run the same model with more interations, or you try
+alternate specifications of the same model.</li>
+<li>Use the optional parameter <code class="docutils literal"><span class="pre">model_cohort</span></code> to &#8220;label&#8221; each model
+fit object.</li>
+</ul>
+</li>
+<li>Not all functions will work with all models<ul>
+<li>Example, <code class="docutils literal"><span class="pre">survivalstan.utils.plot_grp_coefs</span></code> will only work for
+models with grouped-coefficients (ie a varying-coefficient model).</li>
+<li>Similarly, <code class="docutils literal"><span class="pre">survivalstan.utils.plot_baseline_hazard</span></code> will only
+work for &#8220;PEM&#8221; models, which have semi- or non-parametrics
+baseline hazards.</li>
+</ul>
+</li>
+</ul>
+<div class="section" id="Obtain-or-simulate-data">
+<h4>Obtain or simulate data<a class="headerlink" href="#Obtain-or-simulate-data" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>The <code class="docutils literal"><span class="pre">survivalstan.sim</span></code> module includes several data-simulation
+routines.</li>
+<li>typically one record per subject</li>
+<li>&#8220;survival status&#8221; typically consists of several columns. At a
+minimum: time and status (1:event, 0:censor)</li>
+</ul>
+</div>
+<div class="section" id="Select-the-survival-model-you-want-to-fit">
+<h4>Select the survival model you want to fit<a class="headerlink" href="#Select-the-survival-model-you-want-to-fit" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Survivalstan includes Stan code for a variety of models, including:<ul>
+<li>Parametric <a href="#id1"><span class="problematic" id="id2">`baseline hazards &lt;&gt;`__</span></a> (weibull, gamma, exponential)</li>
+<li>Semi- and non-parametric baseline hazards (pem_randomwalk,
+pem_gamma, pem_unstructured)</li>
+<li>Estimating time-dependent effects</li>
+<li>Varying-coefficient models</li>
+<li>Stratified models</li>
+<li>Competing events models</li>
+<li></li>
+</ul>
+</li>
+<li>Or, you may have your own Stan code - a variation of one of the
+above, or your own<ul>
+<li>Many of the models provided by Survivalstan include helper
+functions for regularizing priors, etc.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="Transform-data-into-a-format-suitable-for-your-model">
+<h4>Transform data into a format suitable for your model<a class="headerlink" href="#Transform-data-into-a-format-suitable-for-your-model" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Many of the models provided by Survivalstan (any that start with
+&#8220;<em>pem</em>&#8221;) require that data be provided in a &#8220;long&#8221; format. See
+<a href="#id1"><span class="problematic" id="id3">`Survival modeling with long vs wide format &lt;&gt;`__</span></a></li>
+<li>You can use <code class="docutils literal"><span class="pre">prep_data_long_surv</span></code> function to transform your data
+into the long format prior to analysis.</li>
+</ul>
+</div>
+<div class="section" id="Fit-your-model-to-your-data:-fit_stan_survival_model">
+<h4>Fit your model to your data: <code class="docutils literal"><span class="pre">fit_stan_survival_model</span></code><a class="headerlink" href="#Fit-your-model-to-your-data:-fit_stan_survival_model" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>(within <code class="docutils literal"><span class="pre">fit_stan_survival_model</span></code>):<ul>
+<li>calls StanSurvivalData() to return a data dictionary for your stan
+model</li>
+<li>compiles &amp; optionally caches the compiled model</li>
+<li>calls <code class="docutils literal"><span class="pre">pystan.stan</span></code>, <code class="docutils literal"><span class="pre">stancache.cached_model_fit</span></code> to fit the
+model</li>
+<li>(tries to) call <code class="docutils literal"><span class="pre">stanity.psisloo</span></code> to summarize fit</li>
+<li>(tries to) call <code class="docutils literal"><span class="pre">survivalstan.utils.extract_baseline_hazard</span></code>,
+<code class="docutils literal"><span class="pre">extract_grp_coefs</span></code>, and <code class="docutils literal"><span class="pre">extract_coefs</span></code></li>
+<li>returns a data dictionary containing meta-data about your inputs &amp;
+outputs</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="Check-model-fit-&amp;-posterior-predictive-checking">
+<h4>Check model fit &amp; posterior predictive checking<a class="headerlink" href="#Check-model-fit-&-posterior-predictive-checking" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Try <code class="docutils literal"><span class="pre">survivalstan.utils.plot_baseline_hazard</span></code></li>
+<li>Try <code class="docutils literal"><span class="pre">survivalstan.utils.plot_pp_survival</span></code></li>
+</ul>
+</div>
+<div class="section" id="Update-the-model-(go-back-to-#-2)">
+<h4>Update the model (go back to # 2)<a class="headerlink" href="#Update-the-model-(go-back-to-#-2)" title="Permalink to this headline">¶</a></h4>
 <div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [ ]:
@@ -355,6 +463,8 @@ div.nboutput div.output_area.stderr {
 </div>
 </div>
 </div>
+</div>
+</div>
 
 
            </div>
@@ -363,10 +473,8 @@ div.nboutput div.output_area.stderr {
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="examples/Example-using-pem_survival_model.html" class="btn btn-neutral float-right" title="Fitting a piecewise-exponential model (PEM) to simulated data" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="index.html" class="btn btn-neutral" title="survivalstan: Survival Models in Stan" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="survivalstan" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

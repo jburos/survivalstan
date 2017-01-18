@@ -33,9 +33,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="survivalstan 0.1.2.5 documentation" href="../index.html"/>
-        <link rel="next" title="Estimating a PEM survival model with Gamma baseline hazard" href="Test pem_survival_model_gamma with simulated data.html"/>
-        <link rel="prev" title="Fitting a piecewise-exponential model (PEM) to simulated data" href="Example-using-pem_survival_model.html"/> 
+    <link rel="top" title="survivalstan 0.1.2.5 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -84,23 +82,8 @@
           
             
             
-                <ul class="current">
+                <ul>
 <li class="toctree-l1"><a class="reference internal" href="../Usage.html">Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Example-using-pem_survival_model.html">Fitting a piecewise-exponential model (PEM) to simulated data</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Optimizing Stan code for a user-provided Gamma model</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#Simulate-survival-data">Simulate survival data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Explore-simulated-data">Explore simulated data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#model1:-original-spec">model1: original spec</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#model2:-alternate-version-of-surv_gamma_lpdf">model2: alternate version of surv_gamma_lpdf</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#model3:-use-log_mix-inside-surv_gamma_lpdf">model3: use <code class="docutils literal"><span class="pre">log_mix</span></code> inside surv_gamma_lpdf</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#model4:-vectorize-surv_gamma_lpdf">model4: vectorize surv_gamma_lpdf</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#compare-coefficient-estimates-for-each-model-spec">compare coefficient estimates for each model spec</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="Test pem_survival_model_gamma with simulated data.html">Estimating a PEM survival model with Gamma baseline hazard</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Test pem_survival_model_randomwalk with simulated data.html">PEM survival model with random-walk baseline hazard</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Test pem_survival_model_timevarying with simulated data.html">A PEM Survival Model with Time-Dependent Effects</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules.html">survivalstan</a></li>
 </ul>
 
             
@@ -341,16 +324,16 @@ div.nboutput div.output_area.stderr {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
-<span class="o">%</span><span class="k">autoreload</span> 2
-<span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1100038344</span><span class="p">)</span>
-<span class="kn">import</span> <span class="nn">survivalstan</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">stancache</span> <span class="k">import</span> <span class="n">stancache</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span></span>%load_ext autoreload
+%autoreload 2
+%matplotlib inline
+import random
+random.seed(1100038344)
+import survivalstan
+import numpy as np
+import pandas as pd
+from stancache import stancache
+from matplotlib import pyplot as plt
 </pre></div>
 </div>
 </div>
@@ -393,14 +376,14 @@ interpret estimates of the baseline hazard.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">d</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached</span><span class="p">(</span>
-    <span class="n">survivalstan</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">sim_data_exp_correlated</span><span class="p">,</span>
-    <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-    <span class="n">censor_time</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-    <span class="n">rate_form</span><span class="o">=</span><span class="s1">&#39;1 + sex&#39;</span><span class="p">,</span>
-    <span class="n">rate_coefs</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
-<span class="p">)</span>
-<span class="n">d</span><span class="p">[</span><span class="s1">&#39;age_centered&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span></span>d = stancache.cached(
+    survivalstan.sim.sim_data_exp_correlated,
+    N=100,
+    censor_time=20,
+    rate_form=&#39;1 + sex&#39;,
+    rate_coefs=[-3, 0.5],
+)
+d[&#39;age_centered&#39;] = d[&#39;age&#39;] - d[&#39;age&#39;].mean()
 </pre></div>
 </div>
 </div>
@@ -427,7 +410,7 @@ call to <code class="docutils literal"><span class="pre">survivalstan.sim.sim_da
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">d</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span></span>d.head()
 </pre></div>
 </div>
 </div>
@@ -522,9 +505,9 @@ functions provided by <code class="docutils literal"><span class="pre">survivals
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;female&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;female&#39;</span><span class="p">)</span>
-<span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;male&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;male&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span></span>survivalstan.utils.plot_observed_survival(df=d[d[&#39;sex&#39;]==&#39;female&#39;], event_col=&#39;event&#39;, time_col=&#39;t&#39;, label=&#39;female&#39;)
+survivalstan.utils.plot_observed_survival(df=d[d[&#39;sex&#39;]==&#39;male&#39;], event_col=&#39;event&#39;, time_col=&#39;t&#39;, label=&#39;male&#39;)
+plt.legend()
 </pre></div>
 </div>
 </div>
@@ -554,66 +537,66 @@ functions provided by <code class="docutils literal"><span class="pre">survivals
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">model_code</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
-<span class="s1">functions {</span>
-<span class="s1">  // Defines the log survival</span>
-<span class="s1">  vector log_S (vector t, real shape, vector rate) {</span>
-<span class="s1">    vector[num_elements(t)] log_S;</span>
-<span class="s1">    for (i in 1:num_elements(t)) {</span>
-<span class="s1">      log_S[i] = gamma_lccdf(t[i]|shape,rate[i]);</span>
-<span class="s1">    }</span>
-<span class="s1">    return log_S;</span>
-<span class="s1">  }</span>
+<span></span>model_code = &#39;&#39;&#39;
+functions {
+  // Defines the log survival
+  vector log_S (vector t, real shape, vector rate) {
+    vector[num_elements(t)] log_S;
+    for (i in 1:num_elements(t)) {
+      log_S[i] = gamma_lccdf(t[i]|shape,rate[i]);
+    }
+    return log_S;
+  }
 
-<span class="s1">  // Defines the log hazard</span>
-<span class="s1">  vector log_h (vector t, real shape, vector rate) {</span>
-<span class="s1">    vector[num_elements(t)] log_h;</span>
-<span class="s1">    vector[num_elements(t)] ls;</span>
-<span class="s1">    ls = log_S(t,shape,rate);</span>
-<span class="s1">    for (i in 1:num_elements(t)) {</span>
-<span class="s1">      log_h[i] = gamma_lpdf(t[i]|shape,rate[i]) - ls[i];</span>
-<span class="s1">    }</span>
-<span class="s1">    return log_h;</span>
-<span class="s1">  }</span>
+  // Defines the log hazard
+  vector log_h (vector t, real shape, vector rate) {
+    vector[num_elements(t)] log_h;
+    vector[num_elements(t)] ls;
+    ls = log_S(t,shape,rate);
+    for (i in 1:num_elements(t)) {
+      log_h[i] = gamma_lpdf(t[i]|shape,rate[i]) - ls[i];
+    }
+    return log_h;
+  }
 
-<span class="s1">  // Defines the sampling distribution</span>
-<span class="s1">  real surv_gamma_lpdf (vector t, vector d, real shape, vector rate) {</span>
-<span class="s1">    vector[num_elements(t)] log_lik;</span>
-<span class="s1">    real prob;</span>
-<span class="s1">    log_lik = d .* log_h(t,shape,rate) + log_S(t,shape,rate);</span>
-<span class="s1">    prob = sum(log_lik);</span>
-<span class="s1">    return prob;</span>
-<span class="s1">  }</span>
-<span class="s1">}</span>
+  // Defines the sampling distribution
+  real surv_gamma_lpdf (vector t, vector d, real shape, vector rate) {
+    vector[num_elements(t)] log_lik;
+    real prob;
+    log_lik = d .* log_h(t,shape,rate) + log_S(t,shape,rate);
+    prob = sum(log_lik);
+    return prob;
+  }
+}
 
-<span class="s1">data {</span>
-<span class="s1">  int N;                            // number of observations</span>
-<span class="s1">  vector&lt;lower=0&gt;[N] y;             // observed times</span>
-<span class="s1">  vector&lt;lower=0,upper=1&gt;[N] event;     // censoring indicator (1=observed, 0=censored)</span>
-<span class="s1">  int M;                            // number of covariates</span>
-<span class="s1">  matrix[N, M] x;                    // matrix of covariates (with n rows and H columns)</span>
-<span class="s1">}</span>
+data {
+  int N;                            // number of observations
+  vector&lt;lower=0&gt;[N] y;             // observed times
+  vector&lt;lower=0,upper=1&gt;[N] event;     // censoring indicator (1=observed, 0=censored)
+  int M;                            // number of covariates
+  matrix[N, M] x;                    // matrix of covariates (with n rows and H columns)
+}
 
-<span class="s1">parameters {</span>
-<span class="s1">  vector[M] beta;         // Coefficients in the linear predictor (including intercept)</span>
-<span class="s1">  real&lt;lower=0&gt; alpha;    // shape parameter</span>
-<span class="s1">}</span>
+parameters {
+  vector[M] beta;         // Coefficients in the linear predictor (including intercept)
+  real&lt;lower=0&gt; alpha;    // shape parameter
+}
 
-<span class="s1">transformed parameters {</span>
-<span class="s1">  vector[N] linpred;</span>
-<span class="s1">  vector[N] mu;</span>
-<span class="s1">  linpred = x*beta;</span>
-<span class="s1">  for (i in 1:N) {</span>
-<span class="s1">    mu[i] = exp(linpred[i]);</span>
-<span class="s1">  }</span>
-<span class="s1">}</span>
+transformed parameters {
+  vector[N] linpred;
+  vector[N] mu;
+  linpred = x*beta;
+  for (i in 1:N) {
+    mu[i] = exp(linpred[i]);
+  }
+}
 
-<span class="s1">model {</span>
-<span class="s1">  alpha ~ gamma(0.01,0.01);</span>
-<span class="s1">  beta ~ normal(0,5);</span>
-<span class="s1">  y ~ surv_gamma(event, alpha, mu);</span>
-<span class="s1">}</span>
-<span class="s1">&#39;&#39;&#39;</span>
+model {
+  alpha ~ gamma(0.01,0.01);
+  beta ~ normal(0,5);
+  y ~ surv_gamma(event, alpha, mu);
+}
+&#39;&#39;&#39;
 </pre></div>
 </div>
 </div>
@@ -633,19 +616,19 @@ standard pystan functionality.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">testfit</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
-    <span class="n">model_cohort</span> <span class="o">=</span> <span class="s1">&#39;model 1&#39;</span><span class="p">,</span>
-    <span class="n">model_code</span> <span class="o">=</span> <span class="n">model_code</span><span class="p">,</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span>
-    <span class="n">time_col</span> <span class="o">=</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span>
-    <span class="n">event_col</span> <span class="o">=</span> <span class="s1">&#39;event&#39;</span><span class="p">,</span>
-    <span class="n">formula</span> <span class="o">=</span> <span class="s1">&#39;~ age_centered + sex&#39;</span><span class="p">,</span>
-    <span class="nb">iter</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">,</span>
-    <span class="n">chains</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="n">seed</span> <span class="o">=</span> <span class="mi">9001</span><span class="p">,</span>
-    <span class="n">FIT_FUN</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached_stan_fit</span><span class="p">,</span>
-    <span class="n">drop_intercept</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span>
+<span></span>testfit = survivalstan.fit_stan_survival_model(
+    model_cohort = &#39;model 1&#39;,
+    model_code = model_code,
+    df = d,
+    time_col = &#39;t&#39;,
+    event_col = &#39;event&#39;,
+    formula = &#39;~ age_centered + sex&#39;,
+    iter = 5000,
+    chains = 4,
+    seed = 9001,
+    FIT_FUN = stancache.cached_stan_fit,
+    drop_intercept = False,
+    )
 
 </pre></div>
 </div>
@@ -669,7 +652,7 @@ INFO:stancache.stancache:sampling: Loading result from cache
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="c1"># 0:00:40.518775 elapsed</span>
+<span></span># 0:00:40.518775 elapsed
 </pre></div>
 </div>
 </div>
@@ -679,7 +662,7 @@ INFO:stancache.stancache:sampling: Loading result from cache
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lp__&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">])</span>
+<span></span>survivalstan.utils.print_stan_summary([testfit], pars=[&#39;lp__&#39;, &#39;alpha&#39;, &#39;beta&#39;])
 </pre></div>
 </div>
 </div>
@@ -705,46 +688,46 @@ beta[2]    0.006018  0.000183  0.014844   -0.023068    0.005959    0.035536  1.0
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">model_code2</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
-<span class="s1">functions {</span>
-<span class="s1">  // Defines the log survival</span>
-<span class="s1">  real surv_gamma_lpdf (vector t, vector d, real shape, vector rate) {</span>
-<span class="s1">    vector[num_elements(t)] log_lik;</span>
-<span class="s1">    real prob;</span>
-<span class="s1">    for (i in 1:num_elements(t)) {</span>
-<span class="s1">      log_lik[i] = d[i] * (gamma_lpdf(t[i]|shape,rate[i]) - gamma_lccdf(t[i]|shape,rate[i]))</span>
-<span class="s1">                      + gamma_lccdf(t[i]|shape,rate[i]);</span>
-<span class="s1">    }</span>
-<span class="s1">    prob = sum(log_lik);</span>
-<span class="s1">    return prob;</span>
-<span class="s1">  }</span>
-<span class="s1">}</span>
-<span class="s1">data {</span>
-<span class="s1">  int N;                            // number of observations</span>
-<span class="s1">  vector&lt;lower=0&gt;[N] y;             // observed times</span>
-<span class="s1">  vector&lt;lower=0,upper=1&gt;[N] event;     // censoring indicator (1=observed, 0=censored)</span>
-<span class="s1">  int M;                            // number of covariates</span>
-<span class="s1">  matrix[N, M] x;                    // matrix of covariates (with n rows and H columns)</span>
-<span class="s1">}</span>
-<span class="s1">parameters {</span>
-<span class="s1">  vector[M] beta;         // Coefficients in the linear predictor (including intercept)</span>
-<span class="s1">  real&lt;lower=0&gt; alpha;    // shape parameter</span>
-<span class="s1">}</span>
-<span class="s1">transformed parameters {</span>
-<span class="s1">  vector&lt;lower=0&gt;[N] mu;</span>
-<span class="s1">  {</span>
-<span class="s1">      vector[N] linpred;</span>
-<span class="s1">      linpred = x*beta;</span>
-<span class="s1">      mu = exp(linpred);</span>
-<span class="s1">  }</span>
-<span class="s1">}</span>
+<span></span>model_code2 = &#39;&#39;&#39;
+functions {
+  // Defines the log survival
+  real surv_gamma_lpdf (vector t, vector d, real shape, vector rate) {
+    vector[num_elements(t)] log_lik;
+    real prob;
+    for (i in 1:num_elements(t)) {
+      log_lik[i] = d[i] * (gamma_lpdf(t[i]|shape,rate[i]) - gamma_lccdf(t[i]|shape,rate[i]))
+                      + gamma_lccdf(t[i]|shape,rate[i]);
+    }
+    prob = sum(log_lik);
+    return prob;
+  }
+}
+data {
+  int N;                            // number of observations
+  vector&lt;lower=0&gt;[N] y;             // observed times
+  vector&lt;lower=0,upper=1&gt;[N] event;     // censoring indicator (1=observed, 0=censored)
+  int M;                            // number of covariates
+  matrix[N, M] x;                    // matrix of covariates (with n rows and H columns)
+}
+parameters {
+  vector[M] beta;         // Coefficients in the linear predictor (including intercept)
+  real&lt;lower=0&gt; alpha;    // shape parameter
+}
+transformed parameters {
+  vector&lt;lower=0&gt;[N] mu;
+  {
+      vector[N] linpred;
+      linpred = x*beta;
+      mu = exp(linpred);
+  }
+}
 
-<span class="s1">model {</span>
-<span class="s1">  alpha ~ gamma(0.01,0.01);</span>
-<span class="s1">  beta ~ normal(0,5);</span>
-<span class="s1">  y ~ surv_gamma(event, alpha, mu);</span>
-<span class="s1">}</span>
-<span class="s1">&#39;&#39;&#39;</span>
+model {
+  alpha ~ gamma(0.01,0.01);
+  beta ~ normal(0,5);
+  y ~ surv_gamma(event, alpha, mu);
+}
+&#39;&#39;&#39;
 </pre></div>
 </div>
 </div>
@@ -754,19 +737,19 @@ beta[2]    0.006018  0.000183  0.014844   -0.023068    0.005959    0.035536  1.0
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">testfit2</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
-    <span class="n">model_cohort</span> <span class="o">=</span> <span class="s1">&#39;model 2&#39;</span><span class="p">,</span>
-    <span class="n">model_code</span> <span class="o">=</span> <span class="n">model_code2</span><span class="p">,</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span>
-    <span class="n">time_col</span> <span class="o">=</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span>
-    <span class="n">event_col</span> <span class="o">=</span> <span class="s1">&#39;event&#39;</span><span class="p">,</span>
-    <span class="n">formula</span> <span class="o">=</span> <span class="s1">&#39;~ age_centered + sex&#39;</span><span class="p">,</span>
-    <span class="nb">iter</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">,</span>
-    <span class="n">chains</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="n">seed</span> <span class="o">=</span> <span class="mi">9001</span><span class="p">,</span>
-    <span class="n">FIT_FUN</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached_stan_fit</span><span class="p">,</span>
-    <span class="n">drop_intercept</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span>
+<span></span>testfit2 = survivalstan.fit_stan_survival_model(
+    model_cohort = &#39;model 2&#39;,
+    model_code = model_code2,
+    df = d,
+    time_col = &#39;t&#39;,
+    event_col = &#39;event&#39;,
+    formula = &#39;~ age_centered + sex&#39;,
+    iter = 5000,
+    chains = 4,
+    seed = 9001,
+    FIT_FUN = stancache.cached_stan_fit,
+    drop_intercept = False,
+    )
 
 </pre></div>
 </div>
@@ -790,7 +773,7 @@ INFO:stancache.stancache:sampling: Loading result from cache
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="c1"># 0:00:21.081723 elapsed</span>
+<span></span># 0:00:21.081723 elapsed
 </pre></div>
 </div>
 </div>
@@ -800,7 +783,7 @@ INFO:stancache.stancache:sampling: Loading result from cache
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit2</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lp__&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">])</span>
+<span></span>survivalstan.utils.print_stan_summary([testfit2], pars=[&#39;lp__&#39;, &#39;alpha&#39;, &#39;beta&#39;])
 </pre></div>
 </div>
 </div>
@@ -826,43 +809,43 @@ beta[2]    0.006629  0.000188  0.014733   -0.021872    0.006506    0.036200  1.0
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">model_code3</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
-<span class="s1">functions {</span>
-<span class="s1">  // Defines the log survival</span>
-<span class="s1">  real surv_gamma_lpdf (vector t, vector d, real shape, vector rate) {</span>
-<span class="s1">    vector[num_elements(t)] log_lik;</span>
-<span class="s1">    real prob;</span>
-<span class="s1">    for (i in 1:num_elements(t)) {</span>
-<span class="s1">      log_lik[i] = log_mix(d[i], gamma_lpdf(t[i]|shape,rate[i]), gamma_lccdf(t[i]|shape,rate[i]));</span>
-<span class="s1">    }</span>
-<span class="s1">    prob = sum(log_lik);</span>
-<span class="s1">    return prob;</span>
-<span class="s1">  }</span>
-<span class="s1">}</span>
-<span class="s1">data {</span>
-<span class="s1">  int N;                            // number of observations</span>
-<span class="s1">  vector&lt;lower=0&gt;[N] y;             // observed times</span>
-<span class="s1">  vector&lt;lower=0,upper=1&gt;[N] event; // censoring indicator (1=observed, 0=censored)</span>
-<span class="s1">  int M;                            // number of covariates</span>
-<span class="s1">  matrix[N, M] x;                   // matrix of covariates (with n rows and H columns)</span>
-<span class="s1">}</span>
-<span class="s1">parameters {</span>
-<span class="s1">  vector[M] beta;         // Coefficients in the linear predictor (including intercept)</span>
-<span class="s1">  real&lt;lower=0&gt; alpha;    // shape parameter</span>
-<span class="s1">}</span>
-<span class="s1">transformed parameters {</span>
-<span class="s1">  vector[N] linpred;</span>
-<span class="s1">  vector[N] mu;</span>
-<span class="s1">  linpred = x*beta;</span>
-<span class="s1">  mu = exp(linpred);</span>
-<span class="s1">}</span>
+<span></span>model_code3 = &#39;&#39;&#39;
+functions {
+  // Defines the log survival
+  real surv_gamma_lpdf (vector t, vector d, real shape, vector rate) {
+    vector[num_elements(t)] log_lik;
+    real prob;
+    for (i in 1:num_elements(t)) {
+      log_lik[i] = log_mix(d[i], gamma_lpdf(t[i]|shape,rate[i]), gamma_lccdf(t[i]|shape,rate[i]));
+    }
+    prob = sum(log_lik);
+    return prob;
+  }
+}
+data {
+  int N;                            // number of observations
+  vector&lt;lower=0&gt;[N] y;             // observed times
+  vector&lt;lower=0,upper=1&gt;[N] event; // censoring indicator (1=observed, 0=censored)
+  int M;                            // number of covariates
+  matrix[N, M] x;                   // matrix of covariates (with n rows and H columns)
+}
+parameters {
+  vector[M] beta;         // Coefficients in the linear predictor (including intercept)
+  real&lt;lower=0&gt; alpha;    // shape parameter
+}
+transformed parameters {
+  vector[N] linpred;
+  vector[N] mu;
+  linpred = x*beta;
+  mu = exp(linpred);
+}
 
-<span class="s1">model {</span>
-<span class="s1">  alpha ~ gamma(0.01,0.01);</span>
-<span class="s1">  beta ~ normal(0,5);</span>
-<span class="s1">  y ~ surv_gamma(event, alpha, mu);</span>
-<span class="s1">}</span>
-<span class="s1">&#39;&#39;&#39;</span>
+model {
+  alpha ~ gamma(0.01,0.01);
+  beta ~ normal(0,5);
+  y ~ surv_gamma(event, alpha, mu);
+}
+&#39;&#39;&#39;
 </pre></div>
 </div>
 </div>
@@ -872,19 +855,19 @@ beta[2]    0.006629  0.000188  0.014733   -0.021872    0.006506    0.036200  1.0
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">testfit3</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
-    <span class="n">model_cohort</span> <span class="o">=</span> <span class="s1">&#39;model 3&#39;</span><span class="p">,</span>
-    <span class="n">model_code</span> <span class="o">=</span> <span class="n">model_code3</span><span class="p">,</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span>
-    <span class="n">time_col</span> <span class="o">=</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span>
-    <span class="n">event_col</span> <span class="o">=</span> <span class="s1">&#39;event&#39;</span><span class="p">,</span>
-    <span class="n">formula</span> <span class="o">=</span> <span class="s1">&#39;~ age_centered + sex&#39;</span><span class="p">,</span>
-    <span class="nb">iter</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">,</span>
-    <span class="n">chains</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="n">seed</span> <span class="o">=</span> <span class="mi">9001</span><span class="p">,</span>
-    <span class="n">FIT_FUN</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached_stan_fit</span><span class="p">,</span>
-    <span class="n">drop_intercept</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span>
+<span></span>testfit3 = survivalstan.fit_stan_survival_model(
+    model_cohort = &#39;model 3&#39;,
+    model_code = model_code3,
+    df = d,
+    time_col = &#39;t&#39;,
+    event_col = &#39;event&#39;,
+    formula = &#39;~ age_centered + sex&#39;,
+    iter = 5000,
+    chains = 4,
+    seed = 9001,
+    FIT_FUN = stancache.cached_stan_fit,
+    drop_intercept = False,
+    )
 
 </pre></div>
 </div>
@@ -908,7 +891,7 @@ INFO:stancache.stancache:sampling: Loading result from cache
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="c1">#0:00:20.284146 elapsed</span>
+<span></span>#0:00:20.284146 elapsed
 </pre></div>
 </div>
 </div>
@@ -918,7 +901,7 @@ INFO:stancache.stancache:sampling: Loading result from cache
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit3</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lp__&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">])</span>
+<span></span>survivalstan.utils.print_stan_summary([testfit3], pars=[&#39;lp__&#39;, &#39;alpha&#39;, &#39;beta&#39;])
 </pre></div>
 </div>
 </div>
@@ -944,73 +927,73 @@ beta[2]    0.006028  0.000180  0.014812   -0.022443    0.006036    0.036197  1.0
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">model_code4</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
-<span class="s1">functions {</span>
-<span class="s1">    int count_value(vector a, real val) {</span>
-<span class="s1">        int s;</span>
-<span class="s1">        s = 0;</span>
-<span class="s1">        for (i in 1:num_elements(a))</span>
-<span class="s1">            if (a[i] == val)</span>
-<span class="s1">                s = s + 1;</span>
-<span class="s1">        return s;</span>
-<span class="s1">    }</span>
+<span></span>model_code4 = &#39;&#39;&#39;
+functions {
+    int count_value(vector a, real val) {
+        int s;
+        s = 0;
+        for (i in 1:num_elements(a))
+            if (a[i] == val)
+                s = s + 1;
+        return s;
+    }
 
-<span class="s1">  // Defines the log survival</span>
-<span class="s1">  real surv_gamma_lpdf (vector t, vector d, real shape, vector rate, int num_cens, int num_obs) {</span>
-<span class="s1">    vector[2] log_lik;</span>
-<span class="s1">    int idx_obs[num_obs];</span>
-<span class="s1">    int idx_cens[num_cens];</span>
-<span class="s1">    real prob;</span>
-<span class="s1">    int i_cens;</span>
-<span class="s1">    int i_obs;</span>
-<span class="s1">    i_cens = 1;</span>
-<span class="s1">    i_obs = 1;</span>
-<span class="s1">    for (i in 1:num_elements(t)) {</span>
-<span class="s1">        if (d[i] == 1) {</span>
-<span class="s1">            idx_obs[i_obs] = i;</span>
-<span class="s1">            i_obs = i_obs+1;</span>
-<span class="s1">        }</span>
-<span class="s1">        else {</span>
-<span class="s1">            idx_cens[i_cens] = i;</span>
-<span class="s1">            i_cens = i_cens+1;</span>
-<span class="s1">        }</span>
-<span class="s1">    }</span>
-<span class="s1">    print(idx_obs);</span>
-<span class="s1">    log_lik[1] = gamma_lpdf(t[idx_obs] | shape, rate[idx_obs]);</span>
-<span class="s1">    log_lik[2] = gamma_lccdf(t[idx_cens] | shape, rate[idx_cens]);</span>
-<span class="s1">    prob = sum(log_lik);</span>
-<span class="s1">    return prob;</span>
-<span class="s1">  }</span>
-<span class="s1">}</span>
-<span class="s1">data {</span>
-<span class="s1">  int N;                            // number of observations</span>
-<span class="s1">  vector&lt;lower=0&gt;[N] y;             // observed times</span>
-<span class="s1">  vector&lt;lower=0,upper=1&gt;[N] event; // censoring indicator (1=observed, 0=censored)</span>
-<span class="s1">  int M;                            // number of covariates</span>
-<span class="s1">  matrix[N, M] x;                   // matrix of covariates (with n rows and H columns)</span>
-<span class="s1">}</span>
-<span class="s1">transformed data {</span>
-<span class="s1">  int num_cens;</span>
-<span class="s1">  int num_obs;</span>
-<span class="s1">  num_obs = count_value(event, 1);</span>
-<span class="s1">  num_cens = N - num_obs;</span>
-<span class="s1">}</span>
-<span class="s1">parameters {</span>
-<span class="s1">  vector[M] beta;         // Coefficients in the linear predictor (including intercept)</span>
-<span class="s1">  real&lt;lower=0&gt; alpha;    // shape parameter</span>
-<span class="s1">}</span>
-<span class="s1">transformed parameters {</span>
-<span class="s1">  vector[N] linpred;</span>
-<span class="s1">  vector[N] mu;</span>
-<span class="s1">  linpred = x*beta;</span>
-<span class="s1">  mu = exp(linpred);</span>
-<span class="s1">}</span>
-<span class="s1">model {</span>
-<span class="s1">  alpha ~ gamma(0.01,0.01);</span>
-<span class="s1">  beta ~ normal(0,5);</span>
-<span class="s1">  y ~ surv_gamma(event, alpha, mu, num_cens, num_obs);</span>
-<span class="s1">}</span>
-<span class="s1">&#39;&#39;&#39;</span>
+  // Defines the log survival
+  real surv_gamma_lpdf (vector t, vector d, real shape, vector rate, int num_cens, int num_obs) {
+    vector[2] log_lik;
+    int idx_obs[num_obs];
+    int idx_cens[num_cens];
+    real prob;
+    int i_cens;
+    int i_obs;
+    i_cens = 1;
+    i_obs = 1;
+    for (i in 1:num_elements(t)) {
+        if (d[i] == 1) {
+            idx_obs[i_obs] = i;
+            i_obs = i_obs+1;
+        }
+        else {
+            idx_cens[i_cens] = i;
+            i_cens = i_cens+1;
+        }
+    }
+    print(idx_obs);
+    log_lik[1] = gamma_lpdf(t[idx_obs] | shape, rate[idx_obs]);
+    log_lik[2] = gamma_lccdf(t[idx_cens] | shape, rate[idx_cens]);
+    prob = sum(log_lik);
+    return prob;
+  }
+}
+data {
+  int N;                            // number of observations
+  vector&lt;lower=0&gt;[N] y;             // observed times
+  vector&lt;lower=0,upper=1&gt;[N] event; // censoring indicator (1=observed, 0=censored)
+  int M;                            // number of covariates
+  matrix[N, M] x;                   // matrix of covariates (with n rows and H columns)
+}
+transformed data {
+  int num_cens;
+  int num_obs;
+  num_obs = count_value(event, 1);
+  num_cens = N - num_obs;
+}
+parameters {
+  vector[M] beta;         // Coefficients in the linear predictor (including intercept)
+  real&lt;lower=0&gt; alpha;    // shape parameter
+}
+transformed parameters {
+  vector[N] linpred;
+  vector[N] mu;
+  linpred = x*beta;
+  mu = exp(linpred);
+}
+model {
+  alpha ~ gamma(0.01,0.01);
+  beta ~ normal(0,5);
+  y ~ surv_gamma(event, alpha, mu, num_cens, num_obs);
+}
+&#39;&#39;&#39;
 </pre></div>
 </div>
 </div>
@@ -1020,19 +1003,19 @@ beta[2]    0.006028  0.000180  0.014812   -0.022443    0.006036    0.036197  1.0
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">testfit4</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
-    <span class="n">model_cohort</span> <span class="o">=</span> <span class="s1">&#39;model 4&#39;</span><span class="p">,</span>
-    <span class="n">model_code</span> <span class="o">=</span> <span class="n">model_code4</span><span class="p">,</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span>
-    <span class="n">time_col</span> <span class="o">=</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span>
-    <span class="n">event_col</span> <span class="o">=</span> <span class="s1">&#39;event&#39;</span><span class="p">,</span>
-    <span class="n">formula</span> <span class="o">=</span> <span class="s1">&#39;~ age_centered + sex&#39;</span><span class="p">,</span>
-    <span class="nb">iter</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">,</span>
-    <span class="n">chains</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="n">seed</span> <span class="o">=</span> <span class="mi">9001</span><span class="p">,</span>
-    <span class="n">FIT_FUN</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached_stan_fit</span><span class="p">,</span>
-    <span class="n">drop_intercept</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span>
+<span></span>testfit4 = survivalstan.fit_stan_survival_model(
+    model_cohort = &#39;model 4&#39;,
+    model_code = model_code4,
+    df = d,
+    time_col = &#39;t&#39;,
+    event_col = &#39;event&#39;,
+    formula = &#39;~ age_centered + sex&#39;,
+    iter = 5000,
+    chains = 4,
+    seed = 9001,
+    FIT_FUN = stancache.cached_stan_fit,
+    drop_intercept = False,
+    )
 
 </pre></div>
 </div>
@@ -1065,7 +1048,7 @@ When unpickling the StanModel must be unpickled first.
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="c1"># 0:00:06.245552 elapsed</span>
+<span></span># 0:00:06.245552 elapsed
 </pre></div>
 </div>
 </div>
@@ -1075,7 +1058,7 @@ When unpickling the StanModel must be unpickled first.
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit4</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lp__&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">])</span>
+<span></span>survivalstan.utils.print_stan_summary([testfit4], pars=[&#39;lp__&#39;, &#39;alpha&#39;, &#39;beta&#39;])
 </pre></div>
 </div>
 </div>
@@ -1101,7 +1084,7 @@ beta[2]    0.006211  0.000171  0.014493   -0.022229    0.006113    0.035095  1.0
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_coefs</span><span class="p">([</span><span class="n">testfit</span><span class="p">,</span> <span class="n">testfit2</span><span class="p">,</span> <span class="n">testfit3</span><span class="p">,</span> <span class="n">testfit4</span><span class="p">])</span>
+<span></span>survivalstan.utils.plot_coefs([testfit, testfit2, testfit3, testfit4])
 </pre></div>
 </div>
 </div>
@@ -1129,15 +1112,6 @@ beta[2]    0.006211  0.000171  0.014493   -0.022229    0.006113    0.035095  1.0
            </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="Test pem_survival_model_gamma with simulated data.html" class="btn btn-neutral float-right" title="Estimating a PEM survival model with Gamma baseline hazard" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="Example-using-pem_survival_model.html" class="btn btn-neutral" title="Fitting a piecewise-exponential model (PEM) to simulated data" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

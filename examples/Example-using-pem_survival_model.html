@@ -33,9 +33,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="survivalstan 0.1.2.5 documentation" href="../index.html"/>
-        <link rel="next" title="Optimizing Stan code for a user-provided Gamma model" href="Test new_gamma_survival_model with simulated data.html"/>
-        <link rel="prev" title="Getting started" href="../Usage.html"/> 
+    <link rel="top" title="survivalstan 0.1.2.5 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -84,30 +82,8 @@
           
             
             
-                <ul class="current">
+                <ul>
 <li class="toctree-l1"><a class="reference internal" href="../Usage.html">Getting started</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Fitting a piecewise-exponential model (PEM) to simulated data</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#The-model">The model</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#A-note-about-data-formatting">A note about data formatting</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#Stan-code-for-the-model">Stan code for the model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Simulate-survival-data">Simulate survival data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Explore-simulated-data">Explore simulated data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Transform-to-long-or-per-timepoint-form">Transform to <code class="docutils literal"><span class="pre">long</span></code> or <code class="docutils literal"><span class="pre">per-timepoint</span></code> form</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Fit-stan-model">Fit stan model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Superficial-review-of-convergence">Superficial review of convergence</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Plot-posterior-estimates-of-parameters">Plot posterior estimates of parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Posterior-predictive-checking">Posterior predictive checking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Building-up-the-plot-semi-manually,-for-more-customization">Building up the plot semi-manually, for more customization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Use-plotly-to-summarize-posterior-predicted-values">Use plotly to summarize posterior predicted values</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="Test new_gamma_survival_model with simulated data.html">Optimizing Stan code for a user-provided Gamma model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Test pem_survival_model_gamma with simulated data.html">Estimating a PEM survival model with Gamma baseline hazard</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Test pem_survival_model_randomwalk with simulated data.html">PEM survival model with random-walk baseline hazard</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Test pem_survival_model_timevarying with simulated data.html">A PEM Survival Model with Time-Dependent Effects</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../modules.html">survivalstan</a></li>
 </ul>
 
             
@@ -348,16 +324,16 @@ div.nboutput div.output_area.stderr {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
-<span class="o">%</span><span class="k">autoreload</span> 2
-<span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1100038344</span><span class="p">)</span>
-<span class="kn">import</span> <span class="nn">survivalstan</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">stancache</span> <span class="kn">import</span> <span class="n">stancache</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span></span>%load_ext autoreload
+%autoreload 2
+%matplotlib inline
+import random
+random.seed(1100038344)
+import survivalstan
+import numpy as np
+import pandas as pd
+from stancache import stancache
+from matplotlib import pyplot as plt
 </pre></div>
 </div>
 </div>
@@ -442,7 +418,7 @@ Let&#8217;s take a look at the stan code.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="k">print</span><span class="p">(</span><span class="n">survivalstan</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">pem_survival_model</span><span class="p">)</span>
+<span></span>print(survivalstan.models.pem_survival_model)
 </pre></div>
 </div>
 </div>
@@ -621,14 +597,14 @@ interpret estimates of the baseline hazard.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">d</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached</span><span class="p">(</span>
-    <span class="n">survivalstan</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">sim_data_exp_correlated</span><span class="p">,</span>
-    <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-    <span class="n">censor_time</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-    <span class="n">rate_form</span><span class="o">=</span><span class="s1">&#39;1 + sex&#39;</span><span class="p">,</span>
-    <span class="n">rate_coefs</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
-<span class="p">)</span>
-<span class="n">d</span><span class="p">[</span><span class="s1">&#39;age_centered&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span></span>d = stancache.cached(
+    survivalstan.sim.sim_data_exp_correlated,
+    N=100,
+    censor_time=20,
+    rate_form=&#39;1 + sex&#39;,
+    rate_coefs=[-3, 0.5],
+)
+d[&#39;age_centered&#39;] = d[&#39;age&#39;] - d[&#39;age&#39;].mean()
 </pre></div>
 </div>
 </div>
@@ -657,7 +633,7 @@ call to <code class="docutils literal"><span class="pre">survivalstan.sim.sim_da
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">d</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span></span>d.head()
 </pre></div>
 </div>
 </div>
@@ -752,9 +728,9 @@ functions provided by <code class="docutils literal"><span class="pre">survivals
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;female&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;female&#39;</span><span class="p">)</span>
-<span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;male&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;male&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span></span>survivalstan.utils.plot_observed_survival(df=d[d[&#39;sex&#39;]==&#39;female&#39;], event_col=&#39;event&#39;, time_col=&#39;t&#39;, label=&#39;female&#39;)
+survivalstan.utils.plot_observed_survival(df=d[d[&#39;sex&#39;]==&#39;male&#39;], event_col=&#39;event&#39;, time_col=&#39;t&#39;, label=&#39;male&#39;)
+plt.legend()
 </pre></div>
 </div>
 </div>
@@ -786,10 +762,10 @@ functions provided by <code class="docutils literal"><span class="pre">survivals
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">dlong</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached</span><span class="p">(</span>
-    <span class="n">survivalstan</span><span class="o">.</span><span class="n">prep_data_long_surv</span><span class="p">,</span>
-    <span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span>
-<span class="p">)</span>
+<span></span>dlong = stancache.cached(
+    survivalstan.prep_data_long_surv,
+    df=d, event_col=&#39;event&#39;, time_col=&#39;t&#39;
+)
 </pre></div>
 </div>
 </div>
@@ -812,7 +788,7 @@ per subject (<code class="docutils literal"><span class="pre">index</span></code
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">dlong</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;index == 1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;end_time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<span></span>dlong.query(&#39;index == 1&#39;).sort_values(&#39;end_time&#39;).tail()
 </pre></div>
 </div>
 </div>
@@ -922,28 +898,41 @@ this model fit object. See
 how this works. Also, if you didn&#8217;t want to use the cache, you could
 omit the parameter <code class="docutils literal"><span class="pre">FIT_FUN</span></code> and <code class="docutils literal"><span class="pre">survivalstan</span></code> would use the
 standard pystan functionality.</p>
-<div class="nbinput nblast container">
+<div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [ ]:
+<span></span>In [10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">testfit</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
-    <span class="n">model_cohort</span> <span class="o">=</span> <span class="s1">&#39;test model&#39;</span><span class="p">,</span>
-    <span class="n">model_code</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">pem_survival_model</span><span class="p">,</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">dlong</span><span class="p">,</span>
-    <span class="n">sample_col</span> <span class="o">=</span> <span class="s1">&#39;index&#39;</span><span class="p">,</span>
-    <span class="n">timepoint_end_col</span> <span class="o">=</span> <span class="s1">&#39;end_time&#39;</span><span class="p">,</span>
-    <span class="n">event_col</span> <span class="o">=</span> <span class="s1">&#39;end_failure&#39;</span><span class="p">,</span>
-    <span class="n">formula</span> <span class="o">=</span> <span class="s1">&#39;~ age_centered + sex&#39;</span><span class="p">,</span>
-    <span class="nb">iter</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">,</span>
-    <span class="n">chains</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="n">seed</span> <span class="o">=</span> <span class="mi">9001</span><span class="p">,</span>
-    <span class="n">FIT_FUN</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached_stan_fit</span><span class="p">,</span>
-    <span class="p">)</span>
+<span></span>testfit = survivalstan.fit_stan_survival_model(
+    model_cohort = &#39;test model&#39;,
+    model_code = survivalstan.models.pem_survival_model,
+    df = dlong,
+    sample_col = &#39;index&#39;,
+    timepoint_end_col = &#39;end_time&#39;,
+    event_col = &#39;end_failure&#39;,
+    formula = &#39;~ age_centered + sex&#39;,
+    iter = 5000,
+    chains = 4,
+    seed = 9001,
+    FIT_FUN = stancache.cached_stan_fit,
+    )
 
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="stderr output_area container">
+<div class="highlight"><pre>
+INFO:stancache.stancache:Step 1: Get compiled model code, possibly from cache
+INFO:stancache.stancache:StanModel: cache_filename set to anon_model.cython_0_25_2.model_code_5118842489520038317.pystan_2_14_0_0.stanmodel.pkl
+INFO:stancache.stancache:StanModel: Loading result from cache
+INFO:stancache.stancache:Step 2: Get posterior draws from model, possibly from cache
+INFO:stancache.stancache:sampling: cache_filename set to anon_model.cython_0_25_2.model_code_5118842489520038317.pystan_2_14_0_0.stanfit.chains_4.data_14507016511.iter_5000.seed_9001.pkl
+INFO:stancache.stancache:sampling: Loading result from cache
+</pre></div></div>
 </div>
 </div>
 <div class="section" id="Superficial-review-of-convergence">
@@ -955,37 +944,131 @@ convergence issues, etc. For now the goal is to demonstrate the
 functionalities available here.</p>
 <p>We can summarize posterior estimates for a single parameter, (e.g. the
 built-in Stan parameter <code class="docutils literal"><span class="pre">lp__</span></code>):</p>
-<div class="nbinput nblast container">
+<div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [ ]:
+<span></span>In [11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="s1">&#39;lp__&#39;</span><span class="p">)</span>
+<span></span>survivalstan.utils.print_stan_summary([testfit], pars=&#39;lp__&#39;)
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<div class="highlight"><pre>
+            mean   se_mean         sd       2.5%        50%       97.5%      Rhat
+lp__ -258.914979  6.067607  49.665504 -335.83595 -267.33087 -154.100868  1.085588
+</pre></div></div>
 </div>
 <p>Or, for sets of parameters with the same name:</p>
-<div class="nbinput nblast container">
+<div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [ ]:
+<span></span>In [12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="s1">&#39;log_baseline_raw&#39;</span><span class="p">)</span>
+<span></span>survivalstan.utils.print_stan_summary([testfit], pars=&#39;log_baseline_raw&#39;)
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<div class="highlight"><pre>
+                          mean   se_mean        sd      2.5%       50%     97.5%      Rhat
+log_baseline_raw[0]   0.019647  0.001436  0.143627 -0.265423  0.008856  0.351903  1.000186
+log_baseline_raw[1]   0.017001  0.001451  0.145123 -0.276477  0.006995  0.348198  1.000221
+log_baseline_raw[2]   0.017916  0.001475  0.147465 -0.283370  0.007572  0.357371  1.000288
+log_baseline_raw[3]   0.017542  0.001455  0.145524 -0.276583  0.008317  0.351408  1.000975
+log_baseline_raw[4]   0.017227  0.001463  0.146328 -0.278237  0.006810  0.353518  1.000206
+log_baseline_raw[5]   0.014864  0.001482  0.148171 -0.289185  0.006228  0.359035  1.000175
+log_baseline_raw[6]   0.012331  0.001413  0.141270 -0.275576  0.005273  0.327449  1.000171
+log_baseline_raw[7]   0.007920  0.001509  0.150910 -0.304167  0.003191  0.339291  1.000073
+log_baseline_raw[8]   0.008752  0.001404  0.140400 -0.274269  0.003630  0.316078  1.000433
+log_baseline_raw[9]   0.008926  0.001436  0.143608 -0.286753  0.003888  0.319980  0.999990
+log_baseline_raw[10]  0.009011  0.001439  0.143859 -0.289257  0.004465  0.322414  0.999994
+log_baseline_raw[11]  0.004890  0.001452  0.145208 -0.306954  0.003050  0.331526  1.000125
+log_baseline_raw[12]  0.008431  0.001442  0.144245 -0.285667  0.004344  0.330919  0.999826
+log_baseline_raw[13]  0.008531  0.001461  0.146150 -0.300336  0.003858  0.336951  0.999741
+log_baseline_raw[14]  0.007133  0.001426  0.142569 -0.292241  0.004296  0.317077  1.000004
+log_baseline_raw[15]  0.007492  0.001421  0.142050 -0.287254  0.003846  0.323929  0.999866
+log_baseline_raw[16]  0.008341  0.001447  0.144716 -0.285362  0.005005  0.323623  0.999916
+log_baseline_raw[17]  0.006150  0.001398  0.139799 -0.287581  0.003530  0.313004  1.000583
+log_baseline_raw[18]  0.006208  0.001414  0.141440 -0.287870  0.003043  0.310741  0.999955
+log_baseline_raw[19]  0.004626  0.001407  0.140725 -0.286533  0.001647  0.318195  0.999982
+log_baseline_raw[20]  0.007053  0.001424  0.142352 -0.298405  0.003217  0.332473  1.000008
+log_baseline_raw[21]  0.006165  0.001448  0.144757 -0.301705  0.003087  0.324310  0.999954
+log_baseline_raw[22]  0.003023  0.001443  0.144289 -0.299801  0.000831  0.330782  0.999736
+log_baseline_raw[23]  0.003489  0.001455  0.145501 -0.308853  0.001102  0.323494  0.999748
+log_baseline_raw[24]  0.004883  0.001422  0.142161 -0.302533  0.001940  0.319808  1.000362
+log_baseline_raw[25] -0.000134  0.001419  0.141871 -0.311378 -0.000005  0.304250  0.999907
+log_baseline_raw[26] -0.000183  0.001417  0.141678 -0.306077  0.000268  0.315511  0.999709
+log_baseline_raw[27]  0.000082  0.001406  0.140576 -0.307312  0.000120  0.302780  0.999945
+log_baseline_raw[28]  0.001481  0.001387  0.138691 -0.296750  0.001219  0.305398  0.999783
+log_baseline_raw[29]  0.000518  0.001427  0.142696 -0.298523 -0.000299  0.306153  0.999623
+log_baseline_raw[30] -0.000567  0.001401  0.140102 -0.310931  0.001061  0.290790  0.999853
+log_baseline_raw[31]  0.002251  0.001418  0.141821 -0.308225  0.001303  0.306985  0.999873
+log_baseline_raw[32] -0.000592  0.001458  0.145825 -0.312424  0.000043  0.316410  0.999696
+log_baseline_raw[33] -0.004592  0.001385  0.138487 -0.304364 -0.002543  0.294671  0.999654
+log_baseline_raw[34] -0.003992  0.001454  0.145389 -0.322561 -0.001881  0.302946  0.999755
+log_baseline_raw[35] -0.004156  0.001409  0.140897 -0.306749 -0.001493  0.294782  0.999690
+log_baseline_raw[36] -0.005276  0.001409  0.140950 -0.325573 -0.002215  0.291857  0.999829
+log_baseline_raw[37] -0.007617  0.001415  0.141474 -0.321741 -0.002645  0.289491  0.999988
+log_baseline_raw[38] -0.007937  0.001408  0.140822 -0.313421 -0.004623  0.286457  0.999982
+log_baseline_raw[39] -0.007657  0.001364  0.136358 -0.312765 -0.002851  0.285250  1.000174
+log_baseline_raw[40] -0.008427  0.001410  0.140992 -0.322515 -0.003162  0.282210  0.999950
+log_baseline_raw[41] -0.006690  0.001425  0.142507 -0.319207 -0.002328  0.285721  0.999908
+log_baseline_raw[42] -0.010126  0.001443  0.144295 -0.339026 -0.003639  0.292575  0.999805
+log_baseline_raw[43] -0.008422  0.001427  0.142724 -0.336195 -0.002332  0.284262  1.000084
+log_baseline_raw[44] -0.009589  0.001405  0.140526 -0.320643 -0.003248  0.274365  1.000060
+log_baseline_raw[45] -0.010275  0.001418  0.141758 -0.330956 -0.003702  0.273868  1.000145
+log_baseline_raw[46] -0.010149  0.001441  0.144062 -0.338806 -0.004575  0.289066  1.000731
+log_baseline_raw[47] -0.010984  0.001418  0.141784 -0.330928 -0.004726  0.283092  0.999755
+log_baseline_raw[48] -0.010872  0.001390  0.139015 -0.330739 -0.004454  0.280835  1.000222
+log_baseline_raw[49] -0.009884  0.001403  0.140311 -0.324124 -0.004117  0.275271  0.999847
+log_baseline_raw[50] -0.011829  0.001375  0.137513 -0.314276 -0.004940  0.264868  1.000077
+log_baseline_raw[51] -0.011702  0.001458  0.145799 -0.336412 -0.005200  0.285959  0.999959
+log_baseline_raw[52] -0.010392  0.001469  0.146867 -0.349373 -0.003537  0.283791  0.999980
+log_baseline_raw[53] -0.010106  0.001403  0.140349 -0.312402 -0.003562  0.274880  0.999808
+log_baseline_raw[54] -0.012862  0.001421  0.142080 -0.338375 -0.005334  0.273351  1.000034
+log_baseline_raw[55] -0.011897  0.001398  0.139820 -0.332632 -0.004097  0.274485  0.999865
+log_baseline_raw[56] -0.012945  0.001390  0.138961 -0.331729 -0.004685  0.270914  1.000496
+log_baseline_raw[57] -0.010691  0.001411  0.141106 -0.330575 -0.005446  0.290778  0.999797
+log_baseline_raw[58] -0.012159  0.001410  0.140981 -0.339378 -0.005554  0.280880  0.999786
+log_baseline_raw[59] -0.012971  0.001433  0.143279 -0.334722 -0.005576  0.280169  1.000235
+log_baseline_raw[60] -0.010581  0.001430  0.143014 -0.328594 -0.004387  0.279914  0.999954
+log_baseline_raw[61] -0.008223  0.001426  0.142638 -0.326803 -0.003350  0.292468  0.999918
+log_baseline_raw[62] -0.012020  0.001437  0.143716 -0.334068 -0.005828  0.282619  1.000157
+log_baseline_raw[63] -0.009945  0.001425  0.142458 -0.325602 -0.004666  0.285909  0.999998
+log_baseline_raw[64] -0.011442  0.001499  0.149850 -0.349216 -0.005765  0.309402  1.000616
+log_baseline_raw[65] -0.009525  0.001438  0.143808 -0.326331 -0.004767  0.296830  1.000247
+log_baseline_raw[66] -0.011176  0.001369  0.136854 -0.322828 -0.004931  0.266086  0.999885
+log_baseline_raw[67] -0.009417  0.001412  0.141209 -0.327826 -0.004775  0.283079  1.000007
+log_baseline_raw[68] -0.007313  0.001392  0.139212 -0.315294 -0.003673  0.284527  1.000071
+log_baseline_raw[69] -0.031890  0.001490  0.149014 -0.392716 -0.014664  0.257069  1.001029
+</pre></div></div>
 </div>
 <p>It&#8217;s also not uncommon to graphically summarize the <code class="docutils literal"><span class="pre">Rhat</span></code> values, to
 get a sense of similarity among the chains for particular parameters.</p>
-<div class="nbinput nblast container">
+<div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [ ]:
+<span></span>In [13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_stan_summary</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="s1">&#39;log_baseline_raw&#39;</span><span class="p">)</span>
+<span></span>survivalstan.utils.plot_stan_summary([testfit], pars=&#39;log_baseline_raw&#39;)
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../_images/examples_Example-using-pem_survival_model_31_0.png" src="../_images/examples_Example-using-pem_survival_model_31_0.png" />
 </div>
 </div>
 </div>
@@ -1010,28 +1093,42 @@ details.</p>
 <p>In this case, the model estimates a minimal degree of variance across
 timepoints, which is good given that the simulated data assumed a
 constant hazard over time.</p>
-<div class="nbinput nblast container">
+<div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [ ]:
+<span></span>In [14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_coefs</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;baseline&#39;</span><span class="p">)</span>
+<span></span>survivalstan.utils.plot_coefs([testfit], element=&#39;baseline&#39;)
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../_images/examples_Example-using-pem_survival_model_34_0.png" src="../_images/examples_Example-using-pem_survival_model_34_0.png" />
 </div>
 </div>
 <p>We can also summarize the posterior estimates for our <code class="docutils literal"><span class="pre">beta</span></code>
 coefficients. This is actually the default behavior of <code class="docutils literal"><span class="pre">plot_coefs</span></code>.
 Here we hope to see the posterior estimates of beta coefficients include
 the value we used for our simulation (0.5).</p>
-<div class="nbinput nblast container">
+<div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [ ]:
+<span></span>In [15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_coefs</span><span class="p">([</span><span class="n">testfit</span><span class="p">])</span>
+<span></span>survivalstan.utils.plot_coefs([testfit])
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../_images/examples_Example-using-pem_survival_model_36_0.png" src="../_images/examples_Example-using-pem_survival_model_36_0.png" />
 </div>
 </div>
 </div>
@@ -1048,16 +1145,31 @@ posterior-predicted intervals.</p>
 <p>By default, <code class="docutils literal"><span class="pre">survivalstan</span></code>&#8216;s plot_pp_survival method will plot
 whiskers at the 2.5th and 97.5th percentile values, corresponding to 95%
 predicted intervals.</p>
-<div class="nbinput nblast container">
+<div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_pp_survival</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">fill</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;observed&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span></span>survivalstan.utils.plot_pp_survival([testfit], fill=False)
+survivalstan.utils.plot_observed_survival(df=d, event_col=&#39;event&#39;, time_col=&#39;t&#39;, color=&#39;green&#39;, label=&#39;observed&#39;)
+plt.legend()
 </pre></div>
+</div>
+</div>
+<div class="nboutput container">
+<div class="prompt empty container">
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>&lt;matplotlib.legend.Legend at 0x7f3966f1d510&gt;
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../_images/examples_Example-using-pem_survival_model_38_1.png" src="../_images/examples_Example-using-pem_survival_model_38_1.png" />
 </div>
 </div>
 <p>We can also summarize and plot survival by our covariates of interest,
@@ -1069,7 +1181,7 @@ provided they are included in the original dataframe provided to
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_pp_survival</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;sex&#39;</span><span class="p">)</span>
+<span></span>survivalstan.utils.plot_pp_survival([testfit], by=&#39;sex&#39;)
 </pre></div>
 </div>
 </div>
@@ -1080,7 +1192,7 @@ provided they are included in the original dataframe provided to
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_pp_survival</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="n">pal</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">])</span>
+<span></span>survivalstan.utils.plot_pp_survival([testfit], by=&#39;sex&#39;, pal=[&#39;red&#39;, &#39;blue&#39;])
 </pre></div>
 </div>
 </div>
@@ -1099,7 +1211,7 @@ posterior-predicted values to begin with:</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">ppsurv</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">prep_pp_survival_data</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;sex&#39;</span><span class="p">)</span>
+<span></span>ppsurv = survivalstan.utils.prep_pp_survival_data([testfit], by=&#39;sex&#39;)
 </pre></div>
 </div>
 </div>
@@ -1110,7 +1222,7 @@ posterior-predicted values to begin with:</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">ppsurv</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span></span>ppsurv.head()
 </pre></div>
 </div>
 </div>
@@ -1126,16 +1238,16 @@ intervals with observed values.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">subplot</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">_plot_pp_survival_data</span><span class="p">(</span><span class="n">ppsurv</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;sex == &quot;male&quot;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
-                                          <span class="n">subplot</span><span class="o">=</span><span class="n">subplot</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">_plot_pp_survival_data</span><span class="p">(</span><span class="n">ppsurv</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;sex == &quot;female&quot;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
-                                          <span class="n">subplot</span><span class="o">=</span><span class="n">subplot</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;female&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span>
-                                          <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;female&#39;</span><span class="p">)</span>
-<span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;male&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span>
-                                          <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;male&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span></span>subplot = plt.subplots(1, 1)
+survivalstan.utils._plot_pp_survival_data(ppsurv.query(&#39;sex == &quot;male&quot;&#39;).copy(),
+                                          subplot=subplot, color=&#39;blue&#39;, alpha=0.5)
+survivalstan.utils._plot_pp_survival_data(ppsurv.query(&#39;sex == &quot;female&quot;&#39;).copy(),
+                                          subplot=subplot, color=&#39;red&#39;, alpha=0.5)
+survivalstan.utils.plot_observed_survival(df=d[d[&#39;sex&#39;]==&#39;female&#39;], event_col=&#39;event&#39;, time_col=&#39;t&#39;,
+                                          color=&#39;red&#39;, label=&#39;female&#39;)
+survivalstan.utils.plot_observed_survival(df=d[d[&#39;sex&#39;]==&#39;male&#39;], event_col=&#39;event&#39;, time_col=&#39;t&#39;,
+                                          color=&#39;blue&#39;, label=&#39;male&#39;)
+plt.legend()
 </pre></div>
 </div>
 </div>
@@ -1150,16 +1262,16 @@ observed timepoint, by group.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">ppsummary</span> <span class="o">=</span> <span class="n">ppsurv</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;sex&#39;</span><span class="p">,</span><span class="s1">&#39;event_time&#39;</span><span class="p">])[</span><span class="s1">&#39;survival&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span>
-        <span class="s1">&#39;95_lower&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">),</span>
-        <span class="s1">&#39;95_upper&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">),</span>
-        <span class="s1">&#39;50_lower&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">25</span><span class="p">),</span>
-        <span class="s1">&#39;50_upper&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">75</span><span class="p">),</span>
-        <span class="s1">&#39;median&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
-    <span class="p">})</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-<span class="n">shade_colors</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">male</span><span class="o">=</span><span class="s1">&#39;rgba(0, 128, 128, {})&#39;</span><span class="p">,</span> <span class="n">female</span><span class="o">=</span><span class="s1">&#39;rgba(214, 12, 140, {})&#39;</span><span class="p">)</span>
-<span class="n">line_colors</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">male</span><span class="o">=</span><span class="s1">&#39;rgb(0, 128, 128)&#39;</span><span class="p">,</span> <span class="n">female</span><span class="o">=</span><span class="s1">&#39;rgb(214, 12, 140)&#39;</span><span class="p">)</span>
-<span class="n">ppsummary</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;event_time&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span></span>ppsummary = ppsurv.groupby([&#39;sex&#39;,&#39;event_time&#39;])[&#39;survival&#39;].agg({
+        &#39;95_lower&#39;: lambda x: np.percentile(x, 2.5),
+        &#39;95_upper&#39;: lambda x: np.percentile(x, 97.5),
+        &#39;50_lower&#39;: lambda x: np.percentile(x, 25),
+        &#39;50_upper&#39;: lambda x: np.percentile(x, 75),
+        &#39;median&#39;: lambda x: np.percentile(x, 50),
+    }).reset_index()
+shade_colors = dict(male=&#39;rgba(0, 128, 128, {})&#39;, female=&#39;rgba(214, 12, 140, {})&#39;)
+line_colors = dict(male=&#39;rgb(0, 128, 128)&#39;, female=&#39;rgb(214, 12, 140)&#39;)
+ppsummary.sort_values([&#39;sex&#39;, &#39;event_time&#39;], inplace=True)
 </pre></div>
 </div>
 </div>
@@ -1171,10 +1283,10 @@ line and two shaded areas) per observed group.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">plotly</span>
-<span class="kn">import</span> <span class="nn">plotly.plotly</span> <span class="kn">as</span> <span class="nn">py</span>
-<span class="kn">import</span> <span class="nn">plotly.graph_objs</span> <span class="kn">as</span> <span class="nn">go</span>
-<span class="n">plotly</span><span class="o">.</span><span class="n">offline</span><span class="o">.</span><span class="n">init_notebook_mode</span><span class="p">(</span><span class="n">connected</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span></span>import plotly
+import plotly.plotly as py
+import plotly.graph_objs as go
+plotly.offline.init_notebook_mode(connected=True)
 </pre></div>
 </div>
 </div>
@@ -1184,45 +1296,45 @@ line and two shaded areas) per observed group.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">data5</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-<span class="k">for</span> <span class="n">grp</span><span class="p">,</span> <span class="n">grp_df</span> <span class="ow">in</span> <span class="n">ppsummary</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;sex&#39;</span><span class="p">):</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">grp_df</span><span class="p">[</span><span class="s1">&#39;event_time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-    <span class="n">x_rev</span> <span class="o">=</span> <span class="n">x</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">y_upper</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">grp_df</span><span class="p">[</span><span class="s1">&#39;50_upper&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-    <span class="n">y_lower</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">grp_df</span><span class="p">[</span><span class="s1">&#39;50_lower&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-    <span class="n">y_lower</span> <span class="o">=</span> <span class="n">y_lower</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">y2_upper</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">grp_df</span><span class="p">[</span><span class="s1">&#39;95_upper&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-    <span class="n">y2_lower</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">grp_df</span><span class="p">[</span><span class="s1">&#39;95_lower&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-    <span class="n">y2_lower</span> <span class="o">=</span> <span class="n">y2_lower</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">grp_df</span><span class="p">[</span><span class="s1">&#39;median&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-    <span class="n">my_shading50</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">x_rev</span><span class="p">,</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">y_upper</span> <span class="o">+</span> <span class="n">y_lower</span><span class="p">,</span>
-        <span class="n">fill</span> <span class="o">=</span> <span class="s1">&#39;tozerox&#39;</span><span class="p">,</span>
-        <span class="n">fillcolor</span> <span class="o">=</span> <span class="n">shade_colors</span><span class="p">[</span><span class="n">grp</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mf">0.3</span><span class="p">),</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;transparent&#39;</span><span class="p">),</span>
-        <span class="n">showlegend</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;{} - 50% CI&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">grp</span><span class="p">),</span>
-    <span class="p">)</span>
-    <span class="n">my_shading95</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">x_rev</span><span class="p">,</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">y2_upper</span> <span class="o">+</span> <span class="n">y2_lower</span><span class="p">,</span>
-        <span class="n">fill</span> <span class="o">=</span> <span class="s1">&#39;tozerox&#39;</span><span class="p">,</span>
-        <span class="n">fillcolor</span> <span class="o">=</span> <span class="n">shade_colors</span><span class="p">[</span><span class="n">grp</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mf">0.1</span><span class="p">),</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;transparent&#39;</span><span class="p">),</span>
-        <span class="n">showlegend</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;{} - 95% CI&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">grp</span><span class="p">),</span>
-    <span class="p">)</span>
-    <span class="n">my_line</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">,</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">line_colors</span><span class="p">[</span><span class="n">grp</span><span class="p">]),</span>
-        <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;lines&#39;</span><span class="p">,</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">grp</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">data5</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">my_line</span><span class="p">)</span>
-    <span class="n">data5</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">my_shading50</span><span class="p">)</span>
-    <span class="n">data5</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">my_shading95</span><span class="p">)</span>
+<span></span>data5 = list()
+for grp, grp_df in ppsummary.groupby(&#39;sex&#39;):
+    x = list(grp_df[&#39;event_time&#39;].values)
+    x_rev = x[::-1]
+    y_upper = list(grp_df[&#39;50_upper&#39;].values)
+    y_lower = list(grp_df[&#39;50_lower&#39;].values)
+    y_lower = y_lower[::-1]
+    y2_upper = list(grp_df[&#39;95_upper&#39;].values)
+    y2_lower = list(grp_df[&#39;95_lower&#39;].values)
+    y2_lower = y2_lower[::-1]
+    y = list(grp_df[&#39;median&#39;].values)
+    my_shading50 = go.Scatter(
+        x = x + x_rev,
+        y = y_upper + y_lower,
+        fill = &#39;tozerox&#39;,
+        fillcolor = shade_colors[grp].format(0.3),
+        line = go.Line(color = &#39;transparent&#39;),
+        showlegend = True,
+        name = &#39;{} - 50% CI&#39;.format(grp),
+    )
+    my_shading95 = go.Scatter(
+        x = x + x_rev,
+        y = y2_upper + y2_lower,
+        fill = &#39;tozerox&#39;,
+        fillcolor = shade_colors[grp].format(0.1),
+        line = go.Line(color = &#39;transparent&#39;),
+        showlegend = True,
+        name = &#39;{} - 95% CI&#39;.format(grp),
+    )
+    my_line = go.Scatter(
+        x = x,
+        y = y,
+        line = go.Line(color=line_colors[grp]),
+        mode = &#39;lines&#39;,
+        name = grp,
+    )
+    data5.append(my_line)
+    data5.append(my_shading50)
+    data5.append(my_shading95)
 </pre></div>
 </div>
 </div>
@@ -1233,14 +1345,14 @@ line and two shaded areas) per observed group.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">layout5</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span>
-    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Survival (%)&#39;</span><span class="p">,</span>
-        <span class="c1">#zeroline=False,</span>
-        <span class="n">tickformat</span><span class="o">=</span><span class="s1">&#39;.0%&#39;</span><span class="p">,</span>
-    <span class="p">),</span>
-    <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Days since enrollment&#39;</span><span class="p">)</span>
-<span class="p">)</span>
+<span></span>layout5 = go.Layout(
+    yaxis=dict(
+        title=&#39;Survival (%)&#39;,
+        #zeroline=False,
+        tickformat=&#39;.0%&#39;,
+    ),
+    xaxis=dict(title=&#39;Days since enrollment&#39;)
+)
 </pre></div>
 </div>
 </div>
@@ -1251,7 +1363,7 @@ line and two shaded areas) per observed group.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">py</span><span class="o">.</span><span class="n">iplot</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data5</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout5</span><span class="p">),</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;survivalstan/pem_survival_model_ppsummary&#39;</span><span class="p">)</span>
+<span></span>py.iplot(go.Figure(data=data5, layout=layout5), filename=&#39;survivalstan/pem_survival_model_ppsummary&#39;)
 </pre></div>
 </div>
 </div>
@@ -1265,15 +1377,6 @@ directly</em></p>
            </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="Test new_gamma_survival_model with simulated data.html" class="btn btn-neutral float-right" title="Optimizing Stan code for a user-provided Gamma model" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="../Usage.html" class="btn btn-neutral" title="Getting started" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
