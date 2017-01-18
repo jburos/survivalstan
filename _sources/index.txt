@@ -65,16 +65,13 @@ The project is licensed under the Apache 2.0 license.
 Contents:
 
 .. toctree::
-   :maxdepth: 3
+   :caption: Table of Contents
+   :name: mastertoc
+   :hidden:
 
    Usage.ipynb
    Examples.ipynb
    modules.rst
-
-Examples
---------
-
-- :doc:`examples/Example-using-pem_survival_model.ipynb`
 
 Indices and tables
 ==================
