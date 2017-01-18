@@ -22,7 +22,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Typical workflow\n",
+    "## Typical analysis workflow\n",
     "\n",
     "At a high level, the Survival modeling workflow proceeds in several steps:\n",
     "\n",
@@ -37,7 +37,7 @@
     "    - `survivalstan.utils.plot_coefs`, etc\n",
     "7. Update model: rince and repeat!\n",
     "\n",
-    "#### Some thoughts \n",
+    "Some high-level comments:\n",
     "\n",
     "* **Most if not all survivalstan functions accept a list of models.**\n",
     "    - It's rare to analyze your data with one and only one model. \n",
@@ -45,13 +45,8 @@
     "    - Use the optional parameter `model_cohort` to \"label\" each model fit object.\n",
     "* Not all functions will work with all models\n",
     "    - Example, `survivalstan.utils.plot_grp_coefs` will only work for models with grouped-coefficients (ie a varying-coefficient model).\n",
-    "    - Similarly, `survivalstan.utils.plot_baseline_hazard` will only work for \"PEM\" models, which have semi- or non-parametrics baseline hazards."
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
+    "    - Similarly, `survivalstan.utils.plot_baseline_hazard` will only work for \"PEM\" models, which have semi- or non-parametrics baseline hazards.\n",
+    "\n",
     "\n",
     "### Obtain or simulate data\n",
     "\n",
@@ -93,15 +88,6 @@
     "### Update the model (go back to # 2)\n",
     "\n"
    ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {
-    "collapsed": true
-   },
-   "outputs": [],
-   "source": []
   }
  ],
  "metadata": {

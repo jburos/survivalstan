@@ -66,8 +66,10 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
+   :glob:
 
    Usage.ipynb
+   examples.rst
 
 Indices and tables
 ==================
