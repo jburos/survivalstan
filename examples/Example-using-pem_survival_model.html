@@ -34,8 +34,7 @@
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
     <link rel="top" title="survivalstan 0.1.2.5 documentation" href="../index.html"/>
-        <link rel="up" title="Getting started" href="../Usage.html"/>
-        <link rel="next" title="superficial check of convergence" href="Test pem_survival_model_timevarying with simulated data.html"/>
+        <link rel="next" title="Optimizing Stan code for a user-provided Gamma model" href="Test new_gamma_survival_model with simulated data.html"/>
         <link rel="prev" title="Getting started" href="../Usage.html"/> 
 
   
@@ -86,31 +85,29 @@
             
             
                 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../Usage.html">Getting started</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../Usage.html#Installation">Installation</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Basic piecewise-exponentialmodel</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#The-model">The model</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Stan-code-for-the-model">Stan code for the model</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Simulate-survival-data">Simulate survival data</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Explore-simulated-data">Explore simulated data</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Transform-to-long-or-per-timepoint-form">Transform to <code class="docutils literal"><span class="pre">long</span></code> or <code class="docutils literal"><span class="pre">per-timepoint</span></code> form</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Fit-stan-model">Fit stan model</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Superficial-review-of-convergence">Superficial review of convergence</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Plot-posterior-estimates-of-parameters">Plot posterior estimates of parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Posterior-predictive-checking">Posterior predictive checking</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Building-up-the-plot-semi-manually,-for-more-customization">Building up the plot semi-manually, for more customization</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Use-plotly-to-summarize-posterior-predicted-values">Use plotly to summarize posterior predicted values</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Usage.html">Getting started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Fitting a piecewise-exponential model (PEM) to simulated data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#The-model">The model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#A-note-about-data-formatting">A note about data formatting</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="Test pem_survival_model_timevarying with simulated data.html">superficial check of convergence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Test pem_survival_model_timevarying with simulated data.html#summarize-coefficient-estimates">summarize coefficient estimates</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Test pem_survival_model_timevarying with simulated data.html#posterior-predictive-checks">posterior-predictive checks</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Test pem_survival_model_timevarying with simulated data.html#summarize-time-varying-effect-of-sex-on-survival">summarize time-varying effect of sex on survival</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Test pem_survival_model_timevarying with simulated data.html#accessing-lower-level-functions-for-plotting-effects-over-time">accessing lower-level functions for plotting effects over time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Stan-code-for-the-model">Stan code for the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Simulate-survival-data">Simulate survival data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Explore-simulated-data">Explore simulated data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Transform-to-long-or-per-timepoint-form">Transform to <code class="docutils literal"><span class="pre">long</span></code> or <code class="docutils literal"><span class="pre">per-timepoint</span></code> form</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Fit-stan-model">Fit stan model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Superficial-review-of-convergence">Superficial review of convergence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Plot-posterior-estimates-of-parameters">Plot posterior estimates of parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Posterior-predictive-checking">Posterior predictive checking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Building-up-the-plot-semi-manually,-for-more-customization">Building up the plot semi-manually, for more customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Use-plotly-to-summarize-posterior-predicted-values">Use plotly to summarize posterior predicted values</a></li>
 </ul>
 </li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="Test new_gamma_survival_model with simulated data.html">Optimizing Stan code for a user-provided Gamma model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Test pem_survival_model_gamma with simulated data.html">Estimating a PEM survival model with Gamma baseline hazard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Test pem_survival_model_randomwalk with simulated data.html">PEM survival model with random-walk baseline hazard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Test pem_survival_model_timevarying with simulated data.html">A PEM Survival Model with Time-Dependent Effects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">survivalstan</a></li>
 </ul>
 
             
@@ -140,8 +137,6 @@
 <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
-      
-          <li><a href="../Usage.html">Getting started</a> &raquo;</li>
       
     <li>Fitting a piecewise-exponential model (PEM) to simulated data</li>
       <li class="wy-breadcrumbs-aside">
@@ -347,9 +342,9 @@ div.nboutput div.output_area.stderr {
 </style>
 <div class="section" id="Fitting-a-piecewise-exponential-model-(PEM)-to-simulated-data">
 <h1>Fitting a piecewise-exponential model (PEM) to simulated data<a class="headerlink" href="#Fitting-a-piecewise-exponential-model-(PEM)-to-simulated-data" title="Permalink to this headline">¶</a></h1>
-<div class="nbinput nblast container">
+<div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [ ]:
+<span></span>In [2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -365,6 +360,23 @@ div.nboutput div.output_area.stderr {
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput container">
+<div class="prompt empty container">
+</div>
+<div class="stderr output_area container">
+<div class="highlight"><pre>
+INFO:stancache.seed:Setting seed to 1245502385
+</pre></div></div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<div class="highlight"><pre>
+The autoreload extension is already loaded. To reload it, use:
+  %reload_ext autoreload
+</pre></div></div>
 </div>
 <div class="section" id="The-model">
 <h2>The model<a class="headerlink" href="#The-model" title="Permalink to this headline">¶</a></h2>
@@ -426,7 +438,7 @@ recieve data in this structure.</p>
 Let&#8217;s take a look at the stan code.</p>
 <div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [2]:
+<span></span>In [3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -583,6 +595,13 @@ generated quantities {
 }
 </pre></div></div>
 </div>
+<p>This may seem pretty intimidating, but once you get used to the <a class="reference external" href="http://mc-stan.org/documentation/">Stan
+language</a> you may find it&#8217;s pretty
+powerful.</p>
+<p>One of the goals of <a href="#id3"><span class="problematic" id="id4">`survivalstan &lt;&gt;`__</span></a> is to allow you to edit the stan
+code directly, if you choose to do so. Or to reference Stan code for
+models others have written. This expands the range of what
+<a href="#id3"><span class="problematic" id="id5">`survivalstan &lt;&gt;`__</span></a> can do.</p>
 </div>
 <div class="section" id="Simulate-survival-data">
 <h2>Simulate survival data<a class="headerlink" href="#Simulate-survival-data" title="Permalink to this headline">¶</a></h2>
@@ -598,7 +617,7 @@ simulated value for <code class="docutils literal"><span class="pre">sex</span><
 interpret estimates of the baseline hazard.</p>
 <div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [3]:
+<span></span>In [4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -618,8 +637,10 @@ interpret estimates of the baseline hazard.</p>
 </div>
 <div class="stderr output_area container">
 <div class="highlight"><pre>
-INFO:stancache.stancache:sim_data_exp_correlated: cache_filename set to sim_data_exp_correlated.cached.N_100.censor_time_20.rate_coefs_54462717316.rate_form_1 + sex.pkl
-INFO:stancache.stancache:sim_data_exp_correlated: Loading result from cache
+INFO:stancache.stancache:sim_data_exp_correlated: cache_filename set to sim_data_exp_correlated.cached.N_100.censor_time_20.rate_coefs_21453428780.rate_form_1 + sex.pkl
+INFO:stancache.stancache:sim_data_exp_correlated: Starting execution
+INFO:stancache.stancache:sim_data_exp_correlated: Execution completed (0:00:00.024619 elapsed)
+INFO:stancache.stancache:sim_data_exp_correlated: Saving results to cache
 </pre></div></div>
 </div>
 <p><a href="#id1"><span class="problematic" id="id2">*</span></a>Aside: In order to make this a more reproducible example, this code is
@@ -632,7 +653,7 @@ call to <code class="docutils literal"><span class="pre">survivalstan.sim.sim_da
 <code class="docutils literal"><span class="pre">time-to-event</span></code> form:</p>
 <div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [4]:
+<span></span>In [5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -642,7 +663,7 @@ call to <code class="docutils literal"><span class="pre">survivalstan.sim.sim_da
 </div>
 <div class="nboutput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>Out[4]:
+<span></span>Out[5]:
 </pre></div>
 </div>
 <div class="output_area container">
@@ -664,58 +685,58 @@ call to <code class="docutils literal"><span class="pre">survivalstan.sim.sim_da
   <tbody>
     <tr>
       <th>0</th>
-      <td>59</td>
+      <td>39</td>
       <td>male</td>
       <td>0.082085</td>
-      <td>20.948771</td>
-      <td>20.000000</td>
-      <td>False</td>
+      <td>14.798745</td>
+      <td>14.798745</td>
+      <td>True</td>
       <td>0</td>
-      <td>4.18</td>
+      <td>-16.33</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
+      <td>47</td>
+      <td>female</td>
+      <td>0.049787</td>
+      <td>2.613670</td>
+      <td>2.613670</td>
       <td>True</td>
       <td>1</td>
-      <td>3.18</td>
+      <td>-8.33</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>61</td>
+      <td>53</td>
       <td>female</td>
       <td>0.049787</td>
-      <td>27.018886</td>
+      <td>81.586870</td>
       <td>20.000000</td>
       <td>False</td>
       <td>2</td>
-      <td>6.18</td>
+      <td>-2.33</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>57</td>
-      <td>female</td>
-      <td>0.049787</td>
-      <td>62.220296</td>
-      <td>20.000000</td>
-      <td>False</td>
+      <td>54</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>17.647537</td>
+      <td>17.647537</td>
+      <td>True</td>
       <td>3</td>
-      <td>2.18</td>
+      <td>-1.33</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>55</td>
+      <td>49</td>
       <td>male</td>
       <td>0.082085</td>
-      <td>10.462045</td>
-      <td>10.462045</td>
+      <td>6.346437</td>
+      <td>6.346437</td>
       <td>True</td>
       <td>4</td>
-      <td>0.18</td>
+      <td>-6.33</td>
     </tr>
   </tbody>
 </table>
@@ -727,7 +748,7 @@ call to <code class="docutils literal"><span class="pre">survivalstan.sim.sim_da
 functions provided by <code class="docutils literal"><span class="pre">survivalstan</span></code>.</p>
 <div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [5]:
+<span></span>In [6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -739,11 +760,11 @@ functions provided by <code class="docutils literal"><span class="pre">survivals
 </div>
 <div class="nboutput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>Out[5]:
+<span></span>Out[6]:
 </pre></div>
 </div>
 <div class="output_area highlight-none"><div class="highlight"><pre>
-<span></span>&lt;matplotlib.legend.Legend at 0x7fc064221668&gt;
+<span></span>&lt;matplotlib.legend.Legend at 0x7f39e153b950&gt;
 </pre></div>
 </div>
 </div>
@@ -751,7 +772,7 @@ functions provided by <code class="docutils literal"><span class="pre">survivals
 <div class="prompt empty container">
 </div>
 <div class="output_area container">
-<img alt="../_images/examples_Example-using-pem_survival_model_15_1.png" src="../_images/examples_Example-using-pem_survival_model_15_1.png" />
+<img alt="../_images/examples_Example-using-pem_survival_model_16_1.png" src="../_images/examples_Example-using-pem_survival_model_16_1.png" />
 </div>
 </div>
 </div>
@@ -761,7 +782,7 @@ functions provided by <code class="docutils literal"><span class="pre">survivals
 <code class="docutils literal"><span class="pre">per-timepoint</span></code> form.</p>
 <div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [6]:
+<span></span>In [7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -777,25 +798,27 @@ functions provided by <code class="docutils literal"><span class="pre">survivals
 </div>
 <div class="stderr output_area container">
 <div class="highlight"><pre>
-INFO:stancache.stancache:prep_data_long_surv: cache_filename set to prep_data_long_surv.cached.df_33772694934.event_col_event.time_col_t.pkl
-INFO:stancache.stancache:prep_data_long_surv: Loading result from cache
+INFO:stancache.stancache:prep_data_long_surv: cache_filename set to prep_data_long_surv.cached.df_17750466280.event_col_event.time_col_t.pkl
+INFO:stancache.stancache:prep_data_long_surv: Starting execution
+INFO:stancache.stancache:prep_data_long_surv: Execution completed (0:00:00.388285 elapsed)
+INFO:stancache.stancache:prep_data_long_surv: Saving results to cache
 </pre></div></div>
 </div>
 <p>We now have one record per timepoint (distinct values of <code class="docutils literal"><span class="pre">end_time</span></code>)
 per subject (<code class="docutils literal"><span class="pre">index</span></code>, in the original data frame).</p>
 <div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [7]:
+<span></span>In [8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
-<span></span><span class="n">dlong</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;index == 1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;end_time&#39;</span><span class="p">)</span>
+<span></span><span class="n">dlong</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;index == 1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;end_time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>Out[7]:
+<span></span>Out[8]:
 </pre></div>
 </div>
 <div class="output_area container">
@@ -812,869 +835,78 @@ per subject (<code class="docutils literal"><span class="pre">index</span></code
       <th>event</th>
       <th>index</th>
       <th>age_centered</th>
-      <th>key</th>
       <th>end_time</th>
       <th>end_failure</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th>140</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>0.118611</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>81</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>0.196923</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>139</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>0.262114</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>149</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>0.641174</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>104</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>0.944220</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>136</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>1.105340</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>146</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>1.397562</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>86</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>1.476557</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>135</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>1.530035</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>103</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>2.111333</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>147</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>2.330953</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>83</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>2.357800</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>138</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>2.639054</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>113</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>2.724832</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>125</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>2.743388</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>142</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>3.015604</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>118</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>3.095814</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>108</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>3.471401</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>143</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>3.637968</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>126</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>3.792521</td>
-      <td>False</td>
-    </tr>
-    <tr>
       <th>133</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
+      <td>47</td>
+      <td>female</td>
+      <td>0.049787</td>
+      <td>2.61367</td>
+      <td>2.61367</td>
       <td>True</td>
       <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>4.090998</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>128</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>4.613828</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>119</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>4.829138</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>117</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>4.856847</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>96</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>5.008202</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>95</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>5.084885</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>141</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>5.359748</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>144</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>6.434233</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>116</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>6.512257</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>90</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>6.688216</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>88</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>7.001683</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>127</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>7.157144</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>130</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>7.329006</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>153</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>7.351628</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>148</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>7.405822</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>105</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>7.417478</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>101</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>7.442196</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>131</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>7.561702</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>91</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>7.679609</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>112</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>8.228047</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>151</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>8.263575</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>106</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>8.456715</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>114</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>8.817222</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>82</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>9.244121</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>98</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>9.336164</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>109</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>9.344597</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>123</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>9.590623</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>92</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>9.731395</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>124</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>9.984362</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>121</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>10.159427</td>
+      <td>-8.33</td>
+      <td>2.394245</td>
       <td>False</td>
     </tr>
     <tr>
       <th>80</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
+      <td>47</td>
+      <td>female</td>
+      <td>0.049787</td>
+      <td>2.61367</td>
+      <td>2.61367</td>
       <td>True</td>
       <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>10.462045</td>
+      <td>-8.33</td>
+      <td>2.395736</td>
       <td>False</td>
     </tr>
     <tr>
-      <th>93</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
+      <th>83</th>
+      <td>47</td>
+      <td>female</td>
+      <td>0.049787</td>
+      <td>2.61367</td>
+      <td>2.61367</td>
       <td>True</td>
       <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>10.787069</td>
+      <td>-8.33</td>
+      <td>2.502706</td>
       <td>False</td>
     </tr>
     <tr>
-      <th>102</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
+      <th>125</th>
+      <td>47</td>
+      <td>female</td>
+      <td>0.049787</td>
+      <td>2.61367</td>
+      <td>2.61367</td>
       <td>True</td>
       <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>11.371130</td>
+      <td>-8.33</td>
+      <td>2.549188</td>
       <td>False</td>
     </tr>
     <tr>
-      <th>85</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
+      <th>71</th>
+      <td>47</td>
+      <td>female</td>
+      <td>0.049787</td>
+      <td>2.61367</td>
+      <td>2.61367</td>
       <td>True</td>
       <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>11.540905</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>155</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>11.751679</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>97</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>12.145235</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>122</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>12.156584</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>115</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>12.157394</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>89</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>12.559011</td>
-      <td>False</td>
-    </tr>
-    <tr>
-      <th>79</th>
-      <td>58</td>
-      <td>male</td>
-      <td>0.082085</td>
-      <td>12.827519</td>
-      <td>12.827519</td>
-      <td>True</td>
-      <td>1</td>
-      <td>3.18</td>
-      <td>1</td>
-      <td>12.827519</td>
+      <td>-8.33</td>
+      <td>2.613670</td>
       <td>True</td>
     </tr>
   </tbody>
 </table>
-<p>63 rows × 11 columns</p>
 </div></div>
 </div>
 </div>
@@ -1690,9 +922,9 @@ this model fit object. See
 how this works. Also, if you didn&#8217;t want to use the cache, you could
 omit the parameter <code class="docutils literal"><span class="pre">FIT_FUN</span></code> and <code class="docutils literal"><span class="pre">survivalstan</span></code> would use the
 standard pystan functionality.</p>
-<div class="nbinput container">
+<div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [8]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -1713,31 +945,6 @@ standard pystan functionality.</p>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast container">
-<div class="prompt empty container">
-</div>
-<div class="stderr output_area container">
-<div class="highlight"><pre>
-INFO:stancache.stancache:Step 1: Get compiled model code, possibly from cache
-INFO:stancache.stancache:StanModel: cache_filename set to anon_model.cython_0_25_1.model_code_49777972005.pystan_2_12_0_0.stanmodel.pkl
-INFO:stancache.stancache:StanModel: Loading result from cache
-INFO:stancache.stancache:Step 2: Get posterior draws from model, possibly from cache
-INFO:stancache.stancache:sampling: cache_filename set to anon_model.cython_0_25_1.model_code_49777972005.pystan_2_12_0_0.stanfit.chains_4.data_31278094506.iter_5000.seed_9001.pkl
-INFO:stancache.stancache:sampling: Starting execution
-INFO:stancache.stancache:sampling: Execution completed (0:03:04.556861 elapsed)
-INFO:stancache.stancache:sampling: Saving results to cache
-/home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/stancache/stancache.py:251: UserWarning: Pickling fit objects is an experimental feature!
-The relevant StanModel instance must be pickled along with this fit object.
-When unpickling the StanModel must be unpickled first.
-  pickle.dump(res, open(cache_filepath, &#39;wb&#39;), pickle.HIGHEST_PROTOCOL)
-/home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/stanity/psis.py:228: FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison
-  elif sort == &#39;in-place&#39;:
-/home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/stanity/psis.py:246: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
-  bs /= 3 * x[sort[np.floor(n/4 + 0.5) - 1]]
-/home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/stanity/psis.py:262: RuntimeWarning: overflow encountered in exp
-  np.exp(temp, out=temp)
-</pre></div></div>
-</div>
 </div>
 <div class="section" id="Superficial-review-of-convergence">
 <h2>Superficial review of convergence<a class="headerlink" href="#Superficial-review-of-convergence" title="Permalink to this headline">¶</a></h2>
@@ -1748,9 +955,9 @@ convergence issues, etc. For now the goal is to demonstrate the
 functionalities available here.</p>
 <p>We can summarize posterior estimates for a single parameter, (e.g. the
 built-in Stan parameter <code class="docutils literal"><span class="pre">lp__</span></code>):</p>
-<div class="nbinput container">
+<div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [9]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -1758,19 +965,10 @@ built-in Stan parameter <code class="docutils literal"><span class="pre">lp__</s
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast container">
-<div class="prompt empty container">
-</div>
-<div class="output_area container">
-<div class="highlight"><pre>
-            mean   se_mean         sd        2.5%         50%       97.5%      Rhat
-lp__ -278.136728  5.000714  50.256551 -360.824357 -284.525363 -177.241899  1.023704
-</pre></div></div>
-</div>
 <p>Or, for sets of parameters with the same name:</p>
-<div class="nbinput container">
+<div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [10]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -1778,109 +976,16 @@ lp__ -278.136728  5.000714  50.256551 -360.824357 -284.525363 -177.241899  1.023
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast container">
-<div class="prompt empty container">
-</div>
-<div class="output_area container">
-<div class="highlight"><pre>
-                          mean   se_mean        sd      2.5%       50%     97.5%      Rhat
-log_baseline_raw[0]   0.018405  0.001410  0.141042 -0.266412  0.008231  0.349270  0.999859
-log_baseline_raw[1]   0.018517  0.001413  0.141319 -0.263341  0.008995  0.342834  1.000190
-log_baseline_raw[2]   0.018302  0.001414  0.141387 -0.257858  0.009377  0.347234  0.999925
-log_baseline_raw[3]   0.016333  0.001371  0.137110 -0.253927  0.008481  0.330025  1.000333
-log_baseline_raw[4]   0.011990  0.001368  0.136849 -0.259225  0.005920  0.325580  1.000145
-log_baseline_raw[5]   0.013532  0.001370  0.137043 -0.259307  0.007282  0.324367  1.000157
-log_baseline_raw[6]   0.011470  0.001354  0.135406 -0.266722  0.004746  0.319663  0.999911
-log_baseline_raw[7]   0.012491  0.001347  0.134695 -0.260132  0.006712  0.316462  1.000008
-log_baseline_raw[8]   0.011526  0.001393  0.139255 -0.270375  0.004809  0.331765  1.000029
-log_baseline_raw[9]   0.007375  0.001363  0.136255 -0.279145  0.003548  0.308510  0.999796
-log_baseline_raw[10]  0.005951  0.001356  0.135572 -0.269977  0.004103  0.304337  0.999750
-log_baseline_raw[11]  0.005699  0.001387  0.138687 -0.286487  0.002771  0.312076  0.999869
-log_baseline_raw[12]  0.004665  0.001376  0.137565 -0.283921  0.000912  0.311435  0.999783
-log_baseline_raw[13]  0.007392  0.001347  0.134663 -0.270574  0.002433  0.308283  1.000123
-log_baseline_raw[14]  0.004534  0.001342  0.134165 -0.285146  0.001556  0.292968  0.999952
-log_baseline_raw[15]  0.005103  0.001340  0.134046 -0.277456  0.002392  0.301938  0.999905
-log_baseline_raw[16]  0.003518  0.001378  0.137844 -0.277368  0.002277  0.307551  0.999839
-log_baseline_raw[17]  0.002659  0.001332  0.133164 -0.275810  0.001411  0.295238  0.999671
-log_baseline_raw[18]  0.003533  0.001351  0.135064 -0.277553  0.001838  0.292063  0.999870
-log_baseline_raw[19]  0.002062  0.001383  0.138273 -0.287297 -0.000670  0.307131  1.000221
-log_baseline_raw[20]  0.003071  0.001356  0.135590 -0.292247  0.000741  0.302829  0.999768
-log_baseline_raw[21] -0.001834  0.001394  0.139369 -0.296805 -0.000915  0.287677  0.999744
-log_baseline_raw[22] -0.002089  0.001341  0.134124 -0.286115 -0.000353  0.282904  0.999881
-log_baseline_raw[23] -0.002234  0.001374  0.137426 -0.304963 -0.001630  0.291352  1.000080
-log_baseline_raw[24] -0.000190  0.001343  0.134303 -0.283250 -0.000253  0.294825  0.999723
-log_baseline_raw[25] -0.001287  0.001369  0.136858 -0.295716 -0.000231  0.287421  0.999792
-log_baseline_raw[26] -0.002714  0.001372  0.137223 -0.308940 -0.001566  0.291775  0.999712
-log_baseline_raw[27] -0.006300  0.001364  0.136440 -0.302099 -0.003365  0.270088  0.999816
-log_baseline_raw[28] -0.006234  0.001344  0.134426 -0.304960 -0.002756  0.279475  1.000183
-log_baseline_raw[29] -0.005409  0.001320  0.131976 -0.292328 -0.002348  0.274455  0.999847
-log_baseline_raw[30] -0.007161  0.001320  0.132008 -0.300255 -0.003781  0.268071  0.999809
-log_baseline_raw[31] -0.006813  0.001362  0.136225 -0.312780 -0.002422  0.278778  0.999783
-log_baseline_raw[32] -0.005802  0.001366  0.136638 -0.308640 -0.002019  0.280386  1.000023
-log_baseline_raw[33] -0.008136  0.001322  0.132165 -0.294911 -0.005311  0.267101  0.999791
-log_baseline_raw[34] -0.005414  0.001347  0.134679 -0.301907 -0.001826  0.271617  0.999739
-log_baseline_raw[35] -0.005833  0.001332  0.133184 -0.294655 -0.003908  0.264071  0.999886
-log_baseline_raw[36] -0.005597  0.001333  0.133337 -0.292467 -0.002439  0.264261  0.999732
-log_baseline_raw[37] -0.006969  0.001347  0.134747 -0.301223 -0.002385  0.271992  0.999948
-log_baseline_raw[38] -0.004569  0.001330  0.133014 -0.291487 -0.003056  0.271717  1.000080
-log_baseline_raw[39] -0.005369  0.001377  0.137687 -0.311480 -0.001002  0.278568  0.999943
-log_baseline_raw[40] -0.004928  0.001316  0.131619 -0.293840 -0.002247  0.271888  0.999953
-log_baseline_raw[41] -0.006589  0.001354  0.135430 -0.310065 -0.002537  0.275856  0.999951
-log_baseline_raw[42] -0.005687  0.001369  0.136899 -0.308345 -0.002883  0.281115  0.999867
-log_baseline_raw[43] -0.007082  0.001337  0.133696 -0.307673 -0.002852  0.269971  1.000021
-log_baseline_raw[44] -0.006966  0.001380  0.138005 -0.305034 -0.004202  0.277748  0.999742
-log_baseline_raw[45] -0.006925  0.001344  0.134400 -0.302803 -0.003980  0.271892  0.999753
-log_baseline_raw[46] -0.007264  0.001343  0.134262 -0.300234 -0.005482  0.274120  0.999905
-log_baseline_raw[47] -0.008346  0.001373  0.137330 -0.312680 -0.003998  0.273031  1.000193
-log_baseline_raw[48] -0.006099  0.001325  0.132452 -0.296824 -0.002946  0.271214  0.999884
-log_baseline_raw[49] -0.007845  0.001339  0.133894 -0.307824 -0.002242  0.268274  0.999954
-log_baseline_raw[50] -0.006161  0.001353  0.135278 -0.310913 -0.002115  0.270951  1.000001
-log_baseline_raw[51] -0.004106  0.001367  0.136722 -0.305186 -0.000375  0.280699  0.999947
-log_baseline_raw[52] -0.006734  0.001337  0.133681 -0.307962 -0.003439  0.277566  0.999966
-log_baseline_raw[53] -0.004135  0.001350  0.134955 -0.294451 -0.000209  0.275918  0.999780
-log_baseline_raw[54] -0.006873  0.001353  0.135333 -0.303199 -0.002728  0.273141  1.000029
-log_baseline_raw[55] -0.007751  0.001396  0.139585 -0.318518 -0.003133  0.285527  0.999913
-log_baseline_raw[56] -0.007375  0.001338  0.133818 -0.307137 -0.002825  0.275709  0.999920
-log_baseline_raw[57] -0.008380  0.001351  0.135141 -0.311733 -0.004041  0.267765  0.999744
-log_baseline_raw[58] -0.003854  0.001357  0.135702 -0.297579 -0.001496  0.288015  0.999748
-log_baseline_raw[59] -0.005154  0.001355  0.135456 -0.299541 -0.001827  0.272893  0.999782
-log_baseline_raw[60] -0.005536  0.001351  0.135127 -0.309023 -0.002620  0.279765  0.999889
-log_baseline_raw[61] -0.005031  0.001368  0.136847 -0.310338 -0.002176  0.283778  1.000248
-log_baseline_raw[62] -0.004126  0.001335  0.133517 -0.292910 -0.001112  0.273674  0.999906
-log_baseline_raw[63] -0.006565  0.001341  0.134096 -0.299221 -0.003177  0.267685  1.000108
-log_baseline_raw[64] -0.005644  0.001361  0.136146 -0.307535 -0.002344  0.276061  0.999890
-log_baseline_raw[65] -0.005163  0.001322  0.132204 -0.288991 -0.002578  0.277272  1.000024
-log_baseline_raw[66] -0.003780  0.001344  0.134406 -0.298615 -0.002005  0.282805  0.999966
-log_baseline_raw[67] -0.003824  0.001327  0.132728 -0.292247 -0.003482  0.279543  0.999709
-log_baseline_raw[68] -0.007090  0.001373  0.137329 -0.304829 -0.004162  0.273670  0.999759
-log_baseline_raw[69] -0.006359  0.001352  0.135188 -0.300134 -0.003754  0.273260  0.999711
-log_baseline_raw[70] -0.004139  0.001339  0.133909 -0.299168 -0.001363  0.278754  0.999813
-log_baseline_raw[71] -0.005135  0.001337  0.133750 -0.302788 -0.002349  0.277571  0.999863
-log_baseline_raw[72] -0.004251  0.001329  0.132932 -0.295977 -0.003475  0.273927  0.999838
-log_baseline_raw[73] -0.004634  0.001385  0.138541 -0.305831 -0.001851  0.290301  0.999982
-log_baseline_raw[74] -0.004999  0.001328  0.132767 -0.298910 -0.002887  0.269649  0.999897
-log_baseline_raw[75] -0.004575  0.001344  0.134395 -0.304516 -0.001487  0.278224  0.999981
-log_baseline_raw[76] -0.003373  0.001372  0.137236 -0.301230 -0.001954  0.288494  0.999889
-log_baseline_raw[77] -0.021396  0.001397  0.139665 -0.349297 -0.009878  0.254990  1.000517
-</pre></div></div>
-</div>
 <p>It&#8217;s also not uncommon to graphically summarize the <code class="docutils literal"><span class="pre">Rhat</span></code> values, to
 get a sense of similarity among the chains for particular parameters.</p>
-<div class="nbinput container">
+<div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [11]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
 <span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_stan_summary</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="s1">&#39;log_baseline_raw&#39;</span><span class="p">)</span>
 </pre></div>
-</div>
-</div>
-<div class="nboutput nblast container">
-<div class="prompt empty container">
-</div>
-<div class="output_area container">
-<img alt="../_images/examples_Example-using-pem_survival_model_30_0.png" src="../_images/examples_Example-using-pem_survival_model_30_0.png" />
 </div>
 </div>
 </div>
@@ -1905,9 +1010,9 @@ details.</p>
 <p>In this case, the model estimates a minimal degree of variance across
 timepoints, which is good given that the simulated data assumed a
 constant hazard over time.</p>
-<div class="nbinput container">
+<div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [12]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -1915,32 +1020,18 @@ constant hazard over time.</p>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast container">
-<div class="prompt empty container">
-</div>
-<div class="output_area container">
-<img alt="../_images/examples_Example-using-pem_survival_model_33_0.png" src="../_images/examples_Example-using-pem_survival_model_33_0.png" />
-</div>
-</div>
 <p>We can also summarize the posterior estimates for our <code class="docutils literal"><span class="pre">beta</span></code>
 coefficients. This is actually the default behavior of <code class="docutils literal"><span class="pre">plot_coefs</span></code>.
 Here we hope to see the posterior estimates of beta coefficients include
 the value we used for our simulation (0.5).</p>
-<div class="nbinput container">
+<div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [13]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
 <span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_coefs</span><span class="p">([</span><span class="n">testfit</span><span class="p">])</span>
 </pre></div>
-</div>
-</div>
-<div class="nboutput nblast container">
-<div class="prompt empty container">
-</div>
-<div class="output_area container">
-<img alt="../_images/examples_Example-using-pem_survival_model_35_0.png" src="../_images/examples_Example-using-pem_survival_model_35_0.png" />
 </div>
 </div>
 </div>
@@ -1957,9 +1048,9 @@ posterior-predicted intervals.</p>
 <p>By default, <code class="docutils literal"><span class="pre">survivalstan</span></code>&#8216;s plot_pp_survival method will plot
 whiskers at the 2.5th and 97.5th percentile values, corresponding to 95%
 predicted intervals.</p>
-<div class="nbinput container">
+<div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [14]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -1969,29 +1060,12 @@ predicted intervals.</p>
 </pre></div>
 </div>
 </div>
-<div class="nboutput container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>Out[14]:
-</pre></div>
-</div>
-<div class="output_area highlight-none"><div class="highlight"><pre>
-<span></span>&lt;matplotlib.legend.Legend at 0x7fbfc340de80&gt;
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast container">
-<div class="prompt empty container">
-</div>
-<div class="output_area container">
-<img alt="../_images/examples_Example-using-pem_survival_model_37_1.png" src="../_images/examples_Example-using-pem_survival_model_37_1.png" />
-</div>
-</div>
 <p>We can also summarize and plot survival by our covariates of interest,
 provided they are included in the original dataframe provided to
 <code class="docutils literal"><span class="pre">fit_stan_survival_model</span></code>.</p>
-<div class="nbinput container">
+<div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [15]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -1999,29 +1073,15 @@ provided they are included in the original dataframe provided to
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast container">
-<div class="prompt empty container">
-</div>
-<div class="output_area container">
-<img alt="../_images/examples_Example-using-pem_survival_model_39_0.png" src="../_images/examples_Example-using-pem_survival_model_39_0.png" />
-</div>
-</div>
 <p>This plot can also be customized by a variety of aesthetic elements</p>
-<div class="nbinput container">
+<div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [16]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
 <span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_pp_survival</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="n">pal</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">])</span>
 </pre></div>
-</div>
-</div>
-<div class="nboutput nblast container">
-<div class="prompt empty container">
-</div>
-<div class="output_area container">
-<img alt="../_images/examples_Example-using-pem_survival_model_41_0.png" src="../_images/examples_Example-using-pem_survival_model_41_0.png" />
 </div>
 </div>
 </div>
@@ -2035,7 +1095,7 @@ of the functionality in a more concrete fashion.</p>
 posterior-predicted values to begin with:</p>
 <div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [17]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -2044,9 +1104,9 @@ posterior-predicted values to begin with:</p>
 </div>
 </div>
 <p>Here are what these data look like:</p>
-<div class="nbinput container">
+<div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [18]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -2054,84 +1114,15 @@ posterior-predicted values to begin with:</p>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>Out[18]:
-</pre></div>
-</div>
-<div class="output_area container">
-<div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>iter</th>
-      <th>model_cohort</th>
-      <th>sex</th>
-      <th>level_3</th>
-      <th>event_time</th>
-      <th>survival</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>0</td>
-      <td>test model</td>
-      <td>female</td>
-      <td>0</td>
-      <td>0.000000</td>
-      <td>1.000000</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>0</td>
-      <td>test model</td>
-      <td>female</td>
-      <td>1</td>
-      <td>1.397562</td>
-      <td>1.000000</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>0</td>
-      <td>test model</td>
-      <td>female</td>
-      <td>2</td>
-      <td>2.330953</td>
-      <td>0.974215</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>0</td>
-      <td>test model</td>
-      <td>female</td>
-      <td>3</td>
-      <td>2.357800</td>
-      <td>0.955702</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>0</td>
-      <td>test model</td>
-      <td>female</td>
-      <td>4</td>
-      <td>2.743388</td>
-      <td>0.913719</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
-</div>
 <p>(Note that this itself is a summary of the posterior draws returned by
 <code class="docutils literal"><span class="pre">survivalstan.utils.prep_pp_data</span></code>. In this case, the survival stats
 are summarized by values of <code class="docutils literal"><span class="pre">['iter',</span> <span class="pre">'model_cohort',</span> <span class="pre">by]</span></code>.</p>
 <p>We can then call out to <code class="docutils literal"><span class="pre">survivalstan.utils._plot_pp_survival_data</span></code> to
 construct the plot. In this case, we overlay the posterior predicted
 intervals with observed values.</p>
-<div class="nbinput container">
+<div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [19]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -2148,23 +1139,6 @@ intervals with observed values.</p>
 </pre></div>
 </div>
 </div>
-<div class="nboutput container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>Out[19]:
-</pre></div>
-</div>
-<div class="output_area highlight-none"><div class="highlight"><pre>
-<span></span>&lt;matplotlib.legend.Legend at 0x7fbfc304a588&gt;
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast container">
-<div class="prompt empty container">
-</div>
-<div class="output_area container">
-<img alt="../_images/examples_Example-using-pem_survival_model_49_1.png" src="../_images/examples_Example-using-pem_survival_model_49_1.png" />
-</div>
-</div>
 </div>
 <div class="section" id="Use-plotly-to-summarize-posterior-predicted-values">
 <h2>Use plotly to summarize posterior predicted values<a class="headerlink" href="#Use-plotly-to-summarize-posterior-predicted-values" title="Permalink to this headline">¶</a></h2>
@@ -2172,7 +1146,7 @@ intervals with observed values.</p>
 observed timepoint, by group.</p>
 <div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [20]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -2191,9 +1165,9 @@ observed timepoint, by group.</p>
 </div>
 <p>Next, we construct our graph &#8220;traces&#8221;, consisting of 3 elements (solid
 line and two shaded areas) per observed group.</p>
-<div class="nbinput container">
+<div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [21]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -2204,23 +1178,9 @@ line and two shaded areas) per observed group.</p>
 </pre></div>
 </div>
 </div>
-<div class="nboutput container">
-<div class="prompt empty container">
-</div>
-<div class="stderr output_area container">
-<div class="highlight"><pre>
-INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1): api.plot.ly
-</pre></div></div>
-</div>
-<div class="nboutput nblast container">
-<div class="prompt empty container">
-</div>
-<div class="output_area container">
-<script>requirejs.config({paths: { 'plotly': ['https://cdn.plot.ly/plotly-latest.min']},});if(!window.Plotly) {{require(['plotly'],function(plotly) {window.Plotly=plotly;});}}</script></div>
-</div>
 <div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [22]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -2269,7 +1229,7 @@ INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1):
 <p>Finally, we build a minimal layout structure to house our graph:</p>
 <div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [23]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
@@ -2285,31 +1245,15 @@ INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1):
 </div>
 </div>
 <p>Here is our plot:</p>
-<div class="nbinput container">
+<div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [24]:
+<span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython2"><div class="highlight"><pre>
 <span></span><span class="n">py</span><span class="o">.</span><span class="n">iplot</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data5</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout5</span><span class="p">),</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;survivalstan/pem_survival_model_ppsummary&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput container">
-<div class="prompt empty container">
-</div>
-<div class="stderr output_area container">
-<div class="highlight"><pre>
-INFO:requests.packages.urllib3.connectionpool:Starting new HTTPS connection (1): plot.ly
-</pre></div></div>
-</div>
-<div class="nboutput nblast container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>Out[24]:
-</pre></div>
-</div>
-<div class="output_area container">
-<iframe id="igraph" scrolling="no" style="border:none;" seamless="seamless" src="https://plot.ly/~jackinovik/146.embed" height="525px" width="100%"></iframe></div>
 </div>
 <p><em>Note: this plot will not render in github, since github disables
 iframes. You can however view it in nbviewer or on plotly&#8217;s website
@@ -2324,7 +1268,7 @@ directly</em></p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="Test pem_survival_model_timevarying with simulated data.html" class="btn btn-neutral float-right" title="superficial check of convergence" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="Test new_gamma_survival_model with simulated data.html" class="btn btn-neutral float-right" title="Optimizing Stan code for a user-provided Gamma model" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="../Usage.html" class="btn btn-neutral" title="Getting started" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>

@@ -1,0 +1,1380 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>A PEM Survival Model with Time-Dependent Effects &mdash; survivalstan 0.1.2.5 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="survivalstan 0.1.2.5 documentation" href="../../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> survivalstan
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.2.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Usage.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Example-using-pem_survival_model.html">Fitting a piecewise-exponential model (PEM) to simulated data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Test new_gamma_survival_model with simulated data.html">Optimizing Stan code for a user-provided Gamma model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Test pem_survival_model_gamma with simulated data.html">Estimating a PEM survival model with Gamma baseline hazard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Test pem_survival_model_randomwalk with simulated data.html">PEM survival model with random-walk baseline hazard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Test pem_survival_model_timevarying with simulated data.html">A PEM Survival Model with Time-Dependent Effects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">survivalstan</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">survivalstan</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+    <li>A PEM Survival Model with Time-Dependent Effects</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/examples/.ipynb_checkpoints/Test pem_survival_model_timevarying with simulated data-checkpoint.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="A-PEM-Survival-Model-with-Time-Dependent-Effects">
+<h1>A PEM Survival Model with Time-Dependent Effects<a class="headerlink" href="#A-PEM-Survival-Model-with-Time-Dependent-Effects" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">13847942484</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">survivalstan</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">stancache</span> <span class="k">import</span> <span class="n">stancache</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput container">
+<div class="prompt empty container">
+</div>
+<div class="stderr output_area container">
+<div class="highlight"><pre>
+INFO:stancache.seed:Setting seed to 1245502385
+</pre></div></div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<div class="highlight"><pre>
+The autoreload extension is already loaded. To reload it, use:
+  %reload_ext autoreload
+</pre></div></div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">survivalstan</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">pem_survival_model_timevarying</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<div class="highlight"><pre>
+/*  Variable naming:
+ // dimensions
+ N          = total number of observations (length of data)
+ S          = number of sample ids
+ T          = max timepoint (number of timepoint ids)
+ M          = number of covariates
+
+ // data
+ s          = sample id for each obs
+ t          = timepoint id for each obs
+ event      = integer indicating if there was an event at time t for sample s
+ x          = matrix of real-valued covariates at time t for sample n [N, X]
+ obs_t      = observed end time for interval for timepoint for that obs
+
+*/
+// Jacqueline Buros Novik &lt;jackinovik@gmail.com&gt;
+
+functions {
+  matrix spline(vector x, int N, int H, vector xi, int P) {
+    matrix[N, H + P] b_x;         // expanded predictors
+    for (n in 1:N) {
+        for (p in 1:P) {
+            b_x[n,p] &lt;- pow(x[n],p-1);  // x[n]^(p-1)
+        }
+        for (h in 1:H)
+          b_x[n, h + P] &lt;- fmax(0, pow(x[n] - xi[h],P-1));
+    }
+    return b_x;
+  }
+}
+data {
+  // dimensions
+  int&lt;lower=1&gt; N;
+  int&lt;lower=1&gt; S;
+  int&lt;lower=1&gt; T;
+  int&lt;lower=0&gt; M;
+
+  // data matrix
+  int&lt;lower=1, upper=N&gt; s[N];     // sample id
+  int&lt;lower=1, upper=T&gt; t[N];     // timepoint id
+  int&lt;lower=0, upper=1&gt; event[N]; // 1: event, 0:censor
+  matrix[N, M] x;                 // explanatory vars
+
+  // timepoint data
+  vector&lt;lower=0&gt;[T] t_obs;
+  vector&lt;lower=0&gt;[T] t_dur;
+}
+transformed data {
+  vector[T] log_t_dur;
+  int n_trans[S, T];
+
+  log_t_dur = log(t_obs);
+
+  // n_trans used to map each sample*timepoint to n (used in gen quantities)
+  // map each patient/timepoint combination to n values
+  for (n in 1:N) {
+      n_trans[s[n], t[n]] = n;
+  }
+
+  // fill in missing values with n for max t for that patient
+  // ie assume &#34;last observed&#34; state applies forward (may be problematic for TVC)
+  // this allows us to predict failure times &gt;= observed survival times
+  for (samp in 1:S) {
+      int last_value;
+      last_value = 0;
+      for (tp in 1:T) {
+          // manual says ints are initialized to neg values
+          // so &lt;=0 is a shorthand for &#34;unassigned&#34;
+          if (n_trans[samp, tp] &lt;= 0 &amp;&amp; last_value != 0) {
+              n_trans[samp, tp] = last_value;
+          } else {
+              last_value = n_trans[samp, tp];
+          }
+      }
+  }
+}
+parameters {
+  vector[T] log_baseline_raw;    // unstructured baseline hazard for each timepoint t
+  real&lt;lower=0&gt; baseline_sigma;
+  real log_baseline_mu;
+
+  vector[M] beta; // beta-intercept
+  vector&lt;lower=0&gt;[M] beta_time_sigma;
+  vector[T-1] raw_beta_time_deltas[M]; // for each coefficient
+                                       // change in coefficient value from previous time
+}
+transformed parameters {
+  vector[N] log_hazard;
+  vector[T] log_baseline;
+  vector[T] beta_time[M];
+  vector[T] beta_time_deltas[M];
+
+  // adjust baseline hazard for duration of each period
+  log_baseline = log_baseline_raw + log_t_dur;
+
+  // compute timepoint-specific betas
+  // offsets from previous time
+  for (coef in 1:M) {
+      beta_time_deltas[coef][1] = 0;
+      for (time in 2:T) {
+          beta_time_deltas[coef][time] = raw_beta_time_deltas[coef][time-1];
+      }
+  }
+
+  // coefficients for each timepoint T
+  for (coef in 1:M) {
+      beta_time[coef] = beta[coef] + cumulative_sum(beta_time_deltas[coef]);
+  }
+
+  // compute log-hazard for each obs
+  for (n in 1:N) {
+    real log_linpred;
+    log_linpred &lt;- 0;
+    for (coef in 1:M) {
+      // for now, handle each coef separately
+      // (to be sure we pull out the &#34;right&#34; beta..)
+      log_linpred = log_linpred + x[n, coef] * beta_time[coef][t[n]];
+    }
+    log_hazard[n] = log_baseline_mu + log_baseline[t[n]] + log_linpred;
+  }
+}
+model {
+  // priors on time-varying coefficients
+  for (m in 1:M) {
+    raw_beta_time_deltas[m][1] ~ normal(0, 100);
+    for(i in 2:(T-1)){
+        raw_beta_time_deltas[m][i] ~ normal(raw_beta_time_deltas[m][i-1], beta_time_sigma[m]);
+    }
+  }
+  beta_time_sigma ~ cauchy(0, 1);
+  beta ~ cauchy(0, 1);
+
+  // priors on baseline hazard
+  log_baseline_mu ~ normal(0, 1);
+  baseline_sigma ~ normal(0, 1);
+  log_baseline_raw[1] ~ normal(0, 1);
+  for (i in 2:T) {
+      log_baseline_raw[i] ~ normal(log_baseline_raw[i-1], baseline_sigma);
+  }
+
+  // model
+  event ~ poisson_log(log_hazard);
+}
+generated quantities {
+  real log_lik[N];
+  vector[T] baseline;
+  int y_hat_mat[S, T];     // ppcheck for each S*T combination
+  real y_hat_time[S];      // predicted failure time for each sample
+  int y_hat_event[S];      // predicted event (0:censor, 1:event)
+
+  // compute raw baseline hazard, for summary/plotting
+  baseline = exp(log_baseline_raw);
+
+  // log_likelihood for loo-psis
+  for (n in 1:N) {
+      log_lik[n] &lt;- poisson_log_lpmf(event[n] | log_hazard[n]);
+  }
+
+  // posterior predicted values
+  for (samp in 1:S) {
+      int sample_alive;
+      sample_alive = 1;
+      for (tp in 1:T) {
+        if (sample_alive == 1) {
+              int n;
+              int pred_y;
+              real log_linpred;
+              real log_haz;
+
+              // determine predicted value of y
+              n = n_trans[samp, tp];
+
+              // (borrow code from above to calc linpred)
+              // but use sim tp not t[n]
+              log_linpred = 0;
+              for (coef in 1:M) {
+                  // for now, handle each coef separately
+                  // (to be sure we pull out the &#34;right&#34; beta..)
+                  log_linpred = log_linpred + x[n, coef] * beta_time[coef][tp];
+              }
+              log_haz = log_baseline_mu + log_baseline[tp] + log_linpred;
+
+              // now, make posterior prediction
+              if (log_haz &lt; log(pow(2, 30)))
+                  pred_y = poisson_log_rng(log_haz);
+              else
+                  pred_y = 9;
+
+              // mark this patient as ineligible for future tps
+              // note: deliberately make 9s ineligible
+              if (pred_y &gt;= 1) {
+                  sample_alive = 0;
+                  y_hat_time[samp] = t_obs[tp];
+                  y_hat_event[samp] = 1;
+              }
+
+              // save predicted value of y to matrix
+              y_hat_mat[samp, tp] = pred_y;
+          }
+          else if (sample_alive == 0) {
+              y_hat_mat[samp, tp] = 9;
+          }
+      } // end per-timepoint loop
+
+      // if patient still alive at max
+      //
+      if (sample_alive == 1) {
+          y_hat_time[samp] = t_obs[T];
+          y_hat_event[samp] = 0;
+      }
+  } // end per-sample loop
+}
+
+</pre></div></div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">d</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached</span><span class="p">(</span>
+    <span class="n">survivalstan</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">sim_data_exp_correlated</span><span class="p">,</span>
+    <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">censor_time</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">rate_form</span><span class="o">=</span><span class="s1">&#39;1 + sex&#39;</span><span class="p">,</span>
+    <span class="n">rate_coefs</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">d</span><span class="p">[</span><span class="s1">&#39;age_centered&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput container">
+<div class="prompt empty container">
+</div>
+<div class="stderr output_area container">
+<div class="highlight"><pre>
+INFO:stancache.stancache:sim_data_exp_correlated: cache_filename set to sim_data_exp_correlated.cached.N_100.censor_time_20.rate_coefs_54462717316.rate_form_1 + sex.pkl
+INFO:stancache.stancache:sim_data_exp_correlated: Loading result from cache
+</pre></div></div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[6]:
+</pre></div>
+</div>
+<div class="output_area container">
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age</th>
+      <th>sex</th>
+      <th>rate</th>
+      <th>true_t</th>
+      <th>t</th>
+      <th>event</th>
+      <th>index</th>
+      <th>age_centered</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>59</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>20.948771</td>
+      <td>20.000000</td>
+      <td>False</td>
+      <td>0</td>
+      <td>4.18</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>58</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>12.827519</td>
+      <td>12.827519</td>
+      <td>True</td>
+      <td>1</td>
+      <td>3.18</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>61</td>
+      <td>female</td>
+      <td>0.049787</td>
+      <td>27.018886</td>
+      <td>20.000000</td>
+      <td>False</td>
+      <td>2</td>
+      <td>6.18</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>57</td>
+      <td>female</td>
+      <td>0.049787</td>
+      <td>62.220296</td>
+      <td>20.000000</td>
+      <td>False</td>
+      <td>3</td>
+      <td>2.18</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>55</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>10.462045</td>
+      <td>10.462045</td>
+      <td>True</td>
+      <td>4</td>
+      <td>0.18</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;female&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;female&#39;</span><span class="p">)</span>
+<span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;male&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;male&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[7]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>&lt;matplotlib.legend.Legend at 0x7f6f245cc550&gt;
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_4_1.png" src="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_4_1.png" />
+</div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">dlong</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached</span><span class="p">(</span>
+    <span class="n">survivalstan</span><span class="o">.</span><span class="n">prep_data_long_surv</span><span class="p">,</span>
+    <span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span>
+<span class="p">)</span>
+<span class="n">dlong</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="s1">&#39;end_time&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="stderr output_area container">
+<div class="highlight"><pre>
+INFO:stancache.stancache:prep_data_long_surv: cache_filename set to prep_data_long_surv.cached.df_33772694934.event_col_event.time_col_t.pkl
+INFO:stancache.stancache:prep_data_long_surv: Loading result from cache
+</pre></div></div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">dlong</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[9]:
+</pre></div>
+</div>
+<div class="output_area container">
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age</th>
+      <th>sex</th>
+      <th>rate</th>
+      <th>true_t</th>
+      <th>t</th>
+      <th>event</th>
+      <th>index</th>
+      <th>age_centered</th>
+      <th>key</th>
+      <th>end_time</th>
+      <th>end_failure</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>62</th>
+      <td>59</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>20.948771</td>
+      <td>20.0</td>
+      <td>False</td>
+      <td>0</td>
+      <td>4.18</td>
+      <td>1</td>
+      <td>0.118611</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>59</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>20.948771</td>
+      <td>20.0</td>
+      <td>False</td>
+      <td>0</td>
+      <td>4.18</td>
+      <td>1</td>
+      <td>0.196923</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>61</th>
+      <td>59</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>20.948771</td>
+      <td>20.0</td>
+      <td>False</td>
+      <td>0</td>
+      <td>4.18</td>
+      <td>1</td>
+      <td>0.262114</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>71</th>
+      <td>59</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>20.948771</td>
+      <td>20.0</td>
+      <td>False</td>
+      <td>0</td>
+      <td>4.18</td>
+      <td>1</td>
+      <td>0.641174</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>59</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>20.948771</td>
+      <td>20.0</td>
+      <td>False</td>
+      <td>0</td>
+      <td>4.18</td>
+      <td>1</td>
+      <td>0.944220</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">testfit</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
+    <span class="n">model_cohort</span> <span class="o">=</span> <span class="s1">&#39;test model&#39;</span><span class="p">,</span>
+    <span class="n">model_code</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">pem_survival_model_timevarying</span><span class="p">,</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">dlong</span><span class="p">,</span>
+    <span class="n">sample_col</span> <span class="o">=</span> <span class="s1">&#39;index&#39;</span><span class="p">,</span>
+    <span class="n">timepoint_end_col</span> <span class="o">=</span> <span class="s1">&#39;end_time&#39;</span><span class="p">,</span>
+    <span class="n">event_col</span> <span class="o">=</span> <span class="s1">&#39;end_failure&#39;</span><span class="p">,</span>
+    <span class="n">formula</span> <span class="o">=</span> <span class="s1">&#39;~ age_centered + sex&#39;</span><span class="p">,</span>
+    <span class="nb">iter</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
+    <span class="n">chains</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="mi">9001</span><span class="p">,</span>
+    <span class="n">FIT_FUN</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached_stan_fit</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="stderr output_area container">
+<div class="highlight"><pre>
+INFO:stancache.stancache:Step 1: Get compiled model code, possibly from cache
+INFO:stancache.stancache:StanModel: cache_filename set to anon_model.cython_0_25_1.model_code_9304163442804524267.pystan_2_12_0_0.stanmodel.pkl
+INFO:stancache.stancache:StanModel: Loading result from cache
+INFO:stancache.stancache:Step 2: Get posterior draws from model, possibly from cache
+INFO:stancache.stancache:sampling: cache_filename set to anon_model.cython_0_25_1.model_code_9304163442804524267.pystan_2_12_0_0.stanfit.chains_4.data_75232070308.iter_10000.seed_9001.pkl
+INFO:stancache.stancache:sampling: Loading result from cache
+/home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/stanity/psis.py:228: FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison
+  elif sort == &#39;in-place&#39;:
+/home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/stanity/psis.py:246: VisibleDeprecationWarning: using a non-integer number instead of an integer will result in an error in the future
+  bs /= 3 * x[sort[np.floor(n/4 + 0.5) - 1]]
+/home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/stanity/psis.py:262: RuntimeWarning: overflow encountered in exp
+  np.exp(temp, out=temp)
+</pre></div></div>
+</div>
+<div class="section" id="superficial-check-of-convergence">
+<h2>superficial check of convergence<a class="headerlink" href="#superficial-check-of-convergence" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="s1">&#39;lp__&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<div class="highlight"><pre>
+            mean    se_mean          sd        2.5%         50%       97.5%      Rhat
+lp__  407.328012  15.738683  101.998321  214.786192  407.532163  606.393469  1.059665
+</pre></div></div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_stan_summary</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="s1">&#39;log_baseline&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_10_0.png" src="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_10_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="summarize-coefficient-estimates">
+<h2>summarize coefficient estimates<a class="headerlink" href="#summarize-coefficient-estimates" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_coefs</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;baseline&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_12_0.png" src="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_12_0.png" />
+</div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_coefs</span><span class="p">([</span><span class="n">testfit</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_13_0.png" src="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_13_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="posterior-predictive-checks">
+<h2>posterior-predictive checks<a class="headerlink" href="#posterior-predictive-checks" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_pp_survival</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;observed&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[15]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>&lt;matplotlib.legend.Legend at 0x7f6f0407b630&gt;
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_15_1.png" src="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_15_1.png" />
+</div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_pp_survival</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;sex&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_16_0.png" src="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_16_0.png" />
+</div>
+</div>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_pp_survival</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="n">pal</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="summarize-time-varying-effect-of-sex-on-survival">
+<h2>summarize time-varying effect of sex on survival<a class="headerlink" href="#summarize-time-varying-effect-of-sex-on-survival" title="Permalink to this headline">¶</a></h2>
+<p>Standard behavior is to plot estimated betas at each timepoint, for each
+coefficient in the model.</p>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [31]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_coefs</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;beta_time&#39;</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_20_0.png" src="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_20_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="accessing-lower-level-functions-for-plotting-effects-over-time">
+<h2>accessing lower-level functions for plotting effects over time<a class="headerlink" href="#accessing-lower-level-functions-for-plotting-effects-over-time" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_time_betas</span><span class="p">(</span><span class="n">models</span><span class="o">=</span><span class="p">[</span><span class="n">testfit</span><span class="p">],</span> <span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;coef&#39;</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;exp(beta)&#39;</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_22_0.png" src="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_22_0.png" />
+</div>
+</div>
+<p>Alternatively, you can extract the beta-estimates for each timepoint &amp;
+plot them yourself.</p>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">testfit</span><span class="p">[</span><span class="s1">&#39;time_beta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">extract_time_betas</span><span class="p">([</span><span class="n">testfit</span><span class="p">])</span>
+<span class="n">testfit</span><span class="p">[</span><span class="s1">&#39;time_beta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[27]:
+</pre></div>
+</div>
+<div class="output_area container">
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>timepoint_id</th>
+      <th>beta</th>
+      <th>coef</th>
+      <th>end_time</th>
+      <th>exp(beta)</th>
+      <th>model_cohort</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0.281855</td>
+      <td>sex[T.male]</td>
+      <td>0.118611</td>
+      <td>1.325587</td>
+      <td>test model</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>1.263018</td>
+      <td>sex[T.male]</td>
+      <td>0.118611</td>
+      <td>3.536076</td>
+      <td>test model</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>0.875265</td>
+      <td>sex[T.male]</td>
+      <td>0.118611</td>
+      <td>2.399512</td>
+      <td>test model</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>0.128097</td>
+      <td>sex[T.male]</td>
+      <td>0.118611</td>
+      <td>1.136664</td>
+      <td>test model</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1</td>
+      <td>0.185878</td>
+      <td>sex[T.male]</td>
+      <td>0.118611</td>
+      <td>1.204276</td>
+      <td>test model</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>You can also extract and/or plot data for single coefficients of
+interest at a time.</p>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">first_beta</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">extract_time_betas</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">coefs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sex[T.male]&#39;</span><span class="p">])</span>
+<span class="n">first_beta</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[28]:
+</pre></div>
+</div>
+<div class="output_area container">
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>timepoint_id</th>
+      <th>beta</th>
+      <th>coef</th>
+      <th>end_time</th>
+      <th>exp(beta)</th>
+      <th>model_cohort</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0.281855</td>
+      <td>sex[T.male]</td>
+      <td>0.118611</td>
+      <td>1.325587</td>
+      <td>test model</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>1.263018</td>
+      <td>sex[T.male]</td>
+      <td>0.118611</td>
+      <td>3.536076</td>
+      <td>test model</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>0.875265</td>
+      <td>sex[T.male]</td>
+      <td>0.118611</td>
+      <td>2.399512</td>
+      <td>test model</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>0.128097</td>
+      <td>sex[T.male]</td>
+      <td>0.118611</td>
+      <td>1.136664</td>
+      <td>test model</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1</td>
+      <td>0.185878</td>
+      <td>sex[T.male]</td>
+      <td>0.118611</td>
+      <td>1.204276</td>
+      <td>test model</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">first_beta</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;timepoint_id&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;beta&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[30]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f6f0d2f3518&gt;
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_27_1.png" src="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_27_1.png" />
+</div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [32]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_time_betas</span><span class="p">(</span><span class="n">models</span><span class="o">=</span><span class="p">[</span><span class="n">testfit</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;end_time&#39;</span><span class="p">,</span> <span class="n">coefs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sex[T.male]&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_28_0.png" src="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_28_0.png" />
+</div>
+</div>
+<p>Note that this same plot can be produced by passing data to
+<code class="docutils literal"><span class="pre">plot_time_betas</span></code> directly.</p>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [33]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_time_betas</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">first_beta</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;coef&#39;</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;end_time&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_30_0.png" src="../../_images/examples_.ipynb_checkpoints_Test_pem_survival_model_timevarying_with_simulated_data-checkpoint_30_0.png" />
+</div>
+</div>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Jacki Novik.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.2.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

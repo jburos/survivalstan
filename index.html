@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>survivalstan &mdash; survivalstan 0.1.2.5 documentation</title>
+  <title>survivalstan: Survival Models in Stan &mdash; survivalstan 0.1.2.5 documentation</title>
   
 
   
@@ -85,6 +85,12 @@
             
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Usage.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/Example-using-pem_survival_model.html">Fitting a piecewise-exponential model (PEM) to simulated data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html">Optimizing Stan code for a user-provided Gamma model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/Test pem_survival_model_gamma with simulated data.html">Estimating a PEM survival model with Gamma baseline hazard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/Test pem_survival_model_randomwalk with simulated data.html">PEM survival model with random-walk baseline hazard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html">A PEM Survival Model with Time-Dependent Effects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">survivalstan</a></li>
 </ul>
 
             
@@ -115,7 +121,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="#">Docs</a> &raquo;</li>
       
-    <li>survivalstan</li>
+    <li>survivalstan: Survival Models in Stan</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -163,86 +169,181 @@
     margin-right: 4px;  /* make room for the exclamation icon */
 }
 </style>
-<div class="section" id="survivalstan">
-<h1>survivalstan<a class="headerlink" href="#survivalstan" title="Permalink to this headline">¶</a></h1>
-<p>Survivalstan is a library of Survival Models written in <a class="reference external" href="http://mc-stan.org">Stan</a></p>
-<p>It also contains a number of utility functions helpful when doing survival analysis.</p>
-<p>Typical usage:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>import survivalstan
-# .. prep your data
-fit1 = survivalstan.fit_stan_survival_model(...)
-survivalstan.utils.plot_stan_summary([fit1], metric=’Rhat’)
-survivalstan.utils.plot_coefs([fit1])
-</pre></div>
-</div>
-<div class="section" id="features">
-<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<p>[![Build Status](<a class="reference external" href="https://travis-ci.org/hammerlab/survivalstan.svg?branch=setup-travis)](https://travis-ci.org/hammerlab/survivalstan">https://travis-ci.org/hammerlab/survivalstan.svg?branch=setup-travis)](https://travis-ci.org/hammerlab/survivalstan</a>)
+[![Coverage Status](<a class="reference external" href="https://img.shields.io/coveralls/hammerlab/survivalstan.svg)](https://coveralls.io/github/hammerlab/survivalstan?branch=master">https://img.shields.io/coveralls/hammerlab/survivalstan.svg)](https://coveralls.io/github/hammerlab/survivalstan?branch=master</a>)
+[![PyPI version](<a class="reference external" href="https://img.shields.io/pypi/v/survivalstan.svg)](https://pypi.python.org/pypi/survivalstan">https://img.shields.io/pypi/v/survivalstan.svg)](https://pypi.python.org/pypi/survivalstan</a>)</p>
+<div class="section" id="survivalstan-survival-models-in-stan">
+<h1>survivalstan: Survival Models in Stan<a class="headerlink" href="#survivalstan-survival-models-in-stan" title="Permalink to this headline">¶</a></h1>
+<p>author: Jacki Novik</p>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>Library of Stan Models for Survival Analysis</p>
+<p>Features:</p>
 <ul>
 <li><dl class="first docutils">
 <dt>Variety of standard survival models</dt>
 <dd><ul class="first last simple">
 <li>Weibull, Exponential, and Gamma parameterization</li>
-<li>A variety of semi-parametric and non-parametric baseline hazards</li>
-<li>Supports time-varying-coefficients</li>
-<li>Estimate time-varying effects</li>
-<li>Varying-effects by group</li>
+<li>PEM models with variety of baseline hazards</li>
+<li>PEM model with varying-coefficients (by group)</li>
+<li>PEM model with time-varying-effects</li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><p class="first">Extensible framework - bring your own Stan code, or edit the models provided</p>
+<li><p class="first">Extensible framework - bring your own Stan code, or edit the models above</p>
 </li>
-<li><p class="first">Uses <a class="reference external" href="https://pandas.pydata.org">pandas</a> data frames &amp; <a class="reference external" href="https://pypi.python.org/pypi/patsy">patsy</a> formulas</p>
+<li><p class="first">Uses [pandas](<a class="reference external" href="http://pandas.pydata.org">http://pandas.pydata.org</a>) data frames &amp; [patsy](<a class="reference external" href="https://pypi.python.org/pypi/patsy">https://pypi.python.org/pypi/patsy</a>) formulas</p>
 </li>
-<li><p class="first">Graphical posterior predictive checking</p>
+<li><p class="first">Graphical posterior predictive checking (currently PEM models only)</p>
 </li>
-<li><p class="first">Plot posterior estimates of key parameters using <a class="reference external" href="https://pypi.python.org/pypi/seaborn">seaborn</a></p>
+<li><p class="first">Plot posterior estimates of key parameters using [seaborn](<a class="reference external" href="https://pypi.python.org/pypi/seaborn">https://pypi.python.org/pypi/seaborn</a>)</p>
 </li>
-<li><p class="first">Annotated posterior draws of parameter estimates, as <a class="reference external" href="http://pandas.pydata.org">pandas</a> dataframes</p>
+<li><p class="first">Annotate posterior draws of parameter estimates, format as [pandas](<a class="reference external" href="http://pandas.pydata.org">http://pandas.pydata.org</a>) dataframes</p>
 </li>
-<li><p class="first">Supports caching via as <a class="reference external" href="http://github.com/jburos/stancache">stancache</a> or <a class="reference external" href="https://github.com/paulkernfeld/pystan-cache">pystan-cache</a></p>
+<li><p class="first">Works with extensions to [pystan](<a class="reference external" href="https://pystan.readthedocs.io/en/latest/">https://pystan.readthedocs.io/en/latest/</a>), such as [stancache](<a class="reference external" href="http://github.com/jburos/stancache">http://github.com/jburos/stancache</a>) or [pystan-cache](<a class="reference external" href="https://github.com/paulkernfeld/pystan-cache">https://github.com/paulkernfeld/pystan-cache</a>)</p>
 </li>
 </ul>
 </div>
-<div class="section" id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>Install survivalstan via pip:</p>
+<div class="section" id="installation-usage">
+<h2>Installation / Usage<a class="headerlink" href="#installation-usage" title="Permalink to this headline">¶</a></h2>
+<p>Install using pip, as:</p>
 <blockquote>
-<div>pip install survivalstan</div></blockquote>
+<div>$ pip install survivalstan</div></blockquote>
+<p>Or, you can clone the repo:</p>
+<blockquote>
+<div>$ git clone <a class="reference external" href="https://github.com/hammerlab/survivalstan.git">https://github.com/hammerlab/survivalstan.git</a>
+$ pip install .</div></blockquote>
 </div>
-<div class="section" id="contribute">
-<h2>Contribute<a class="headerlink" href="#contribute" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>Issue Tracker: github.com/hammerlab/survivalstan/issues</li>
-<li>Source Code: github.com/survivalstan/survivalstan</li>
-</ul>
+<div class="section" id="contributing">
+<h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h2>
+<p>Details to come. For now, please do not hesitate to contribute if you would like.</p>
 </div>
-<div class="section" id="support">
-<h2>Support<a class="headerlink" href="#support" title="Permalink to this headline">¶</a></h2>
-<p>If you are having issues or questions, please let us know.</p>
-<p>We can be reached by email (via github) or via <a class="reference external" href="https://gitter.im/survivalstan">https://gitter.im/survivalstan</a></p>
-</div>
-<div class="section" id="license">
-<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
-<p>The project is licensed under the Apache 2.0 license.</p>
-<p>Contents:</p>
+<div class="section" id="usage-examples">
+<h2>Usage examples<a class="headerlink" href="#usage-examples" title="Permalink to this headline">¶</a></h2>
+<p>There are several examples included in the [example-notebooks](<a class="reference external" href="http://nbviewer.jupyter.org/github/hammerlab/survivalstan/tree/master/example-notebooks/">http://nbviewer.jupyter.org/github/hammerlab/survivalstan/tree/master/example-notebooks/</a>), roughly one corresponding to each model.</p>
+<p>If you are not sure where to start, [Test pem_survival_model with simulated data.ipynb](<a class="reference external" href="http://nbviewer.jupyter.org/github/hammerlab/survivalstan/blob/master/example-notebooks/Test%20pem_survival_model%20with%20simulated%20data.ipynb">http://nbviewer.jupyter.org/github/hammerlab/survivalstan/blob/master/example-notebooks/Test%20pem_survival_model%20with%20simulated%20data.ipynb</a>) contains the most explanatory text. Many of the other notebooks are sparse on explanation, but do illustrate variations on the different models.</p>
+<p>For basic usage:</p>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a>`
+import survivalstan
+import stanity
+import seaborn as sb
+import matplotlib.pyplot as plt
+import statsmodels</p>
+<p>## load flchain test data from R&#8217;s <cite>survival</cite> package
+dataset = statsmodels.datasets.get_rdataset(package = &#8216;survival&#8217;, dataname = &#8216;flchain&#8217; )
+d  = dataset.data.query(&#8216;futime &gt; 7&#8217;)
+d.reset_index(level = 0, inplace = True)</p>
+<p>## e.g. fit Weibull survival model
+testfit_wei = survivalstan.fit_stan_survival_model(</p>
+<blockquote>
+<div>model_cohort = &#8216;Weibull model&#8217;,
+model_code = survivalstan.models.weibull_survival_model,
+df = d,
+time_col = &#8216;futime&#8217;,
+event_col = &#8216;death&#8217;,
+formula = &#8216;age + sex&#8217;,
+iter = 3000,
+chains = 4,
+make_inits = survivalstan.make_weibull_survival_model_inits
+)</div></blockquote>
+<p>## coefplot for Weibull coefficient estimates
+sb.boxplot(x = &#8216;value&#8217;, y = &#8216;variable&#8217;, data = testfit_wei[&#8216;coefs&#8217;])</p>
+<p>## or, use plot_coefs
+survivalstan.utils.plot_coefs([testfit_wei])</p>
+<p>## print summary of MCMC draws from posterior for each parameter
+print(testfit_wei[&#8216;fit&#8217;])</p>
+<p>## e.g. fit Piecewise-exponential survival model
+dlong = survivalstan.prep_data_long_surv(d, time_col = &#8216;futime&#8217;, event_col = &#8216;death&#8217;)
+testfit_pem = survivalstan.fit_stan_survival_model(</p>
+<blockquote>
+<div>model_cohort = &#8216;PEM model&#8217;,
+model_code = survivalstan.models.pem_survival_model,
+df = dlong,
+sample_col = &#8216;index&#8217;,
+timepoint_end_col = &#8216;end_time&#8217;,
+event_col = &#8216;end_failure&#8217;,
+formula = &#8216;age + sex&#8217;,
+iter = 3000,
+chains = 4,
+)</div></blockquote>
+<p>## print summary of MCMC draws from posterior for each parameter
+print(testfit_pem[&#8216;fit&#8217;])</p>
+<p>## coefplot for PEM model results
+sb.boxplot(x = &#8216;value&#8217;, y = &#8216;variable&#8217;, data = testfit_pem[&#8216;coefs&#8217;])</p>
+<p>## plot baseline hazard (only PEM models)
+survivalstan.utils.plot_coefs([testfit_pem], element=&#8217;baseline&#8217;)</p>
+<p>## posterior-predictive checking (only PEM models)
+survivalstan.utils.plot_pp_survival([testfit_pem])</p>
+<p>## e.g. compare models using PSIS-LOO
+stanity.loo_compare(testfit_wei[&#8216;loo&#8217;], testfit_pem[&#8216;loo&#8217;])</p>
+<p>## compare coefplots
+sb.boxplot(x = &#8216;value&#8217;, y = &#8216;variable&#8217;, hue = &#8216;model_cohort&#8217;,</p>
+<blockquote>
+<div>data = testfit_pem[&#8216;coefs&#8217;].append(testfit_wei[&#8216;coefs&#8217;]))</div></blockquote>
+<p>plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)</p>
+<p>## (or, use survivalstan.utils.plot_coefs)
+survivalstan.utils.plot_coefs([testfit_wei, testfit_pem])</p>
+<p><a href="#id3"><span class="problematic" id="id4">``</span></a><a href="#id5"><span class="problematic" id="id6">`</span></a></p>
+<p>See examples to get started</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Usage.html">Getting started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Usage.html#Installation">Installation</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="examples/Example-using-pem_survival_model.html">Fitting a piecewise-exponential model (PEM) to simulated data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/Example-using-pem_survival_model.html#The-model">The model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/Example-using-pem_survival_model.html#A-note-about-data-formatting">A note about data formatting</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Example-using-pem_survival_model.html#Stan-code-for-the-model">Stan code for the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Example-using-pem_survival_model.html#Simulate-survival-data">Simulate survival data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Example-using-pem_survival_model.html#Explore-simulated-data">Explore simulated data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Example-using-pem_survival_model.html#Transform-to-long-or-per-timepoint-form">Transform to <code class="docutils literal"><span class="pre">long</span></code> or <code class="docutils literal"><span class="pre">per-timepoint</span></code> form</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Example-using-pem_survival_model.html#Fit-stan-model">Fit stan model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Example-using-pem_survival_model.html#Superficial-review-of-convergence">Superficial review of convergence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Example-using-pem_survival_model.html#Plot-posterior-estimates-of-parameters">Plot posterior estimates of parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Example-using-pem_survival_model.html#Posterior-predictive-checking">Posterior predictive checking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Example-using-pem_survival_model.html#Building-up-the-plot-semi-manually,-for-more-customization">Building up the plot semi-manually, for more customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Example-using-pem_survival_model.html#Use-plotly-to-summarize-posterior-predicted-values">Use plotly to summarize posterior predicted values</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html">Optimizing Stan code for a user-provided Gamma model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#Simulate-survival-data">Simulate survival data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#Explore-simulated-data">Explore simulated data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#model1:-original-spec">model1: original spec</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#model2:-alternate-version-of-surv_gamma_lpdf">model2: alternate version of surv_gamma_lpdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#model3:-use-log_mix-inside-surv_gamma_lpdf">model3: use <code class="docutils literal"><span class="pre">log_mix</span></code> inside surv_gamma_lpdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#model4:-vectorize-surv_gamma_lpdf">model4: vectorize surv_gamma_lpdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#compare-coefficient-estimates-for-each-model-spec">compare coefficient estimates for each model spec</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples/Test pem_survival_model_gamma with simulated data.html">Estimating a PEM survival model with Gamma baseline hazard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/Test pem_survival_model_randomwalk with simulated data.html">PEM survival model with random-walk baseline hazard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html">A PEM Survival Model with Time-Dependent Effects</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html#superficial-check-of-convergence">superficial check of convergence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html#summarize-coefficient-estimates">summarize coefficient estimates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html#posterior-predictive-checks">posterior-predictive checks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html#summarize-time-varying-effect-of-sex-on-survival">summarize time-varying effect of sex on survival</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html#accessing-lower-level-functions-for-plotting-effects-over-time">accessing lower-level functions for plotting effects over time</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">survivalstan</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="survivalstan.html">survivalstan package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="survivalstan.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="survivalstan.html#module-survivalstan.models">survivalstan.models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="survivalstan.html#module-survivalstan.sim">survivalstan.sim module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="survivalstan.html#module-survivalstan.survivalstan">survivalstan.survivalstan module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="survivalstan.html#module-survivalstan.utils">survivalstan.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="survivalstan.html#module-survivalstan">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
-</div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
-<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
-<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
-</ul>
 </div>
 
 

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Simulate survival data &mdash; survivalstan 0.1.2.5 documentation</title>
+  <title>Optimizing Stan code for a user-provided Gamma model &mdash; survivalstan 0.1.2.5 documentation</title>
   
 
   
@@ -33,7 +33,9 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="survivalstan 0.1.2.5 documentation" href="../index.html"/> 
+    <link rel="top" title="survivalstan 0.1.2.5 documentation" href="../index.html"/>
+        <link rel="next" title="Estimating a PEM survival model with Gamma baseline hazard" href="Test pem_survival_model_gamma with simulated data.html"/>
+        <link rel="prev" title="Fitting a piecewise-exponential model (PEM) to simulated data" href="Example-using-pem_survival_model.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -82,8 +84,23 @@
           
             
             
-                <ul>
+                <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../Usage.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Example-using-pem_survival_model.html">Fitting a piecewise-exponential model (PEM) to simulated data</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Optimizing Stan code for a user-provided Gamma model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Simulate-survival-data">Simulate survival data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Explore-simulated-data">Explore simulated data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model1:-original-spec">model1: original spec</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model2:-alternate-version-of-surv_gamma_lpdf">model2: alternate version of surv_gamma_lpdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model3:-use-log_mix-inside-surv_gamma_lpdf">model3: use <code class="docutils literal"><span class="pre">log_mix</span></code> inside surv_gamma_lpdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model4:-vectorize-surv_gamma_lpdf">model4: vectorize surv_gamma_lpdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compare-coefficient-estimates-for-each-model-spec">compare coefficient estimates for each model spec</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Test pem_survival_model_gamma with simulated data.html">Estimating a PEM survival model with Gamma baseline hazard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Test pem_survival_model_randomwalk with simulated data.html">PEM survival model with random-walk baseline hazard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Test pem_survival_model_timevarying with simulated data.html">A PEM Survival Model with Time-Dependent Effects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">survivalstan</a></li>
 </ul>
 
             
@@ -114,7 +131,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>Simulate survival data</li>
+    <li>Optimizing Stan code for a user-provided Gamma model</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -316,6 +333,8 @@ div.nboutput div.output_area.stderr {
     margin-right: 4px;  /* make room for the exclamation icon */
 }
 </style>
+<div class="section" id="Optimizing-Stan-code-for-a-user-provided-Gamma-model">
+<h1>Optimizing Stan code for a user-provided Gamma model<a class="headerlink" href="#Optimizing-Stan-code-for-a-user-provided-Gamma-model" title="Permalink to this headline">¶</a></h1>
 <div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [3]:
@@ -357,7 +376,7 @@ INFO:stancache.seed:Setting seed to 1245502385
 </pre></div></div>
 </div>
 <div class="section" id="Simulate-survival-data">
-<h1>Simulate survival data<a class="headerlink" href="#Simulate-survival-data" title="Permalink to this headline">¶</a></h1>
+<h2>Simulate survival data<a class="headerlink" href="#Simulate-survival-data" title="Permalink to this headline">¶</a></h2>
 <p>In order to demonstrate the use of this model, we will first simulate
 some survival data using <code class="docutils literal"><span class="pre">survivalstan.sim.sim_data_exp_correlated</span></code>.
 As the name implies, this function simulates data assuming a constant
@@ -399,7 +418,7 @@ using a file-caching function <code class="docutils literal"><span class="pre">s
 call to <code class="docutils literal"><span class="pre">survivalstan.sim.sim_data_exp_correlated</span></code>. *</p>
 </div>
 <div class="section" id="Explore-simulated-data">
-<h1>Explore simulated data<a class="headerlink" href="#Explore-simulated-data" title="Permalink to this headline">¶</a></h1>
+<h2>Explore simulated data<a class="headerlink" href="#Explore-simulated-data" title="Permalink to this headline">¶</a></h2>
 <p>Here is what these data look like - this is <code class="docutils literal"><span class="pre">per-subject</span></code> or
 <code class="docutils literal"><span class="pre">time-to-event</span></code> form:</p>
 <div class="nbinput container">
@@ -523,12 +542,12 @@ functions provided by <code class="docutils literal"><span class="pre">survivals
 <div class="prompt empty container">
 </div>
 <div class="output_area container">
-<img alt="../_images/examples_Test_new_gamma_survival_model_with_simulated_data_10_1.png" src="../_images/examples_Test_new_gamma_survival_model_with_simulated_data_10_1.png" />
+<img alt="../_images/examples_Test_new_gamma_survival_model_with_simulated_data_11_1.png" src="../_images/examples_Test_new_gamma_survival_model_with_simulated_data_11_1.png" />
 </div>
 </div>
 </div>
 <div class="section" id="model1:-original-spec">
-<h1>model1: original spec<a class="headerlink" href="#model1:-original-spec" title="Permalink to this headline">¶</a></h1>
+<h2>model1: original spec<a class="headerlink" href="#model1:-original-spec" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [7]:
@@ -679,7 +698,7 @@ beta[2]    0.006018  0.000183  0.014844   -0.023068    0.005959    0.035536  1.0
 </div>
 </div>
 <div class="section" id="model2:-alternate-version-of-surv_gamma_lpdf">
-<h1>model2: alternate version of surv_gamma_lpdf<a class="headerlink" href="#model2:-alternate-version-of-surv_gamma_lpdf" title="Permalink to this headline">¶</a></h1>
+<h2>model2: alternate version of surv_gamma_lpdf<a class="headerlink" href="#model2:-alternate-version-of-surv_gamma_lpdf" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [11]:
@@ -800,7 +819,7 @@ beta[2]    0.006629  0.000188  0.014733   -0.021872    0.006506    0.036200  1.0
 </div>
 </div>
 <div class="section" id="model3:-use-log_mix-inside-surv_gamma_lpdf">
-<h1>model3: use <code class="docutils literal"><span class="pre">log_mix</span></code> inside surv_gamma_lpdf<a class="headerlink" href="#model3:-use-log_mix-inside-surv_gamma_lpdf" title="Permalink to this headline">¶</a></h1>
+<h2>model3: use <code class="docutils literal"><span class="pre">log_mix</span></code> inside surv_gamma_lpdf<a class="headerlink" href="#model3:-use-log_mix-inside-surv_gamma_lpdf" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [15]:
@@ -918,7 +937,7 @@ beta[2]    0.006028  0.000180  0.014812   -0.022443    0.006036    0.036197  1.0
 </div>
 </div>
 <div class="section" id="model4:-vectorize-surv_gamma_lpdf">
-<h1>model4: vectorize surv_gamma_lpdf<a class="headerlink" href="#model4:-vectorize-surv_gamma_lpdf" title="Permalink to this headline">¶</a></h1>
+<h2>model4: vectorize surv_gamma_lpdf<a class="headerlink" href="#model4:-vectorize-surv_gamma_lpdf" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [40]:
@@ -1075,7 +1094,7 @@ beta[2]    0.006211  0.000171  0.014493   -0.022229    0.006113    0.035095  1.0
 </div>
 </div>
 <div class="section" id="compare-coefficient-estimates-for-each-model-spec">
-<h1>compare coefficient estimates for each model spec<a class="headerlink" href="#compare-coefficient-estimates-for-each-model-spec" title="Permalink to this headline">¶</a></h1>
+<h2>compare coefficient estimates for each model spec<a class="headerlink" href="#compare-coefficient-estimates-for-each-model-spec" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [44]:
@@ -1090,7 +1109,7 @@ beta[2]    0.006211  0.000171  0.014493   -0.022229    0.006113    0.035095  1.0
 <div class="prompt empty container">
 </div>
 <div class="output_area container">
-<img alt="../_images/examples_Test_new_gamma_survival_model_with_simulated_data_33_0.png" src="../_images/examples_Test_new_gamma_survival_model_with_simulated_data_33_0.png" />
+<img alt="../_images/examples_Test_new_gamma_survival_model_with_simulated_data_34_0.png" src="../_images/examples_Test_new_gamma_survival_model_with_simulated_data_34_0.png" />
 </div>
 </div>
 <div class="nbinput nblast container">
@@ -1104,11 +1123,21 @@ beta[2]    0.006211  0.000171  0.014493   -0.022229    0.006113    0.035095  1.0
 </div>
 </div>
 </div>
+</div>
 
 
            </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Test pem_survival_model_gamma with simulated data.html" class="btn btn-neutral float-right" title="Estimating a PEM survival model with Gamma baseline hazard" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Example-using-pem_survival_model.html" class="btn btn-neutral" title="Fitting a piecewise-exponential model (PEM) to simulated data" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

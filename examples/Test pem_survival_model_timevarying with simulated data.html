@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>superficial check of convergence &mdash; survivalstan 0.1.2.5 documentation</title>
+  <title>A PEM Survival Model with Time-Dependent Effects &mdash; survivalstan 0.1.2.5 documentation</title>
   
 
   
@@ -34,8 +34,8 @@
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
     <link rel="top" title="survivalstan 0.1.2.5 documentation" href="../index.html"/>
-        <link rel="up" title="Getting started" href="../Usage.html"/>
-        <link rel="prev" title="Fitting a piecewise-exponential model (PEM) to simulated data" href="Example-using-pem_survival_model.html"/> 
+        <link rel="next" title="survivalstan" href="../modules.html"/>
+        <link rel="prev" title="PEM survival model with random-walk baseline hazard" href="Test pem_survival_model_randomwalk with simulated data.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -85,18 +85,20 @@
             
             
                 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../Usage.html">Getting started</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../Usage.html#Installation">Installation</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="Example-using-pem_survival_model.html">Basic piecewise-exponentialmodel</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">superficial check of convergence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#summarize-coefficient-estimates">summarize coefficient estimates</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#posterior-predictive-checks">posterior-predictive checks</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#summarize-time-varying-effect-of-sex-on-survival">summarize time-varying effect of sex on survival</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#accessing-lower-level-functions-for-plotting-effects-over-time">accessing lower-level functions for plotting effects over time</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Usage.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Example-using-pem_survival_model.html">Fitting a piecewise-exponential model (PEM) to simulated data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Test new_gamma_survival_model with simulated data.html">Optimizing Stan code for a user-provided Gamma model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Test pem_survival_model_gamma with simulated data.html">Estimating a PEM survival model with Gamma baseline hazard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Test pem_survival_model_randomwalk with simulated data.html">PEM survival model with random-walk baseline hazard</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">A PEM Survival Model with Time-Dependent Effects</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#superficial-check-of-convergence">superficial check of convergence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#summarize-coefficient-estimates">summarize coefficient estimates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#posterior-predictive-checks">posterior-predictive checks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#summarize-time-varying-effect-of-sex-on-survival">summarize time-varying effect of sex on survival</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#accessing-lower-level-functions-for-plotting-effects-over-time">accessing lower-level functions for plotting effects over time</a></li>
 </ul>
 </li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">survivalstan</a></li>
 </ul>
 
             
@@ -127,9 +129,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-          <li><a href="../Usage.html">Getting started</a> &raquo;</li>
-      
-    <li>superficial check of convergence</li>
+    <li>A PEM Survival Model with Time-Dependent Effects</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -331,6 +331,8 @@ div.nboutput div.output_area.stderr {
     margin-right: 4px;  /* make room for the exclamation icon */
 }
 </style>
+<div class="section" id="A-PEM-Survival-Model-with-Time-Dependent-Effects">
+<h1>A PEM Survival Model with Time-Dependent Effects<a class="headerlink" href="#A-PEM-Survival-Model-with-Time-Dependent-Effects" title="Permalink to this headline">¶</a></h1>
 <div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [4]:
@@ -731,7 +733,7 @@ INFO:stancache.stancache:sim_data_exp_correlated: Loading result from cache
 <div class="prompt empty container">
 </div>
 <div class="output_area container">
-<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_3_1.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_3_1.png" />
+<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_4_1.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_4_1.png" />
 </div>
 </div>
 <div class="nbinput container">
@@ -908,7 +910,7 @@ INFO:stancache.stancache:sampling: Loading result from cache
 </pre></div></div>
 </div>
 <div class="section" id="superficial-check-of-convergence">
-<h1>superficial check of convergence<a class="headerlink" href="#superficial-check-of-convergence" title="Permalink to this headline">¶</a></h1>
+<h2>superficial check of convergence<a class="headerlink" href="#superficial-check-of-convergence" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [11]:
@@ -942,12 +944,12 @@ lp__  407.328012  15.738683  101.998321  214.786192  407.532163  606.393469  1.0
 <div class="prompt empty container">
 </div>
 <div class="output_area container">
-<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_9_0.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_9_0.png" />
+<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_10_0.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_10_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="summarize-coefficient-estimates">
-<h1>summarize coefficient estimates<a class="headerlink" href="#summarize-coefficient-estimates" title="Permalink to this headline">¶</a></h1>
+<h2>summarize coefficient estimates<a class="headerlink" href="#summarize-coefficient-estimates" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [13]:
@@ -962,7 +964,7 @@ lp__  407.328012  15.738683  101.998321  214.786192  407.532163  606.393469  1.0
 <div class="prompt empty container">
 </div>
 <div class="output_area container">
-<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_11_0.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_11_0.png" />
+<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_12_0.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_12_0.png" />
 </div>
 </div>
 <div class="nbinput container">
@@ -979,12 +981,12 @@ lp__  407.328012  15.738683  101.998321  214.786192  407.532163  606.393469  1.0
 <div class="prompt empty container">
 </div>
 <div class="output_area container">
-<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_12_0.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_12_0.png" />
+<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_13_0.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_13_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="posterior-predictive-checks">
-<h1>posterior-predictive checks<a class="headerlink" href="#posterior-predictive-checks" title="Permalink to this headline">¶</a></h1>
+<h2>posterior-predictive checks<a class="headerlink" href="#posterior-predictive-checks" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [15]:
@@ -1011,7 +1013,7 @@ lp__  407.328012  15.738683  101.998321  214.786192  407.532163  606.393469  1.0
 <div class="prompt empty container">
 </div>
 <div class="output_area container">
-<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_14_1.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_14_1.png" />
+<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_15_1.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_15_1.png" />
 </div>
 </div>
 <div class="nbinput container">
@@ -1028,7 +1030,7 @@ lp__  407.328012  15.738683  101.998321  214.786192  407.532163  606.393469  1.0
 <div class="prompt empty container">
 </div>
 <div class="output_area container">
-<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_15_0.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_15_0.png" />
+<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_16_0.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_16_0.png" />
 </div>
 </div>
 <div class="nbinput nblast container">
@@ -1043,7 +1045,7 @@ lp__  407.328012  15.738683  101.998321  214.786192  407.532163  606.393469  1.0
 </div>
 </div>
 <div class="section" id="summarize-time-varying-effect-of-sex-on-survival">
-<h1>summarize time-varying effect of sex on survival<a class="headerlink" href="#summarize-time-varying-effect-of-sex-on-survival" title="Permalink to this headline">¶</a></h1>
+<h2>summarize time-varying effect of sex on survival<a class="headerlink" href="#summarize-time-varying-effect-of-sex-on-survival" title="Permalink to this headline">¶</a></h2>
 <p>Standard behavior is to plot estimated betas at each timepoint, for each
 coefficient in the model.</p>
 <div class="nbinput container">
@@ -1060,12 +1062,12 @@ coefficient in the model.</p>
 <div class="prompt empty container">
 </div>
 <div class="output_area container">
-<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_19_0.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_19_0.png" />
+<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_20_0.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_20_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="accessing-lower-level-functions-for-plotting-effects-over-time">
-<h1>accessing lower-level functions for plotting effects over time<a class="headerlink" href="#accessing-lower-level-functions-for-plotting-effects-over-time" title="Permalink to this headline">¶</a></h1>
+<h2>accessing lower-level functions for plotting effects over time<a class="headerlink" href="#accessing-lower-level-functions-for-plotting-effects-over-time" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [26]:
@@ -1080,7 +1082,7 @@ coefficient in the model.</p>
 <div class="prompt empty container">
 </div>
 <div class="output_area container">
-<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_21_0.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_21_0.png" />
+<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_22_0.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_22_0.png" />
 </div>
 </div>
 <p>Alternatively, you can extract the beta-estimates for each timepoint &amp;
@@ -1272,7 +1274,7 @@ interest at a time.</p>
 <div class="prompt empty container">
 </div>
 <div class="output_area container">
-<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_26_1.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_26_1.png" />
+<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_27_1.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_27_1.png" />
 </div>
 </div>
 <div class="nbinput container">
@@ -1289,7 +1291,7 @@ interest at a time.</p>
 <div class="prompt empty container">
 </div>
 <div class="output_area container">
-<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_27_0.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_27_0.png" />
+<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_28_0.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_28_0.png" />
 </div>
 </div>
 <p>Note that this same plot can be produced by passing data to
@@ -1308,7 +1310,7 @@ interest at a time.</p>
 <div class="prompt empty container">
 </div>
 <div class="output_area container">
-<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_29_0.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_29_0.png" />
+<img alt="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_30_0.png" src="../_images/examples_Test_pem_survival_model_timevarying_with_simulated_data_30_0.png" />
 </div>
 </div>
 <div class="nbinput nblast container">
@@ -1322,6 +1324,7 @@ interest at a time.</p>
 </div>
 </div>
 </div>
+</div>
 
 
            </div>
@@ -1330,8 +1333,10 @@ interest at a time.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="../modules.html" class="btn btn-neutral float-right" title="survivalstan" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="Example-using-pem_survival_model.html" class="btn btn-neutral" title="Fitting a piecewise-exponential model (PEM) to simulated data" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="Test pem_survival_model_randomwalk with simulated data.html" class="btn btn-neutral" title="PEM survival model with random-walk baseline hazard" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

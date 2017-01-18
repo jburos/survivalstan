@@ -1,0 +1,1177 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Optimizing Stan code for a user-provided Gamma model &mdash; survivalstan 0.1.2.5 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="survivalstan 0.1.2.5 documentation" href="../../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> survivalstan
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.2.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Usage.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Example-using-pem_survival_model.html">Fitting a piecewise-exponential model (PEM) to simulated data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Test new_gamma_survival_model with simulated data.html">Optimizing Stan code for a user-provided Gamma model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Test pem_survival_model_gamma with simulated data.html">Estimating a PEM survival model with Gamma baseline hazard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Test pem_survival_model_randomwalk with simulated data.html">PEM survival model with random-walk baseline hazard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Test pem_survival_model_timevarying with simulated data.html">A PEM Survival Model with Time-Dependent Effects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">survivalstan</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">survivalstan</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+    <li>Optimizing Stan code for a user-provided Gamma model</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/examples/.ipynb_checkpoints/Test new_gamma_survival_model with simulated data-checkpoint.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="Optimizing-Stan-code-for-a-user-provided-Gamma-model">
+<h1>Optimizing Stan code for a user-provided Gamma model<a class="headerlink" href="#Optimizing-Stan-code-for-a-user-provided-Gamma-model" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1100038344</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">survivalstan</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">stancache</span> <span class="k">import</span> <span class="n">stancache</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<div class="highlight"><pre>
+The autoreload extension is already loaded. To reload it, use:
+  %reload_ext autoreload
+</pre></div></div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="stderr output_area container">
+<div class="highlight"><pre>
+/home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/Cython/Distutils/old_build_ext.py:30: UserWarning: Cython.Distutils.old_build_ext does not properly handle dependencies and is deprecated.
+  &#34;Cython.Distutils.old_build_ext does not properly handle dependencies &#34;
+/home/jacquelineburos/.local/lib/python3.5/site-packages/IPython/html.py:14: ShimWarning: The `IPython.html` package has been deprecated. You should import from `notebook` instead. `IPython.html.widgets` has moved to `ipywidgets`.
+  &#34;`IPython.html.widgets` has moved to `ipywidgets`.&#34;, ShimWarning)
+INFO:stancache.seed:Setting seed to 1245502385
+</pre></div></div>
+</div>
+<div class="section" id="Simulate-survival-data">
+<h2>Simulate survival data<a class="headerlink" href="#Simulate-survival-data" title="Permalink to this headline">¶</a></h2>
+<p>In order to demonstrate the use of this model, we will first simulate
+some survival data using <code class="docutils literal"><span class="pre">survivalstan.sim.sim_data_exp_correlated</span></code>.
+As the name implies, this function simulates data assuming a constant
+hazard throughout the follow-up time period, which is consistent with
+the Exponential survival function.</p>
+<p>This function includes two simulated covariates by default (<code class="docutils literal"><span class="pre">age</span></code> and
+<code class="docutils literal"><span class="pre">sex</span></code>). We also simulate a situation where hazard is a function of the
+simulated value for <code class="docutils literal"><span class="pre">sex</span></code>.</p>
+<p>We also center the <code class="docutils literal"><span class="pre">age</span></code> variable since this will make it easier to
+interpret estimates of the baseline hazard.</p>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">d</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached</span><span class="p">(</span>
+    <span class="n">survivalstan</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">sim_data_exp_correlated</span><span class="p">,</span>
+    <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">censor_time</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">rate_form</span><span class="o">=</span><span class="s1">&#39;1 + sex&#39;</span><span class="p">,</span>
+    <span class="n">rate_coefs</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">d</span><span class="p">[</span><span class="s1">&#39;age_centered&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="stderr output_area container">
+<div class="highlight"><pre>
+INFO:stancache.stancache:sim_data_exp_correlated: cache_filename set to sim_data_exp_correlated.cached.N_100.censor_time_20.rate_coefs_54462717316.rate_form_1 + sex.pkl
+INFO:stancache.stancache:sim_data_exp_correlated: Loading result from cache
+</pre></div></div>
+</div>
+<p><a href="#id1"><span class="problematic" id="id2">*</span></a>Aside: In order to make this a more reproducible example, this code is
+using a file-caching function <code class="docutils literal"><span class="pre">stancache.cached</span></code> to wrap a function
+call to <code class="docutils literal"><span class="pre">survivalstan.sim.sim_data_exp_correlated</span></code>. *</p>
+</div>
+<div class="section" id="Explore-simulated-data">
+<h2>Explore simulated data<a class="headerlink" href="#Explore-simulated-data" title="Permalink to this headline">¶</a></h2>
+<p>Here is what these data look like - this is <code class="docutils literal"><span class="pre">per-subject</span></code> or
+<code class="docutils literal"><span class="pre">time-to-event</span></code> form:</p>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">d</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[5]:
+</pre></div>
+</div>
+<div class="output_area container">
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age</th>
+      <th>sex</th>
+      <th>rate</th>
+      <th>true_t</th>
+      <th>t</th>
+      <th>event</th>
+      <th>index</th>
+      <th>age_centered</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>59</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>20.948771</td>
+      <td>20.000000</td>
+      <td>False</td>
+      <td>0</td>
+      <td>4.18</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>58</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>12.827519</td>
+      <td>12.827519</td>
+      <td>True</td>
+      <td>1</td>
+      <td>3.18</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>61</td>
+      <td>female</td>
+      <td>0.049787</td>
+      <td>27.018886</td>
+      <td>20.000000</td>
+      <td>False</td>
+      <td>2</td>
+      <td>6.18</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>57</td>
+      <td>female</td>
+      <td>0.049787</td>
+      <td>62.220296</td>
+      <td>20.000000</td>
+      <td>False</td>
+      <td>3</td>
+      <td>2.18</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>55</td>
+      <td>male</td>
+      <td>0.082085</td>
+      <td>10.462045</td>
+      <td>10.462045</td>
+      <td>True</td>
+      <td>4</td>
+      <td>0.18</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p><em>It&#8217;s not that obvious from the field names, but in this example
+&#8220;subjects&#8221; are indexed by the field ``index``.</em></p>
+<p>We can plot these data using <code class="docutils literal"><span class="pre">lifelines</span></code>, or the rudimentary plotting
+functions provided by <code class="docutils literal"><span class="pre">survivalstan</span></code>.</p>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;female&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;female&#39;</span><span class="p">)</span>
+<span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_observed_survival</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;male&#39;</span><span class="p">],</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;male&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[6]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>&lt;matplotlib.legend.Legend at 0x7f64d8063978&gt;
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../../_images/examples_.ipynb_checkpoints_Test_new_gamma_survival_model_with_simulated_data-checkpoint_11_1.png" src="../../_images/examples_.ipynb_checkpoints_Test_new_gamma_survival_model_with_simulated_data-checkpoint_11_1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="model1:-original-spec">
+<h2>model1: original spec<a class="headerlink" href="#model1:-original-spec" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">model_code</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">functions {</span>
+<span class="s1">  // Defines the log survival</span>
+<span class="s1">  vector log_S (vector t, real shape, vector rate) {</span>
+<span class="s1">    vector[num_elements(t)] log_S;</span>
+<span class="s1">    for (i in 1:num_elements(t)) {</span>
+<span class="s1">      log_S[i] = gamma_lccdf(t[i]|shape,rate[i]);</span>
+<span class="s1">    }</span>
+<span class="s1">    return log_S;</span>
+<span class="s1">  }</span>
+
+<span class="s1">  // Defines the log hazard</span>
+<span class="s1">  vector log_h (vector t, real shape, vector rate) {</span>
+<span class="s1">    vector[num_elements(t)] log_h;</span>
+<span class="s1">    vector[num_elements(t)] ls;</span>
+<span class="s1">    ls = log_S(t,shape,rate);</span>
+<span class="s1">    for (i in 1:num_elements(t)) {</span>
+<span class="s1">      log_h[i] = gamma_lpdf(t[i]|shape,rate[i]) - ls[i];</span>
+<span class="s1">    }</span>
+<span class="s1">    return log_h;</span>
+<span class="s1">  }</span>
+
+<span class="s1">  // Defines the sampling distribution</span>
+<span class="s1">  real surv_gamma_lpdf (vector t, vector d, real shape, vector rate) {</span>
+<span class="s1">    vector[num_elements(t)] log_lik;</span>
+<span class="s1">    real prob;</span>
+<span class="s1">    log_lik = d .* log_h(t,shape,rate) + log_S(t,shape,rate);</span>
+<span class="s1">    prob = sum(log_lik);</span>
+<span class="s1">    return prob;</span>
+<span class="s1">  }</span>
+<span class="s1">}</span>
+
+<span class="s1">data {</span>
+<span class="s1">  int N;                            // number of observations</span>
+<span class="s1">  vector&lt;lower=0&gt;[N] y;             // observed times</span>
+<span class="s1">  vector&lt;lower=0,upper=1&gt;[N] event;     // censoring indicator (1=observed, 0=censored)</span>
+<span class="s1">  int M;                            // number of covariates</span>
+<span class="s1">  matrix[N, M] x;                    // matrix of covariates (with n rows and H columns)</span>
+<span class="s1">}</span>
+
+<span class="s1">parameters {</span>
+<span class="s1">  vector[M] beta;         // Coefficients in the linear predictor (including intercept)</span>
+<span class="s1">  real&lt;lower=0&gt; alpha;    // shape parameter</span>
+<span class="s1">}</span>
+
+<span class="s1">transformed parameters {</span>
+<span class="s1">  vector[N] linpred;</span>
+<span class="s1">  vector[N] mu;</span>
+<span class="s1">  linpred = x*beta;</span>
+<span class="s1">  for (i in 1:N) {</span>
+<span class="s1">    mu[i] = exp(linpred[i]);</span>
+<span class="s1">  }</span>
+<span class="s1">}</span>
+
+<span class="s1">model {</span>
+<span class="s1">  alpha ~ gamma(0.01,0.01);</span>
+<span class="s1">  beta ~ normal(0,5);</span>
+<span class="s1">  y ~ surv_gamma(event, alpha, mu);</span>
+<span class="s1">}</span>
+<span class="s1">&#39;&#39;&#39;</span>
+</pre></div>
+</div>
+</div>
+<p>Now, we are ready to fit our model using
+<code class="docutils literal"><span class="pre">survivalstan.fit_stan_survival_model</span></code>.</p>
+<p>We pass a few parameters to the fit function, many of which are
+required. See ?survivalstan.fit_stan_survival_model for details.</p>
+<p>Similar to what we did above, we are asking <code class="docutils literal"><span class="pre">survivalstan</span></code> to cache
+this model fit object. See
+<a class="reference external" href="http://github.com/jburos/stancache">stancache</a> for more details on
+how this works. Also, if you didn&#8217;t want to use the cache, you could
+omit the parameter <code class="docutils literal"><span class="pre">FIT_FUN</span></code> and <code class="docutils literal"><span class="pre">survivalstan</span></code> would use the
+standard pystan functionality.</p>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">testfit</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
+    <span class="n">model_cohort</span> <span class="o">=</span> <span class="s1">&#39;model 1&#39;</span><span class="p">,</span>
+    <span class="n">model_code</span> <span class="o">=</span> <span class="n">model_code</span><span class="p">,</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span>
+    <span class="n">time_col</span> <span class="o">=</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span>
+    <span class="n">event_col</span> <span class="o">=</span> <span class="s1">&#39;event&#39;</span><span class="p">,</span>
+    <span class="n">formula</span> <span class="o">=</span> <span class="s1">&#39;~ age_centered + sex&#39;</span><span class="p">,</span>
+    <span class="nb">iter</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">,</span>
+    <span class="n">chains</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="mi">9001</span><span class="p">,</span>
+    <span class="n">FIT_FUN</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached_stan_fit</span><span class="p">,</span>
+    <span class="n">drop_intercept</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="stderr output_area container">
+<div class="highlight"><pre>
+INFO:stancache.stancache:Step 1: Get compiled model code, possibly from cache
+INFO:stancache.stancache:StanModel: cache_filename set to anon_model.cython_0_25_1.model_code_14429915565770599621.pystan_2_12_0_0.stanmodel.pkl
+INFO:stancache.stancache:StanModel: Loading result from cache
+INFO:stancache.stancache:Step 2: Get posterior draws from model, possibly from cache
+INFO:stancache.stancache:sampling: cache_filename set to anon_model.cython_0_25_1.model_code_14429915565770599621.pystan_2_12_0_0.stanfit.chains_4.data_25476010973.iter_5000.seed_9001.pkl
+INFO:stancache.stancache:sampling: Loading result from cache
+</pre></div></div>
+</div>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># 0:00:40.518775 elapsed</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lp__&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<div class="highlight"><pre>
+               mean   se_mean        sd        2.5%         50%       97.5%      Rhat
+lp__    -278.113380  0.021718  1.358348 -281.579969 -277.815032 -276.424942  1.000465
+alpha      1.220129  0.002561  0.170488    0.913076    1.209632    1.581949  1.000245
+beta[0]   -2.703902  0.003699  0.226779   -3.173168   -2.695839   -2.275841  1.000271
+beta[1]    0.608266  0.002897  0.199169    0.221442    0.606373    1.003776  1.000226
+beta[2]    0.006018  0.000183  0.014844   -0.023068    0.005959    0.035536  1.000075
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="model2:-alternate-version-of-surv_gamma_lpdf">
+<h2>model2: alternate version of surv_gamma_lpdf<a class="headerlink" href="#model2:-alternate-version-of-surv_gamma_lpdf" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">model_code2</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">functions {</span>
+<span class="s1">  // Defines the log survival</span>
+<span class="s1">  real surv_gamma_lpdf (vector t, vector d, real shape, vector rate) {</span>
+<span class="s1">    vector[num_elements(t)] log_lik;</span>
+<span class="s1">    real prob;</span>
+<span class="s1">    for (i in 1:num_elements(t)) {</span>
+<span class="s1">      log_lik[i] = d[i] * (gamma_lpdf(t[i]|shape,rate[i]) - gamma_lccdf(t[i]|shape,rate[i]))</span>
+<span class="s1">                      + gamma_lccdf(t[i]|shape,rate[i]);</span>
+<span class="s1">    }</span>
+<span class="s1">    prob = sum(log_lik);</span>
+<span class="s1">    return prob;</span>
+<span class="s1">  }</span>
+<span class="s1">}</span>
+<span class="s1">data {</span>
+<span class="s1">  int N;                            // number of observations</span>
+<span class="s1">  vector&lt;lower=0&gt;[N] y;             // observed times</span>
+<span class="s1">  vector&lt;lower=0,upper=1&gt;[N] event;     // censoring indicator (1=observed, 0=censored)</span>
+<span class="s1">  int M;                            // number of covariates</span>
+<span class="s1">  matrix[N, M] x;                    // matrix of covariates (with n rows and H columns)</span>
+<span class="s1">}</span>
+<span class="s1">parameters {</span>
+<span class="s1">  vector[M] beta;         // Coefficients in the linear predictor (including intercept)</span>
+<span class="s1">  real&lt;lower=0&gt; alpha;    // shape parameter</span>
+<span class="s1">}</span>
+<span class="s1">transformed parameters {</span>
+<span class="s1">  vector&lt;lower=0&gt;[N] mu;</span>
+<span class="s1">  {</span>
+<span class="s1">      vector[N] linpred;</span>
+<span class="s1">      linpred = x*beta;</span>
+<span class="s1">      mu = exp(linpred);</span>
+<span class="s1">  }</span>
+<span class="s1">}</span>
+
+<span class="s1">model {</span>
+<span class="s1">  alpha ~ gamma(0.01,0.01);</span>
+<span class="s1">  beta ~ normal(0,5);</span>
+<span class="s1">  y ~ surv_gamma(event, alpha, mu);</span>
+<span class="s1">}</span>
+<span class="s1">&#39;&#39;&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">testfit2</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
+    <span class="n">model_cohort</span> <span class="o">=</span> <span class="s1">&#39;model 2&#39;</span><span class="p">,</span>
+    <span class="n">model_code</span> <span class="o">=</span> <span class="n">model_code2</span><span class="p">,</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span>
+    <span class="n">time_col</span> <span class="o">=</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span>
+    <span class="n">event_col</span> <span class="o">=</span> <span class="s1">&#39;event&#39;</span><span class="p">,</span>
+    <span class="n">formula</span> <span class="o">=</span> <span class="s1">&#39;~ age_centered + sex&#39;</span><span class="p">,</span>
+    <span class="nb">iter</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">,</span>
+    <span class="n">chains</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="mi">9001</span><span class="p">,</span>
+    <span class="n">FIT_FUN</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached_stan_fit</span><span class="p">,</span>
+    <span class="n">drop_intercept</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="stderr output_area container">
+<div class="highlight"><pre>
+INFO:stancache.stancache:Step 1: Get compiled model code, possibly from cache
+INFO:stancache.stancache:StanModel: cache_filename set to anon_model.cython_0_25_1.model_code_9177012762674257483.pystan_2_12_0_0.stanmodel.pkl
+INFO:stancache.stancache:StanModel: Loading result from cache
+INFO:stancache.stancache:Step 2: Get posterior draws from model, possibly from cache
+INFO:stancache.stancache:sampling: cache_filename set to anon_model.cython_0_25_1.model_code_9177012762674257483.pystan_2_12_0_0.stanfit.chains_4.data_25476010973.iter_5000.seed_9001.pkl
+INFO:stancache.stancache:sampling: Loading result from cache
+</pre></div></div>
+</div>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># 0:00:21.081723 elapsed</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit2</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lp__&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<div class="highlight"><pre>
+               mean   se_mean        sd        2.5%         50%       97.5%      Rhat
+lp__    -278.122019  0.022342  1.367441 -281.523430 -277.808097 -276.440635  1.001051
+alpha      1.218976  0.002590  0.171529    0.906313    1.208893    1.586105  1.000714
+beta[0]   -2.704073  0.003788  0.228848   -3.187193   -2.693108   -2.287256  1.000886
+beta[1]    0.604867  0.002814  0.201056    0.208092    0.605508    0.993031  1.000143
+beta[2]    0.006629  0.000188  0.014733   -0.021872    0.006506    0.036200  1.000063
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="model3:-use-log_mix-inside-surv_gamma_lpdf">
+<h2>model3: use <code class="docutils literal"><span class="pre">log_mix</span></code> inside surv_gamma_lpdf<a class="headerlink" href="#model3:-use-log_mix-inside-surv_gamma_lpdf" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">model_code3</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">functions {</span>
+<span class="s1">  // Defines the log survival</span>
+<span class="s1">  real surv_gamma_lpdf (vector t, vector d, real shape, vector rate) {</span>
+<span class="s1">    vector[num_elements(t)] log_lik;</span>
+<span class="s1">    real prob;</span>
+<span class="s1">    for (i in 1:num_elements(t)) {</span>
+<span class="s1">      log_lik[i] = log_mix(d[i], gamma_lpdf(t[i]|shape,rate[i]), gamma_lccdf(t[i]|shape,rate[i]));</span>
+<span class="s1">    }</span>
+<span class="s1">    prob = sum(log_lik);</span>
+<span class="s1">    return prob;</span>
+<span class="s1">  }</span>
+<span class="s1">}</span>
+<span class="s1">data {</span>
+<span class="s1">  int N;                            // number of observations</span>
+<span class="s1">  vector&lt;lower=0&gt;[N] y;             // observed times</span>
+<span class="s1">  vector&lt;lower=0,upper=1&gt;[N] event; // censoring indicator (1=observed, 0=censored)</span>
+<span class="s1">  int M;                            // number of covariates</span>
+<span class="s1">  matrix[N, M] x;                   // matrix of covariates (with n rows and H columns)</span>
+<span class="s1">}</span>
+<span class="s1">parameters {</span>
+<span class="s1">  vector[M] beta;         // Coefficients in the linear predictor (including intercept)</span>
+<span class="s1">  real&lt;lower=0&gt; alpha;    // shape parameter</span>
+<span class="s1">}</span>
+<span class="s1">transformed parameters {</span>
+<span class="s1">  vector[N] linpred;</span>
+<span class="s1">  vector[N] mu;</span>
+<span class="s1">  linpred = x*beta;</span>
+<span class="s1">  mu = exp(linpred);</span>
+<span class="s1">}</span>
+
+<span class="s1">model {</span>
+<span class="s1">  alpha ~ gamma(0.01,0.01);</span>
+<span class="s1">  beta ~ normal(0,5);</span>
+<span class="s1">  y ~ surv_gamma(event, alpha, mu);</span>
+<span class="s1">}</span>
+<span class="s1">&#39;&#39;&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">testfit3</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
+    <span class="n">model_cohort</span> <span class="o">=</span> <span class="s1">&#39;model 3&#39;</span><span class="p">,</span>
+    <span class="n">model_code</span> <span class="o">=</span> <span class="n">model_code3</span><span class="p">,</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span>
+    <span class="n">time_col</span> <span class="o">=</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span>
+    <span class="n">event_col</span> <span class="o">=</span> <span class="s1">&#39;event&#39;</span><span class="p">,</span>
+    <span class="n">formula</span> <span class="o">=</span> <span class="s1">&#39;~ age_centered + sex&#39;</span><span class="p">,</span>
+    <span class="nb">iter</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">,</span>
+    <span class="n">chains</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="mi">9001</span><span class="p">,</span>
+    <span class="n">FIT_FUN</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached_stan_fit</span><span class="p">,</span>
+    <span class="n">drop_intercept</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="stderr output_area container">
+<div class="highlight"><pre>
+INFO:stancache.stancache:Step 1: Get compiled model code, possibly from cache
+INFO:stancache.stancache:StanModel: cache_filename set to anon_model.cython_0_25_1.model_code_1293841621968646714.pystan_2_12_0_0.stanmodel.pkl
+INFO:stancache.stancache:StanModel: Loading result from cache
+INFO:stancache.stancache:Step 2: Get posterior draws from model, possibly from cache
+INFO:stancache.stancache:sampling: cache_filename set to anon_model.cython_0_25_1.model_code_1293841621968646714.pystan_2_12_0_0.stanfit.chains_4.data_25476010973.iter_5000.seed_9001.pkl
+INFO:stancache.stancache:sampling: Loading result from cache
+</pre></div></div>
+</div>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1">#0:00:20.284146 elapsed</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit3</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lp__&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<div class="highlight"><pre>
+               mean   se_mean        sd        2.5%         50%       97.5%      Rhat
+lp__    -278.092768  0.021055  1.344719 -281.491359 -277.783232 -276.425885  1.000812
+alpha      1.216429  0.002640  0.166944    0.905732    1.207800    1.576275  1.000432
+beta[0]   -2.708385  0.003770  0.220966   -3.173480   -2.697460   -2.307317  1.000622
+beta[1]    0.609834  0.002799  0.199563    0.223234    0.609396    1.008451  1.000295
+beta[2]    0.006028  0.000180  0.014812   -0.022443    0.006036    0.036197  1.000265
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="model4:-vectorize-surv_gamma_lpdf">
+<h2>model4: vectorize surv_gamma_lpdf<a class="headerlink" href="#model4:-vectorize-surv_gamma_lpdf" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [40]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">model_code4</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">functions {</span>
+<span class="s1">    int count_value(vector a, real val) {</span>
+<span class="s1">        int s;</span>
+<span class="s1">        s = 0;</span>
+<span class="s1">        for (i in 1:num_elements(a))</span>
+<span class="s1">            if (a[i] == val)</span>
+<span class="s1">                s = s + 1;</span>
+<span class="s1">        return s;</span>
+<span class="s1">    }</span>
+
+<span class="s1">  // Defines the log survival</span>
+<span class="s1">  real surv_gamma_lpdf (vector t, vector d, real shape, vector rate, int num_cens, int num_obs) {</span>
+<span class="s1">    vector[2] log_lik;</span>
+<span class="s1">    int idx_obs[num_obs];</span>
+<span class="s1">    int idx_cens[num_cens];</span>
+<span class="s1">    real prob;</span>
+<span class="s1">    int i_cens;</span>
+<span class="s1">    int i_obs;</span>
+<span class="s1">    i_cens = 1;</span>
+<span class="s1">    i_obs = 1;</span>
+<span class="s1">    for (i in 1:num_elements(t)) {</span>
+<span class="s1">        if (d[i] == 1) {</span>
+<span class="s1">            idx_obs[i_obs] = i;</span>
+<span class="s1">            i_obs = i_obs+1;</span>
+<span class="s1">        }</span>
+<span class="s1">        else {</span>
+<span class="s1">            idx_cens[i_cens] = i;</span>
+<span class="s1">            i_cens = i_cens+1;</span>
+<span class="s1">        }</span>
+<span class="s1">    }</span>
+<span class="s1">    print(idx_obs);</span>
+<span class="s1">    log_lik[1] = gamma_lpdf(t[idx_obs] | shape, rate[idx_obs]);</span>
+<span class="s1">    log_lik[2] = gamma_lccdf(t[idx_cens] | shape, rate[idx_cens]);</span>
+<span class="s1">    prob = sum(log_lik);</span>
+<span class="s1">    return prob;</span>
+<span class="s1">  }</span>
+<span class="s1">}</span>
+<span class="s1">data {</span>
+<span class="s1">  int N;                            // number of observations</span>
+<span class="s1">  vector&lt;lower=0&gt;[N] y;             // observed times</span>
+<span class="s1">  vector&lt;lower=0,upper=1&gt;[N] event; // censoring indicator (1=observed, 0=censored)</span>
+<span class="s1">  int M;                            // number of covariates</span>
+<span class="s1">  matrix[N, M] x;                   // matrix of covariates (with n rows and H columns)</span>
+<span class="s1">}</span>
+<span class="s1">transformed data {</span>
+<span class="s1">  int num_cens;</span>
+<span class="s1">  int num_obs;</span>
+<span class="s1">  num_obs = count_value(event, 1);</span>
+<span class="s1">  num_cens = N - num_obs;</span>
+<span class="s1">}</span>
+<span class="s1">parameters {</span>
+<span class="s1">  vector[M] beta;         // Coefficients in the linear predictor (including intercept)</span>
+<span class="s1">  real&lt;lower=0&gt; alpha;    // shape parameter</span>
+<span class="s1">}</span>
+<span class="s1">transformed parameters {</span>
+<span class="s1">  vector[N] linpred;</span>
+<span class="s1">  vector[N] mu;</span>
+<span class="s1">  linpred = x*beta;</span>
+<span class="s1">  mu = exp(linpred);</span>
+<span class="s1">}</span>
+<span class="s1">model {</span>
+<span class="s1">  alpha ~ gamma(0.01,0.01);</span>
+<span class="s1">  beta ~ normal(0,5);</span>
+<span class="s1">  y ~ surv_gamma(event, alpha, mu, num_cens, num_obs);</span>
+<span class="s1">}</span>
+<span class="s1">&#39;&#39;&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [41]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">testfit4</span> <span class="o">=</span> <span class="n">survivalstan</span><span class="o">.</span><span class="n">fit_stan_survival_model</span><span class="p">(</span>
+    <span class="n">model_cohort</span> <span class="o">=</span> <span class="s1">&#39;model 4&#39;</span><span class="p">,</span>
+    <span class="n">model_code</span> <span class="o">=</span> <span class="n">model_code4</span><span class="p">,</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span>
+    <span class="n">time_col</span> <span class="o">=</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span>
+    <span class="n">event_col</span> <span class="o">=</span> <span class="s1">&#39;event&#39;</span><span class="p">,</span>
+    <span class="n">formula</span> <span class="o">=</span> <span class="s1">&#39;~ age_centered + sex&#39;</span><span class="p">,</span>
+    <span class="nb">iter</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">,</span>
+    <span class="n">chains</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="mi">9001</span><span class="p">,</span>
+    <span class="n">FIT_FUN</span> <span class="o">=</span> <span class="n">stancache</span><span class="o">.</span><span class="n">cached_stan_fit</span><span class="p">,</span>
+    <span class="n">drop_intercept</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="stderr output_area container">
+<div class="highlight"><pre>
+INFO:stancache.stancache:Step 1: Get compiled model code, possibly from cache
+INFO:stancache.stancache:StanModel: cache_filename set to anon_model.cython_0_25_1.model_code_16881928540873162731.pystan_2_12_0_0.stanmodel.pkl
+INFO:stancache.stancache:StanModel: Starting execution
+INFO:pystan:COMPILING THE C++ CODE FOR MODEL anon_model_b18a6495e568fcff90662e16a3d2aa85 NOW.
+INFO:stancache.stancache:StanModel: Execution completed (0:01:09.439292 elapsed)
+INFO:stancache.stancache:StanModel: Saving results to cache
+INFO:stancache.stancache:Step 2: Get posterior draws from model, possibly from cache
+INFO:stancache.stancache:sampling: cache_filename set to anon_model.cython_0_25_1.model_code_16881928540873162731.pystan_2_12_0_0.stanfit.chains_4.data_25476010973.iter_5000.seed_9001.pkl
+INFO:stancache.stancache:sampling: Starting execution
+INFO:stancache.stancache:sampling: Execution completed (0:00:06.245552 elapsed)
+INFO:stancache.stancache:sampling: Saving results to cache
+/home/jacquelineburos/miniconda3/envs/python3/lib/python3.5/site-packages/stancache/stancache.py:284: UserWarning: Pickling fit objects is an experimental feature!
+The relevant StanModel instance must be pickled along with this fit object.
+When unpickling the StanModel must be unpickled first.
+  pickle.dump(res, open(cache_filepath, &#39;wb&#39;), pickle.HIGHEST_PROTOCOL)
+</pre></div></div>
+</div>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [42]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># 0:00:06.245552 elapsed</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [43]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">print_stan_summary</span><span class="p">([</span><span class="n">testfit4</span><span class="p">],</span> <span class="n">pars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lp__&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<div class="highlight"><pre>
+               mean   se_mean        sd        2.5%         50%       97.5%      Rhat
+lp__    -278.097416  0.020380  1.353386 -281.543138 -277.782205 -276.445123  0.999867
+alpha      1.216149  0.002525  0.169578    0.913312    1.206908    1.574024  1.000702
+beta[0]   -2.708518  0.003627  0.228658   -3.188661   -2.700493   -2.278788  1.000723
+beta[1]    0.610593  0.002824  0.201974    0.224438    0.607700    1.030164  1.000744
+beta[2]    0.006211  0.000171  0.014493   -0.022229    0.006113    0.035095  1.000222
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="compare-coefficient-estimates-for-each-model-spec">
+<h2>compare coefficient estimates for each model spec<a class="headerlink" href="#compare-coefficient-estimates-for-each-model-spec" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [44]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">survivalstan</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">plot_coefs</span><span class="p">([</span><span class="n">testfit</span><span class="p">,</span> <span class="n">testfit2</span><span class="p">,</span> <span class="n">testfit3</span><span class="p">,</span> <span class="n">testfit4</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast container">
+<div class="prompt empty container">
+</div>
+<div class="output_area container">
+<img alt="../../_images/examples_.ipynb_checkpoints_Test_new_gamma_survival_model_with_simulated_data-checkpoint_34_0.png" src="../../_images/examples_.ipynb_checkpoints_Test_new_gamma_survival_model_with_simulated_data-checkpoint_34_0.png" />
+</div>
+</div>
+<div class="nbinput nblast container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Jacki Novik.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.2.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
