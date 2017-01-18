@@ -171,12 +171,52 @@
 
 
 <div class="viewcode-block" id="extract_time_betas"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.utils.extract_time_betas">[docs]</a><span class="k">def</span> <span class="nf">extract_time_betas</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;beta_time&#39;</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Extract posterior draws for values of time-varying `element` from each model given in the list of `models`.</span>
+<span class="sd">    </span>
+<span class="sd">        Returns a pandas.DataFrame containing one record for each posterior draw of each parameter, where</span>
+<span class="sd">            the parameter varies over time.</span>
+<span class="sd">        </span>
+<span class="sd">            Columns include:</span>
+<span class="sd">            </span>
+<span class="sd">                - model_cohort: description of the model or cohort from which the draw was taken</span>
+<span class="sd">                - &lt;value-column&gt;: the value of the posterior draw, named according to given parameter `value_name`</span>
+<span class="sd">                - coef: description of the coefficient estimated, as per patsy formula provided </span>
+<span class="sd">                - iter: integer indicator of the draw from which that estimate was taken</span>
+<span class="sd">                - &lt;timepoint-id-column&gt;: integer identifier for each unique time at which betas are estimated</span>
+<span class="sd">                    (default column name is set by `fit_stan_survival_model`, typically as &quot;timepoint_id&quot;)</span>
+<span class="sd">                - &lt;timepoint-end-column&gt;: time at which this beta was estimated</span>
+<span class="sd">                    (default column name is set by `fit_stan_survival_model`, typically as &quot;end_time&quot;)</span>
+<span class="sd">                </span>
+<span class="sd">        ** Parameters **:</span>
+<span class="sd">            </span>
+<span class="sd">            :param models: list of model-fit objects returned by `survivalstan.fit_stan_survival_model`.</span>
+<span class="sd">            :type models: list</span>
+<span class="sd">            </span>
+<span class="sd">            :param element: name of parameter to extract. Defaults to &quot;beta_time&quot;, the parameter name</span>
+<span class="sd">                used in the example time-varying stan model.</span>
+<span class="sd">            :type element: str</span>
+<span class="sd">            </span>
+<span class="sd">            :param value_name: what you would like the &quot;value&quot; column called in the resulting dataframe</span>
+<span class="sd">            :type value_name: str</span>
+<span class="sd">            </span>
+<span class="sd">            :param **kwargs: **kwargs are passed to `_extract_time_betas_single_model`, allowing</span>
+<span class="sd">                user to customize &quot;default&quot; values which would otherwise be read from each model object.</span>
+<span class="sd">                examples include: `coefs`, `timepoint_id_col`, and `timepoint_end_col`.</span>
+<span class="sd">        </span>
+<span class="sd">        ** Returns **:</span>
+<span class="sd">            </span>
+<span class="sd">            :returns: pandas.DataFrame containing posterior draws of parameter values.</span>
+<span class="sd">         </span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">_extract_time_betas_single_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="n">element</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">value_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 
 <span class="k">def</span> <span class="nf">_extract_time_betas_single_model</span><span class="p">(</span><span class="n">stanmodel</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;beta_time&#39;</span><span class="p">,</span> <span class="n">coefs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                                      <span class="n">value_name</span><span class="o">=</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="n">timepoint_id_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                                      <span class="n">timepoint_end_col</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Helper/utility function used by `extract_time_betas`, for a single model</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
     <span class="k">if</span> <span class="ow">not</span> <span class="n">timepoint_id_col</span><span class="p">:</span>
         <span class="n">timepoint_id_col</span> <span class="o">=</span> <span class="n">stanmodel</span><span class="p">[</span><span class="s1">&#39;timepoint_id_col&#39;</span><span class="p">]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">timepoint_end_col</span><span class="p">:</span>
@@ -306,6 +346,69 @@
                     <span class="n">subplot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span>
                     <span class="n">num_ticks</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">pal</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                     <span class="n">value_name</span><span class="o">=</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Plot posterior draws of time-varying parameters (`element`) from each model given in the list of `models`.</span>
+<span class="sd">    </span>
+
+<span class="sd">        .. seealso:: `extract_time_betas` to return the dataframe used by this function to plot data. </span>
+<span class="sd">        </span>
+<span class="sd">        .. note:: this function can optionally take a `df` argument (the result of extract_time_betas) to </span>
+<span class="sd">            support data-extraction &amp; plotting in a two-step operation.</span>
+<span class="sd">        </span>
+<span class="sd">        ** Parameters controlling data extraction **:</span>
+<span class="sd">            </span>
+<span class="sd">            :param models: list of model-fit objects returned by `survivalstan.fit_stan_survival_model`.</span>
+<span class="sd">            :type models: list</span>
+<span class="sd">            </span>
+<span class="sd">            :param element: name of parameter to extract. Defaults to &quot;beta_time&quot;, the parameter name</span>
+<span class="sd">                used in the example time-varying stan model.</span>
+<span class="sd">            :type element: str</span>
+<span class="sd">            </span>
+<span class="sd">            :param value_name: what you would like the &quot;value&quot; column called in the resulting dataframe</span>
+<span class="sd">            :type value_name: str</span>
+<span class="sd">            </span>
+<span class="sd">            :param coefs: (optional) parameter passed to `extract_time_betas`, to override coefficient names </span>
+<span class="sd">                captured in `fit_stan_survival_model`.</span>
+<span class="sd">            </span>
+<span class="sd">            :param timepoint_id_col: (optional) parameter passed to `extract_time_betas`, to </span>
+<span class="sd">                override timepoint_id_col captured in `fit_stan_survival_model`.</span>
+<span class="sd">                </span>
+<span class="sd">            :param timepoint_end_col: (optional) parameter passed to `extract_time_betas` to </span>
+<span class="sd">                override timepoint_end_col captured in `fit_stan_survival_model`.</span>
+<span class="sd">                </span>
+
+<span class="sd">        ** Parameters controlling plot orientation/presentation **:</span>
+<span class="sd">            </span>
+<span class="sd">            :param trans: (optional) function to transform y-values plotted. Example: np.log</span>
+<span class="sd">            :type trans: function</span>
+<span class="sd">            </span>
+<span class="sd">            :param by: (optional) list of columns by which to aggregate &amp; color boxplots</span>
+<span class="sd">                Defaults to: [&#39;model_cohort&#39;, &#39;coef&#39;]</span>
+<span class="sd">            :type by: list</span>
+<span class="sd">            </span>
+<span class="sd">            :param pal: (optional) palette to use for plotting.</span>
+<span class="sd">            :type pal: list of colors, matching length of `by` groups</span>
+<span class="sd">            </span>
+<span class="sd">            :param y: (optional) column to put on the y-axis. Defaults to &#39;beta&#39;</span>
+<span class="sd">            :type y: str</span>
+<span class="sd">            </span>
+<span class="sd">            :param x: (optional) column to put in the x-axis. Defaults to &#39;timepoint_end_col&#39;</span>
+<span class="sd">            :type x: str</span>
+<span class="sd">            </span>
+<span class="sd">            :param num_ticks: (optional) how many ticks to show on the x-axis. See _plot_time_betas for details.</span>
+<span class="sd">            </span>
+<span class="sd">            :param alpha: (optional) level of transparency for boxplots</span>
+<span class="sd">            </span>
+<span class="sd">            :param fill: (optional) whether to fill in boxplots or just show outlines. Defaults to True</span>
+<span class="sd">            </span>
+<span class="sd">            :param subplot: (optional) pyplot.subplots object to use, if provided. Useful if you want to overlay </span>
+<span class="sd">                multiple values on the same plot.</span>
+<span class="sd">            </span>
+<span class="sd">            </span>
+<span class="sd">        ** Returns **:</span>
+<span class="sd">            </span>
+<span class="sd">            :returns: Nothing. Plotted object is a side-effect.</span>
+<span class="sd">         </span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">extract_time_betas</span><span class="p">(</span><span class="n">models</span><span class="o">=</span><span class="n">models</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="n">element</span><span class="p">,</span> <span class="n">coefs</span><span class="o">=</span><span class="n">coefs</span><span class="p">,</span>
                                      <span class="n">value_name</span><span class="o">=</span><span class="n">value_name</span><span class="p">,</span> <span class="n">timepoint_id_col</span><span class="o">=</span><span class="n">timepoint_id_col</span><span class="p">,</span>
@@ -382,8 +485,45 @@
     <span class="k">return</span> <span class="n">pp_data</span>
 
 
-<div class="viewcode-block" id="prep_pp_data"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.utils.prep_pp_data">[docs]</a><span class="k">def</span> <span class="nf">prep_pp_data</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">time_element</span><span class="o">=</span><span class="s1">&#39;y_hat_time&#39;</span><span class="p">,</span> <span class="n">event_element</span><span class="o">=</span><span class="s1">&#39;y_hat_event&#39;</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event_status&#39;</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;event_time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">_prep_pp_data_single_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">event_element</span><span class="o">=</span><span class="n">event_element</span><span class="p">,</span> <span class="n">time_element</span><span class="o">=</span><span class="n">time_element</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="n">event_col</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="n">time_col</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="viewcode-block" id="prep_pp_data"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.utils.prep_pp_data">[docs]</a><span class="k">def</span> <span class="nf">prep_pp_data</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">time_element</span><span class="o">=</span><span class="s1">&#39;y_hat_time&#39;</span><span class="p">,</span>
+                 <span class="n">event_element</span><span class="o">=</span><span class="s1">&#39;y_hat_event&#39;</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event_status&#39;</span><span class="p">,</span>
+                 <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;event_time&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Extract posterior-predicted values from each model included in the list of `models` given, optionally merged with </span>
+<span class="sd">            covariates &amp; meta-data provided in the input `df`.</span>
+<span class="sd">        </span>
+<span class="sd">        **Parameters**:</span>
+<span class="sd">            </span>
+<span class="sd">            :param models: list of `fit_stan_survival_model` results from which to extract posterior-predicted values</span>
+<span class="sd">            :type models: list</span>
+<span class="sd">            </span>
+<span class="sd">            :param time_element: (optional) name of parameter containing posterior-predicted event **time** for each subject</span>
+<span class="sd">                Defaults to standard used in survivalstan models: `y_hat_time`.</span>
+<span class="sd">            :type time_element: str</span>
+<span class="sd">            </span>
+<span class="sd">            :param event_element: (optional) name of parameter containing posterior-predicted event **status** for each subject</span>
+<span class="sd">                Defaults to the standard used in survivalstan models: `y_hat_event`.</span>
+<span class="sd">            :type event_element: str</span>
+<span class="sd">            </span>
+<span class="sd">            :param event_col: (optional) name to use for column containing posterior draw for event_status</span>
+<span class="sd">            :type event_col: str</span>
+<span class="sd">            </span>
+<span class="sd">            :param time_col: (optional) name to use for column containing posterior draw for time to event</span>
+<span class="sd">            :type time_col: str</span>
+<span class="sd">        </span>
+<span class="sd">            :param **kwargs: **kwargs are passed to `_prep_pp_data_single_model`, allowing user to override </span>
+<span class="sd">                or specify default values given in the original call to `fit_stan_survival_model`.</span>
+<span class="sd">                Parameters include: `sample_col`, `sample_id_col` to define names of sample description &amp; id columns</span>
+<span class="sd">                    as well as `join_with` giving name of dataframe to join with (options include df_nonmiss, x_df, or None). </span>
+<span class="sd">             </span>
+<span class="sd">             Use `join_with` = None to disable merge with original dataframe.</span>
+<span class="sd">             </span>
+<span class="sd">        **Returns**:</span>
+<span class="sd">            </span>
+<span class="sd">            :returns: pandas.DataFrame with one record per posterior draw (iter) for each subject, from each model </span>
+<span class="sd">                optionally joined with original input data.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">_prep_pp_data_single_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">event_element</span><span class="o">=</span><span class="n">event_element</span><span class="p">,</span>
+                                       <span class="n">time_element</span><span class="o">=</span><span class="n">time_element</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="n">event_col</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="n">time_col</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">]</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="n">time_col</span><span class="p">,</span> <span class="s1">&#39;iter&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -392,12 +532,54 @@
 
 <div class="viewcode-block" id="prep_pp_survival_data"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.utils.prep_pp_survival_data">[docs]</a><span class="k">def</span> <span class="nf">prep_pp_survival_data</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">time_element</span><span class="o">=</span><span class="s1">&#39;y_hat_time&#39;</span><span class="p">,</span> <span class="n">event_element</span><span class="o">=</span><span class="s1">&#39;y_hat_event&#39;</span><span class="p">,</span>
                          <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;event_time&#39;</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event_status&#39;</span><span class="p">,</span>
-                         <span class="n">by</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">pp_data</span> <span class="o">=</span> <span class="n">prep_pp_data</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">time_element</span><span class="o">=</span><span class="n">time_element</span><span class="p">,</span> <span class="n">event_element</span><span class="o">=</span><span class="n">event_element</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="n">time_col</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="n">event_col</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                         <span class="n">by</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Summarize posterior-predicted values into KM survival/censor rates</span>
+<span class="sd">            by group, for each model given in the list of `models`.</span>
+<span class="sd">    </span>
+<span class="sd">            See `prep_pp_data` for details regarding process of extracting posterior-predicted values.</span>
+<span class="sd">            </span>
+<span class="sd">        **Parameters**:</span>
+<span class="sd">            </span>
+<span class="sd">            :param models: list of `fit_stan_survival_model` results from which to extract posterior-predicted values</span>
+<span class="sd">            :type models: list</span>
+<span class="sd">            </span>
+<span class="sd">            :param by: additional column or columns by which to summarize posterior-predicted values.</span>
+<span class="sd">                Default is None, which results in draws summarized by [`iter` and `model_cohort`].</span>
+<span class="sd">                Values can include any covariates provided in the original df.</span>
+<span class="sd">            :type by: str or list of strings</span>
+<span class="sd">               </span>
+<span class="sd">            :param time_element: (optional) name of parameter containing posterior-predicted event **time** for each subject</span>
+<span class="sd">                Defaults to standard used in survivalstan models: `y_hat_time`.</span>
+<span class="sd">            :type time_element: str</span>
+<span class="sd">            </span>
+<span class="sd">            :param event_element: (optional) name of parameter containing posterior-predicted event **status** for each subject</span>
+<span class="sd">                Defaults to the standard used in survivalstan models: `y_hat_event`.</span>
+<span class="sd">            :type event_element: str</span>
+<span class="sd">            </span>
+<span class="sd">            :param event_col: (optional) name to use for column containing posterior draw for event_status</span>
+<span class="sd">            :type event_col: str</span>
+<span class="sd">            </span>
+<span class="sd">            :param time_col: (optional) name to use for column containing posterior draw for time to event</span>
+<span class="sd">            :type time_col: str</span>
+<span class="sd">        </span>
+<span class="sd">            :param **kwargs: **kwargs are passed to `_prep_pp_data_single_model`, allowing user to override </span>
+<span class="sd">                or specify default values given in the original call to `fit_stan_survival_model`.</span>
+<span class="sd">                Parameters include: `sample_col`, `sample_id_col` to define names of sample description &amp; id columns</span>
+<span class="sd">                    as well as `join_with` giving name of dataframe to join with (options include df_nonmiss, x_df, or None). </span>
+<span class="sd">             </span>
+<span class="sd">             Use `join_with` = None to disable merge with original dataframe.</span>
+<span class="sd">             </span>
+<span class="sd">        **Returns**:</span>
+<span class="sd">            </span>
+<span class="sd">            :returns: pandas.DataFrame with one record per posterior draw (iter), timepoint, model_cohort, and by-groups.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">pp_data</span> <span class="o">=</span> <span class="n">prep_pp_data</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">time_element</span><span class="o">=</span><span class="n">time_element</span><span class="p">,</span>
+                           <span class="n">event_element</span><span class="o">=</span><span class="n">event_element</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="n">time_col</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="n">event_col</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;iter&#39;</span><span class="p">,</span> <span class="s1">&#39;model_cohort&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">by</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">by</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">by</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">by</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">by</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">by</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">groups</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">by</span><span class="p">)</span>
     <span class="n">pp_surv</span> <span class="o">=</span> <span class="n">pp_data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
          <span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">_summarize_survival</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="n">time_col</span><span class="p">,</span> <span class="n">event_col</span><span class="o">=</span><span class="n">event_col</span><span class="p">))</span>
     <span class="n">pp_surv</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -458,6 +640,73 @@
                      <span class="n">num_ticks</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ticks_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="s1">&#39;event_time&#39;</span><span class="p">,</span>
                      <span class="n">event_col</span><span class="o">=</span><span class="s1">&#39;event_status&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">pal</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                      <span class="n">subplot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Plot KM curve estimates from posterior-predicted values by group, for each model given in the list of `models`.</span>
+<span class="sd">    </span>
+<span class="sd">            See `prep_pp_survival_data` for details regarding process of extracting posterior-predicted values.</span>
+<span class="sd">            </span>
+<span class="sd">        **Parameters controlling data extraction **:</span>
+<span class="sd">            </span>
+<span class="sd">            :param models: list of `fit_stan_survival_model` results from which to extract posterior-predicted values</span>
+<span class="sd">            :type models: list</span>
+<span class="sd">            </span>
+<span class="sd">            :param by: additional column or columns by which to summarize posterior-predicted values.</span>
+<span class="sd">                Default is None, which results in draws summarized by [`iter` and `model_cohort`].</span>
+<span class="sd">                Values can include any covariates provided in the original df.</span>
+<span class="sd">            :type by: str or list of strings</span>
+<span class="sd">               </span>
+<span class="sd">            :param time_element: (optional) name of parameter containing posterior-predicted event **time** for each subject</span>
+<span class="sd">                Defaults to standard used in survivalstan models: `y_hat_time`.</span>
+<span class="sd">            :type time_element: str</span>
+<span class="sd">            </span>
+<span class="sd">            :param event_element: (optional) name of parameter containing posterior-predicted event **status** for each subject</span>
+<span class="sd">                Defaults to the standard used in survivalstan models: `y_hat_event`.</span>
+<span class="sd">            :type event_element: str</span>
+<span class="sd">            </span>
+<span class="sd">            :param event_col: (optional) name to use for column containing posterior draw for event_status</span>
+<span class="sd">            :type event_col: str</span>
+<span class="sd">            </span>
+<span class="sd">            :param time_col: (optional) name to use for column containing posterior draw for time to event</span>
+<span class="sd">            :type time_col: str</span>
+<span class="sd">        </span>
+<span class="sd">            :param **kwargs: **kwargs are passed to `_prep_pp_data_single_model`, allowing user to override </span>
+<span class="sd">                or specify default values given in the original call to `fit_stan_survival_model`.</span>
+<span class="sd">                Parameters include: `sample_col`, `sample_id_col` to define names of sample description &amp; id columns</span>
+<span class="sd">                    as well as `join_with` giving name of dataframe to join with (options include df_nonmiss, x_df, or None). </span>
+<span class="sd">             </span>
+<span class="sd">             Use `join_with` = None to disable merge with original dataframe.</span>
+<span class="sd">             </span>
+
+<span class="sd">        ** Parameters controlling plot orientation/presentation **:</span>
+<span class="sd">            </span>
+<span class="sd">            :param pal: (optional) palette to use for plotting.</span>
+<span class="sd">            :type pal: list of colors, matching length of `by` groups</span>
+<span class="sd">            </span>
+<span class="sd">            :param ticks_at: (optional) exact locations for placement of ticks</span>
+<span class="sd">            </span>
+<span class="sd">            :param num_ticks: (optional) control number of ticks, if ticks_at not given.</span>
+<span class="sd">            </span>
+<span class="sd">            :param step_size: (optional) control tick spacing, if ticks_at or num_ticks not given</span>
+<span class="sd">            </span>
+<span class="sd">            :param alpha: (optional) level of transparency for boxplots</span>
+<span class="sd">            </span>
+<span class="sd">            :param fill: (optional) whether to fill in boxplots or just show outlines. Defaults to True</span>
+<span class="sd">            </span>
+<span class="sd">            :param subplot: (optional) pyplot.subplots object to use, if provided. Useful if you want to overlay </span>
+<span class="sd">                observed or true survival on the same plot.</span>
+<span class="sd">            </span>
+<span class="sd">            :param xlabel: (optional) label for x-axis (defaults to &quot;Days&quot;)</span>
+<span class="sd">            </span>
+<span class="sd">            :param ylabel: (optional) label for y-axis (defaults to &quot;Survival %&quot;)</span>
+<span class="sd">            </span>
+<span class="sd">            :param label: (optional) legend-label for this plot group </span>
+<span class="sd">                    (defaults to &quot;posterior predictions&quot;, model-cohort, or by-group label depending options)</span>
+<span class="sd">            </span>
+<span class="sd">            :param **kwargs: (optional) args passed to set properties of boxes, medians &amp; whiskers (e.g. color)</span>
+<span class="sd">            </span>
+<span class="sd">        ** Returns **:</span>
+<span class="sd">            </span>
+<span class="sd">            :returns: Nothing. Plotted object is a side-effect.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">pp_surv</span> <span class="o">=</span> <span class="n">prep_pp_survival_data</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">time_element</span><span class="o">=</span><span class="n">time_element</span><span class="p">,</span>
                                     <span class="n">event_element</span><span class="o">=</span><span class="n">event_element</span><span class="p">,</span> <span class="n">time_col</span><span class="o">=</span><span class="n">time_col</span><span class="p">,</span>
                                     <span class="n">event_col</span><span class="o">=</span><span class="n">event_col</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="n">by</span><span class="p">)</span>

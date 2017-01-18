@@ -198,11 +198,9 @@ for testing &amp; model checking purposes</p>
 <code class="descclassname">survivalstan.sim.</code><code class="descname">sim_data_exp</code><span class="sig-paren">(</span><em>N</em>, <em>censor_time</em>, <em>rate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/sim.html#sim_data_exp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.sim.sim_data_exp" title="Permalink to this definition">¶</a></dt>
 <dd><p>simulate true lifetimes (t) according to exponential model</p>
 <blockquote>
-<div><p>N: (int) number of observations 
-censor_time: (float) uniform censor time for each observation</p>
-<blockquote>
-<div><blockquote>
-<div>rate: (float, positive) hazard rate used to parameterize failure times</div></blockquote>
+<div>N: (int) number of observations 
+censor_time: (float) uniform censor time for each observation
+rate: (float, positive) hazard rate used to parameterize failure times</div></blockquote>
 <dl class="docutils">
 <dt>pandas DataFrame with N observations, and 3 columns:</dt>
 <dd><ul class="first last">
@@ -219,8 +217,6 @@ censor_time: (float) uniform censor time for each observation</p>
 </ul>
 </dd>
 </dl>
-</div></blockquote>
-</div></blockquote>
 </dd></dl>
 
 <dl class="function">
@@ -258,9 +254,45 @@ rate_coefs: inputs to rate-calc (coefs used to estimate log-rate). defaults to <
 </dl>
 </dd></dl>
 
+<dl class="function">
+<dt id="survivalstan.sim.sim_data_jointmodel">
+<code class="descclassname">survivalstan.sim.</code><code class="descname">sim_data_jointmodel</code><span class="sig-paren">(</span><em>N</em>, <em>p=0.5</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/sim.html#sim_data_jointmodel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.sim.sim_data_jointmodel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate data for joint model</p>
+<p>Dictionary of 4 ojects:</p>
+<ul class="simple">
+<li>params: parameter values used to simulate data</li>
+<li>covars: dataframe of covariates per subject_id</li>
+<li>events: dataframe of multiple-event data, per subject_id</li>
+<li>biomarker: dataframe of longitudinal biomarker values simulated</li>
+</ul>
+</dd></dl>
+
 </div>
 <div class="section" id="module-survivalstan.survivalstan">
 <span id="survivalstan-survivalstan-module"></span><h2>survivalstan.survivalstan module<a class="headerlink" href="#module-survivalstan.survivalstan" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="survivalstan.survivalstan.SurvivalStanData">
+<em class="property">class </em><code class="descclassname">survivalstan.survivalstan.</code><code class="descname">SurvivalStanData</code><span class="sig-paren">(</span><em>df</em>, <em>formula</em>, <em>event_col</em>, <em>time_col=None</em>, <em>sample_id_col=None</em>, <em>sample_col=None</em>, <em>group_id_col=None</em>, <em>group_col=None</em>, <em>timepoint_id_col=None</em>, <em>timepoint_end_col=None</em>, <em>drop_intercept=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/survivalstan.html#SurvivalStanData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.survivalstan.SurvivalStanData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Input data representing a survival model</p>
+<dl class="method">
+<dt id="survivalstan.survivalstan.SurvivalStanData.get_group_names">
+<code class="descname">get_group_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/survivalstan.html#SurvivalStanData.get_group_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.survivalstan.SurvivalStanData.get_group_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="survivalstan.survivalstan.SurvivalStanData.prep_df_nonmiss">
+<code class="descname">prep_df_nonmiss</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/survivalstan.html#SurvivalStanData.prep_df_nonmiss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.survivalstan.SurvivalStanData.prep_df_nonmiss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create x_df and df_nonmiss</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="survivalstan.survivalstan.SurvivalStanData.prep_input_data">
+<code class="descname">prep_input_data</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/survivalstan.html#SurvivalStanData.prep_input_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.survivalstan.SurvivalStanData.prep_input_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="function">
 <dt id="survivalstan.survivalstan.extract_baseline_hazard">
 <code class="descclassname">survivalstan.survivalstan.</code><code class="descname">extract_baseline_hazard</code><span class="sig-paren">(</span><em>results</em>, <em>element='baseline'</em>, <em>timepoint_id_col='timepoint_id'</em>, <em>timepoint_end_col='end_time'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/survivalstan.html#extract_baseline_hazard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.survivalstan.extract_baseline_hazard" title="Permalink to this definition">¶</a></dt>
@@ -275,17 +307,19 @@ rate_coefs: inputs to rate-calc (coefs used to estimate log-rate). defaults to <
 
 <dl class="function">
 <dt id="survivalstan.survivalstan.fit_stan_survival_model">
-<code class="descclassname">survivalstan.survivalstan.</code><code class="descname">fit_stan_survival_model</code><span class="sig-paren">(</span><em>df</em>, <em>formula</em>, <em>event_col</em>, <em>model_code=None</em>, <em>file=None</em>, <em>model_cohort='survival model'</em>, <em>time_col=None</em>, <em>sample_id_col=None</em>, <em>sample_col=None</em>, <em>group_id_col=None</em>, <em>group_col=None</em>, <em>timepoint_id_col=None</em>, <em>timepoint_end_col=None</em>, <em>make_inits=None</em>, <em>stan_data=None</em>, <em>grp_coef_type=None</em>, <em>FIT_FUN=&lt;function fit&gt;</em>, <em>drop_intercept=True</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/survivalstan.html#fit_stan_survival_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.survivalstan.fit_stan_survival_model" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">survivalstan.survivalstan.</code><code class="descname">fit_stan_survival_model</code><span class="sig-paren">(</span><em>df=None</em>, <em>formula=None</em>, <em>event_col=None</em>, <em>model_code=None</em>, <em>file=None</em>, <em>model_cohort='survival model'</em>, <em>time_col=None</em>, <em>sample_id_col=None</em>, <em>sample_col=None</em>, <em>group_id_col=None</em>, <em>group_col=None</em>, <em>timepoint_id_col=None</em>, <em>timepoint_end_col=None</em>, <em>make_inits=None</em>, <em>stan_data={}</em>, <em>grp_coef_type=None</em>, <em>FIT_FUN=&lt;function fit&gt;</em>, <em>drop_intercept=True</em>, <em>input_data=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/survivalstan.html#fit_stan_survival_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.survivalstan.fit_stan_survival_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function prepares inputs appropriate for stan model model code, and fits that model using Stan.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>df (pandas DataFrame):  The data frame containing input data to Survival model.
+<p>Required args:</p>
+<blockquote>
+<div>df (pandas DataFrame):  The data frame containing input data to Survival model.
 formula (chr): Patsy formula to use for covariates. E.g &#8216;met_status + pd_l1&#8217;
 event_col (chr): name of column containing event status. Will be coerced to int
 model_code (chr): stan model code to use.
-file (chr): path to stan file (if model_code not given).</dd>
-<dt>Kwargs:</dt>
-<dd><p class="first">model_cohort (chr): description of this model fit, to be used when plotting or summarizing output
+file (chr): path to stan file (if model_code not given)
+<a href="#id1"><span class="problematic" id="id2">*</span></a>args, <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: passed to FIT_FUN (stanity.fit or replacement)</div></blockquote>
+<p>Optional args:</p>
+<blockquote>
+<div><p>model_cohort (chr): description of this model fit, to be used when plotting or summarizing output
 time_col (chr): name of column containing event time &#8211; used for parameteric (Weibull) model
 sample_id_col (chr): name of column containing numeric sample ids (1-indexed &amp; sequential)
 sample_col (chr): name of column containing sample descriptions - will be converted to an ID
@@ -305,8 +339,9 @@ grp_coef_type (chr): type of group coef specified, if using a varying-coef model
 <li>&#8216;vector-of-vectors&#8217;: grp_beta defined as <cite>vector[M] grp_beta[G];</cite></li>
 </ul>
 </div></blockquote>
-<p class="last">drop_intercept (bool): whether to drop the intercept term from the model matrix (default: True)</p>
-</dd>
+<p>drop_intercept (bool): whether to drop the intercept term from the model matrix (default: True)</p>
+</div></blockquote>
+<dl class="docutils">
 <dt>Returns:</dt>
 <dd><p class="first">dictionary of results objects.  Contents:</p>
 <div class="last highlight-default"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">:</span> <span class="n">Pandas</span> <span class="n">data</span> <span class="n">frame</span> <span class="n">containing</span> <span class="nb">input</span> <span class="n">data</span><span class="p">,</span> <span class="n">filtered</span> <span class="n">to</span> <span class="n">non</span><span class="o">-</span><span class="n">missing</span> <span class="n">obs</span> <span class="o">&amp;</span> <span class="k">with</span> <span class="n">ID</span> <span class="n">variables</span> <span class="n">created</span>
@@ -349,8 +384,77 @@ grp_coef_type (chr): type of group coef specified, if using a varying-coef model
 
 <dl class="function">
 <dt id="survivalstan.survivalstan.prep_data_long_surv">
-<code class="descclassname">survivalstan.survivalstan.</code><code class="descname">prep_data_long_surv</code><span class="sig-paren">(</span><em>df</em>, <em>time_col</em>, <em>event_col</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/survivalstan.html#prep_data_long_surv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.survivalstan.prep_data_long_surv" title="Permalink to this definition">¶</a></dt>
-<dd><p>convert wide survival data to long format</p>
+<code class="descclassname">survivalstan.survivalstan.</code><code class="descname">prep_data_long_surv</code><span class="sig-paren">(</span><em>df</em>, <em>time_col</em>, <em>event_col</em>, <em>sample_col=None</em>, <em>event_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/survivalstan.html#prep_data_long_surv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.survivalstan.prep_data_long_surv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert wide survival data df to long format, in preparation for modeling using PEM models.</p>
+<dl class="docutils">
+<dt>Returns a pandas DataFrame with original records duplicated for each unique failure time observed. </dt>
+<dd>Each record will have two new columns: &#8216;end_failure&#8217; and &#8216;end_time&#8217;, indicating
+the event status (<cite>end_failure</cite>) for each unique timepoint (<cite>end_time</cite>).</dd>
+<dt>Multiple events &#8211; either per subject or multiple types of events per subject &#8211; are  </dt>
+<dd><p class="first">supported via optional parameters sample_col and/or event_name.</p>
+<ul class="simple">
+<li>If a sample_col is given, result will be de-duped so that</li>
+</ul>
+<p>multiple events of the same type are handled correctly.</p>
+<ul class="simple">
+<li>If an event_name column is given or if event_col is a list,</li>
+</ul>
+<p>then multiple events will be processed.</p>
+<p class="last">In this case, result will contain event status for each 
+event given. E.g. as for semi- or competing event data
+with multiple event types.</p>
+</dd>
+</dl>
+<p><strong>Parameters</strong>:</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param df:</th><td class="field-body">Input data containing survival time &amp; status for each subject</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type df:</th><td class="field-body">pandas.DataFrame</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param time_col:</th><td class="field-body">name of column containing time to censor/event</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type time_col:</th><td class="field-body">str</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param event_col:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">name of column containing status (1 or True: event, 0 or False: censor)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type event_col:</th><td class="field-body">str</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param sample_col:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">(optional) column containing sample or subject identifier.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type sample_col:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">str</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param event_name:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">(optional) column containing description of event type, if 
+more than one type of event is observed</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type event_name:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><strong>Returns</strong>:</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">Dataframe with original records duplicated for each unique failure time observed. 
+Each record will have two new columns: &#8216;end_failure&#8217; and &#8216;end_time&#8217;, indicating
+the timepoint-specific event status for each record.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">rtype:</th><td class="field-body">pandas.DataFrame</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
 </dd></dl>
 
 </div>
@@ -385,7 +489,77 @@ Other options (depending on model type) include:
 <dl class="function">
 <dt id="survivalstan.utils.extract_time_betas">
 <code class="descclassname">survivalstan.utils.</code><code class="descname">extract_time_betas</code><span class="sig-paren">(</span><em>models</em>, <em>element='beta_time'</em>, <em>value_name='beta'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/utils.html#extract_time_betas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.utils.extract_time_betas" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Extract posterior draws for values of time-varying <cite>element</cite> from each model given in the list of <cite>models</cite>.</p>
+<dl class="docutils">
+<dt>Returns a pandas.DataFrame containing one record for each posterior draw of each parameter, where</dt>
+<dd><p class="first">the parameter varies over time.</p>
+<p>Columns include:</p>
+<blockquote class="last">
+<div><ul>
+<li><p class="first">model_cohort: description of the model or cohort from which the draw was taken</p>
+</li>
+<li><p class="first">&lt;value-column&gt;: the value of the posterior draw, named according to given parameter <cite>value_name</cite></p>
+</li>
+<li><p class="first">coef: description of the coefficient estimated, as per patsy formula provided</p>
+</li>
+<li><p class="first">iter: integer indicator of the draw from which that estimate was taken</p>
+</li>
+<li><dl class="first docutils">
+<dt>&lt;timepoint-id-column&gt;: integer identifier for each unique time at which betas are estimated</dt>
+<dd><p class="first last">(default column name is set by <cite>fit_stan_survival_model</cite>, typically as &#8220;timepoint_id&#8221;)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>&lt;timepoint-end-column&gt;: time at which this beta was estimated</dt>
+<dd><p class="first last">(default column name is set by <cite>fit_stan_survival_model</cite>, typically as &#8220;end_time&#8221;)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+<p>** Parameters <a href="#id5"><span class="problematic" id="id6">**</span></a>:</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param models:</th><td class="field-body">list of model-fit objects returned by <cite>survivalstan.fit_stan_survival_model</cite>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type models:</th><td class="field-body">list</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param element:</th><td class="field-body">name of parameter to extract. Defaults to &#8220;beta_time&#8221;, the parameter name
+used in the example time-varying stan model.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type element:</th><td class="field-body">str</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param value_name:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">what you would like the &#8220;value&#8221; column called in the resulting dataframe</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type value_name:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">str</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param <a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs:</th><td class="field-body"><a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs are passed to <cite>_extract_time_betas_single_model</cite>, allowing
+user to customize &#8220;default&#8221; values which would otherwise be read from each model object.
+examples include: <cite>coefs</cite>, <cite>timepoint_id_col</cite>, and <cite>timepoint_end_col</cite>.</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>** Returns <a href="#id11"><span class="problematic" id="id12">**</span></a>:</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body">pandas.DataFrame containing posterior draws of parameter values.</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</dd></dl>
 
 <dl class="function">
 <dt id="survivalstan.utils.filter_stan_summary">
@@ -454,7 +628,124 @@ Other options (depending on model type) include:
 <dl class="function">
 <dt id="survivalstan.utils.plot_pp_survival">
 <code class="descclassname">survivalstan.utils.</code><code class="descname">plot_pp_survival</code><span class="sig-paren">(</span><em>models</em>, <em>time_element='y_hat_time'</em>, <em>event_element='y_hat_event'</em>, <em>num_ticks=10</em>, <em>step_size=None</em>, <em>ticks_at=None</em>, <em>time_col='event_time'</em>, <em>event_col='event_status'</em>, <em>fill=True</em>, <em>by=None</em>, <em>alpha=0.5</em>, <em>pal=None</em>, <em>subplot=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/utils.html#plot_pp_survival"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.utils.plot_pp_survival" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Plot KM curve estimates from posterior-predicted values by group, for each model given in the list of <cite>models</cite>.</p>
+<blockquote>
+<div>See <cite>prep_pp_survival_data</cite> for details regarding process of extracting posterior-predicted values.</div></blockquote>
+<p><a href="#id13"><span class="problematic" id="id14">**</span></a>Parameters controlling data extraction <a href="#id15"><span class="problematic" id="id16">**</span></a>:</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param models:</th><td class="field-body"><p class="first">list of <cite>fit_stan_survival_model</cite> results from which to extract posterior-predicted values</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type models:</th><td class="field-body"><p class="first">list</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param by:</th><td class="field-body"><p class="first">additional column or columns by which to summarize posterior-predicted values.
+Default is None, which results in draws summarized by [<cite>iter</cite> and <cite>model_cohort</cite>].
+Values can include any covariates provided in the original df.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type by:</th><td class="field-body"><p class="first">str or list of strings</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param time_element:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">(optional) name of parameter containing posterior-predicted event <strong>time</strong> for each subject
+Defaults to standard used in survivalstan models: <cite>y_hat_time</cite>.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type time_element:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first">str</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param event_element:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">(optional) name of parameter containing posterior-predicted event <strong>status</strong> for each subject
+Defaults to the standard used in survivalstan models: <cite>y_hat_event</cite>.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type event_element:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first">str</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param event_col:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">(optional) name to use for column containing posterior draw for event_status</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type event_col:</th><td class="field-body"><p class="first">str</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param time_col:</th><td class="field-body"><p class="first">(optional) name to use for column containing posterior draw for time to event</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type time_col:</th><td class="field-body"><p class="first">str</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param <a href="#id17"><span class="problematic" id="id18">**</span></a>kwargs:</th><td class="field-body"><dl class="first docutils">
+<dt><a href="#id19"><span class="problematic" id="id20">**</span></a>kwargs are passed to <cite>_prep_pp_data_single_model</cite>, allowing user to override </dt>
+<dd><p class="first">or specify default values given in the original call to <cite>fit_stan_survival_model</cite>.
+Parameters include: <cite>sample_col</cite>, <cite>sample_id_col</cite> to define names of sample description &amp; id columns</p>
+<blockquote class="last">
+<div><p>as well as <cite>join_with</cite> giving name of dataframe to join with (options include df_nonmiss, x_df, or None).</p>
+</div></blockquote>
+</dd>
+</dl>
+<p class="last">Use <cite>join_with</cite> = None to disable merge with original dataframe.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>** Parameters controlling plot orientation/presentation <a href="#id21"><span class="problematic" id="id22">**</span></a>:</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param pal:</th><td class="field-body">(optional) palette to use for plotting.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type pal:</th><td class="field-body">list of colors, matching length of <cite>by</cite> groups</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param ticks_at:</th><td class="field-body">(optional) exact locations for placement of ticks</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param num_ticks:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">(optional) control number of ticks, if ticks_at not given.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param step_size:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">(optional) control tick spacing, if ticks_at or num_ticks not given</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param alpha:</th><td class="field-body">(optional) level of transparency for boxplots</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param fill:</th><td class="field-body">(optional) whether to fill in boxplots or just show outlines. Defaults to True</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param subplot:</th><td class="field-body">(optional) pyplot.subplots object to use, if provided. Useful if you want to overlay 
+observed or true survival on the same plot.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param xlabel:</th><td class="field-body">(optional) label for x-axis (defaults to &#8220;Days&#8221;)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param ylabel:</th><td class="field-body">(optional) label for y-axis (defaults to &#8220;Survival %&#8221;)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param label:</th><td class="field-body">(optional) legend-label for this plot group 
+(defaults to &#8220;posterior predictions&#8221;, model-cohort, or by-group label depending options)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param <a href="#id23"><span class="problematic" id="id24">**</span></a>kwargs:</th><td class="field-body">(optional) args passed to set properties of boxes, medians &amp; whiskers (e.g. color)</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>** Returns <a href="#id25"><span class="problematic" id="id26">**</span></a>:</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body">Nothing. Plotted object is a side-effect.</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</dd></dl>
 
 <dl class="function">
 <dt id="survivalstan.utils.plot_stan_summary">
@@ -476,17 +767,270 @@ default: <cite>Rhat</cite></dd>
 <dl class="function">
 <dt id="survivalstan.utils.plot_time_betas">
 <code class="descclassname">survivalstan.utils.</code><code class="descname">plot_time_betas</code><span class="sig-paren">(</span><em>models=None, df=None, element='beta_time', y='beta', trans=None, coefs=None, x='timepoint_end_col', by=['model_cohort', 'coef'], timepoint_id_col=None, timepoint_end_col=None, subplot=None, ticks_at=None, ylabel=None, xlabel='time', num_ticks=10, step_size=None, fill=True, alpha=0.5, pal=None, value_name='beta', **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/utils.html#plot_time_betas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.utils.plot_time_betas" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Plot posterior draws of time-varying parameters (<cite>element</cite>) from each model given in the list of <cite>models</cite>.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>extract_time_betas</cite> to return the dataframe used by this function to plot data.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">this function can optionally take a <cite>df</cite> argument (the result of extract_time_betas) to 
+support data-extraction &amp; plotting in a two-step operation.</p>
+</div>
+<p>** Parameters controlling data extraction <a href="#id27"><span class="problematic" id="id28">**</span></a>:</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param models:</th><td class="field-body">list of model-fit objects returned by <cite>survivalstan.fit_stan_survival_model</cite>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type models:</th><td class="field-body">list</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param element:</th><td class="field-body">name of parameter to extract. Defaults to &#8220;beta_time&#8221;, the parameter name
+used in the example time-varying stan model.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type element:</th><td class="field-body">str</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param value_name:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">what you would like the &#8220;value&#8221; column called in the resulting dataframe</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type value_name:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">str</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param coefs:</th><td class="field-body">(optional) parameter passed to <cite>extract_time_betas</cite>, to override coefficient names 
+captured in <cite>fit_stan_survival_model</cite>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">param timepoint_id_col:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">(optional) parameter passed to <cite>extract_time_betas</cite>, to 
+override timepoint_id_col captured in <cite>fit_stan_survival_model</cite>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param timepoint_end_col:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">(optional) parameter passed to <cite>extract_time_betas</cite> to 
+override timepoint_end_col captured in <cite>fit_stan_survival_model</cite>.</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>** Parameters controlling plot orientation/presentation <a href="#id29"><span class="problematic" id="id30">**</span></a>:</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param trans:</th><td class="field-body">(optional) function to transform y-values plotted. Example: np.log</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type trans:</th><td class="field-body">function</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param by:</th><td class="field-body">(optional) list of columns by which to aggregate &amp; color boxplots
+Defaults to: [&#8216;model_cohort&#8217;, &#8216;coef&#8217;]</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type by:</th><td class="field-body">list</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param pal:</th><td class="field-body">(optional) palette to use for plotting.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type pal:</th><td class="field-body">list of colors, matching length of <cite>by</cite> groups</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param y:</th><td class="field-body">(optional) column to put on the y-axis. Defaults to &#8216;beta&#8217;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type y:</th><td class="field-body">str</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param x:</th><td class="field-body">(optional) column to put in the x-axis. Defaults to &#8216;timepoint_end_col&#8217;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type x:</th><td class="field-body">str</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param num_ticks:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">(optional) how many ticks to show on the x-axis. See _plot_time_betas for details.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param alpha:</th><td class="field-body">(optional) level of transparency for boxplots</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param fill:</th><td class="field-body">(optional) whether to fill in boxplots or just show outlines. Defaults to True</td>
+</tr>
+<tr class="field-even field"><th class="field-name">param subplot:</th><td class="field-body">(optional) pyplot.subplots object to use, if provided. Useful if you want to overlay 
+multiple values on the same plot.</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>** Returns <a href="#id31"><span class="problematic" id="id32">**</span></a>:</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body">Nothing. Plotted object is a side-effect.</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</dd></dl>
 
 <dl class="function">
 <dt id="survivalstan.utils.prep_pp_data">
 <code class="descclassname">survivalstan.utils.</code><code class="descname">prep_pp_data</code><span class="sig-paren">(</span><em>models</em>, <em>time_element='y_hat_time'</em>, <em>event_element='y_hat_event'</em>, <em>event_col='event_status'</em>, <em>time_col='event_time'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/utils.html#prep_pp_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.utils.prep_pp_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><dl class="docutils">
+<dt>Extract posterior-predicted values from each model included in the list of <cite>models</cite> given, optionally merged with </dt>
+<dd>covariates &amp; meta-data provided in the input <cite>df</cite>.</dd>
+</dl>
+<p><strong>Parameters</strong>:</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param models:</th><td class="field-body"><p class="first">list of <cite>fit_stan_survival_model</cite> results from which to extract posterior-predicted values</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type models:</th><td class="field-body"><p class="first">list</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param time_element:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">(optional) name of parameter containing posterior-predicted event <strong>time</strong> for each subject
+Defaults to standard used in survivalstan models: <cite>y_hat_time</cite>.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type time_element:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first">str</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param event_element:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">(optional) name of parameter containing posterior-predicted event <strong>status</strong> for each subject
+Defaults to the standard used in survivalstan models: <cite>y_hat_event</cite>.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type event_element:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first">str</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param event_col:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">(optional) name to use for column containing posterior draw for event_status</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type event_col:</th><td class="field-body"><p class="first">str</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param time_col:</th><td class="field-body"><p class="first">(optional) name to use for column containing posterior draw for time to event</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type time_col:</th><td class="field-body"><p class="first">str</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param <a href="#id33"><span class="problematic" id="id34">**</span></a>kwargs:</th><td class="field-body"><dl class="first docutils">
+<dt><a href="#id35"><span class="problematic" id="id36">**</span></a>kwargs are passed to <cite>_prep_pp_data_single_model</cite>, allowing user to override </dt>
+<dd><p class="first">or specify default values given in the original call to <cite>fit_stan_survival_model</cite>.
+Parameters include: <cite>sample_col</cite>, <cite>sample_id_col</cite> to define names of sample description &amp; id columns</p>
+<blockquote class="last">
+<div><p>as well as <cite>join_with</cite> giving name of dataframe to join with (options include df_nonmiss, x_df, or None).</p>
+</div></blockquote>
+</dd>
+</dl>
+<p class="last">Use <cite>join_with</cite> = None to disable merge with original dataframe.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><strong>Returns</strong>:</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body">pandas.DataFrame with one record per posterior draw (iter) for each subject, from each model 
+optionally joined with original input data.</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</dd></dl>
 
 <dl class="function">
 <dt id="survivalstan.utils.prep_pp_survival_data">
 <code class="descclassname">survivalstan.utils.</code><code class="descname">prep_pp_survival_data</code><span class="sig-paren">(</span><em>models</em>, <em>time_element='y_hat_time'</em>, <em>event_element='y_hat_event'</em>, <em>time_col='event_time'</em>, <em>event_col='event_status'</em>, <em>by=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/survivalstan/utils.html#prep_pp_survival_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#survivalstan.utils.prep_pp_survival_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><dl class="docutils">
+<dt>Summarize posterior-predicted values into KM survival/censor rates</dt>
+<dd><p class="first">by group, for each model given in the list of <cite>models</cite>.</p>
+<p class="last">See <cite>prep_pp_data</cite> for details regarding process of extracting posterior-predicted values.</p>
+</dd>
+</dl>
+<p><strong>Parameters</strong>:</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param models:</th><td class="field-body"><p class="first">list of <cite>fit_stan_survival_model</cite> results from which to extract posterior-predicted values</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type models:</th><td class="field-body"><p class="first">list</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param by:</th><td class="field-body"><p class="first">additional column or columns by which to summarize posterior-predicted values.
+Default is None, which results in draws summarized by [<cite>iter</cite> and <cite>model_cohort</cite>].
+Values can include any covariates provided in the original df.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type by:</th><td class="field-body"><p class="first">str or list of strings</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param time_element:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">(optional) name of parameter containing posterior-predicted event <strong>time</strong> for each subject
+Defaults to standard used in survivalstan models: <cite>y_hat_time</cite>.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type time_element:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first">str</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param event_element:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">(optional) name of parameter containing posterior-predicted event <strong>status</strong> for each subject
+Defaults to the standard used in survivalstan models: <cite>y_hat_event</cite>.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">type event_element:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first">str</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">param event_col:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">(optional) name to use for column containing posterior draw for event_status</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type event_col:</th><td class="field-body"><p class="first">str</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param time_col:</th><td class="field-body"><p class="first">(optional) name to use for column containing posterior draw for time to event</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">type time_col:</th><td class="field-body"><p class="first">str</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">param <a href="#id37"><span class="problematic" id="id38">**</span></a>kwargs:</th><td class="field-body"><dl class="first docutils">
+<dt><a href="#id39"><span class="problematic" id="id40">**</span></a>kwargs are passed to <cite>_prep_pp_data_single_model</cite>, allowing user to override </dt>
+<dd><p class="first">or specify default values given in the original call to <cite>fit_stan_survival_model</cite>.
+Parameters include: <cite>sample_col</cite>, <cite>sample_id_col</cite> to define names of sample description &amp; id columns</p>
+<blockquote class="last">
+<div><p>as well as <cite>join_with</cite> giving name of dataframe to join with (options include df_nonmiss, x_df, or None).</p>
+</div></blockquote>
+</dd>
+</dl>
+<p class="last">Use <cite>join_with</cite> = None to disable merge with original dataframe.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><strong>Returns</strong>:</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body">pandas.DataFrame with one record per posterior draw (iter), timepoint, model_cohort, and by-groups.</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</dd></dl>
 
 <dl class="function">
 <dt id="survivalstan.utils.print_stan_summary">
@@ -512,7 +1056,7 @@ dictionary of file names: file contents.</p>
 <dd>directory path (can be relative or absolute)</dd>
 <dt>pattern (string, optional):</dt>
 <dd>regex pattern applied to files on import
-defaults to &#8220;<a href="#id1"><span class="problematic" id="id2">*</span></a>.stan&#8221;</dd>
+defaults to &#8220;<a href="#id41"><span class="problematic" id="id42">*</span></a>.stan&#8221;</dd>
 <dt>encoding (string, optional):</dt>
 <dd>encoding to use when importing files
 defaults to &#8220;UTF-8&#8221;</dd>

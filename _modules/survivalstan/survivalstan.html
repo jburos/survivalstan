@@ -139,28 +139,43 @@
 <span class="kn">import</span> <span class="nn">stanity</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 
-
-<div class="viewcode-block" id="fit_stan_survival_model"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.survivalstan.fit_stan_survival_model">[docs]</a><span class="k">def</span> <span class="nf">fit_stan_survival_model</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">formula</span><span class="p">,</span> <span class="n">event_col</span><span class="p">,</span> <span class="n">model_code</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                                           <span class="n">model_cohort</span> <span class="o">=</span> <span class="s1">&#39;survival model&#39;</span><span class="p">,</span> 
-                             <span class="n">time_col</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                             <span class="n">sample_id_col</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sample_col</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                             <span class="n">group_id_col</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">group_col</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                             <span class="n">timepoint_id_col</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">timepoint_end_col</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                             <span class="n">make_inits</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">stan_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                             <span class="n">grp_coef_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">FIT_FUN</span> <span class="o">=</span> <span class="n">stanity</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span>
-                             <span class="n">drop_intercept</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-                             <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="fit_stan_survival_model"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.survivalstan.fit_stan_survival_model">[docs]</a><span class="k">def</span> <span class="nf">fit_stan_survival_model</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">formula</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">event_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">model_code</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">model_cohort</span><span class="o">=</span><span class="s1">&#39;survival model&#39;</span><span class="p">,</span> 
+                            <span class="n">time_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">sample_id_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">sample_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">group_id_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">group_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">timepoint_id_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">timepoint_end_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">make_inits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">stan_data</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
+                            <span class="n">grp_coef_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">FIT_FUN</span><span class="o">=</span><span class="n">stanity</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span>
+                            <span class="n">drop_intercept</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">input_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This function prepares inputs appropriate for stan model model code, and fits that model using Stan.</span>
 
-<span class="sd">    Args:</span>
+<span class="sd">    Required args:</span>
+<span class="sd">    </span>
 <span class="sd">       df (pandas DataFrame):  The data frame containing input data to Survival model.</span>
 <span class="sd">       formula (chr): Patsy formula to use for covariates. E.g &#39;met_status + pd_l1&#39;</span>
 <span class="sd">       event_col (chr): name of column containing event status. Will be coerced to int</span>
 <span class="sd">       model_code (chr): stan model code to use.</span>
-<span class="sd">       file (chr): path to stan file (if model_code not given).</span>
+<span class="sd">       file (chr): path to stan file (if model_code not given)</span>
+<span class="sd">       *args, **kwargs: passed to FIT_FUN (stanity.fit or replacement)</span>
 
-<span class="sd">    Kwargs:</span>
+<span class="sd">    Optional args:</span>
+<span class="sd">    </span>
 <span class="sd">       model_cohort (chr): description of this model fit, to be used when plotting or summarizing output</span>
 <span class="sd">       time_col (chr): name of column containing event time -- used for parameteric (Weibull) model</span>
 <span class="sd">       sample_id_col (chr): name of column containing numeric sample ids (1-indexed &amp; sequential)</span>
@@ -217,96 +232,31 @@
         <span class="k">if</span> <span class="n">file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;Either model_code or file is required.&#39;</span><span class="p">)</span>
     
-    <span class="c1">## input covariates given formula</span>
-    <span class="n">x_df</span> <span class="o">=</span> <span class="n">patsy</span><span class="o">.</span><span class="n">dmatrix</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span>
-                          <span class="n">df</span><span class="p">,</span>
-                          <span class="n">return_type</span><span class="o">=</span><span class="s1">&#39;dataframe&#39;</span>
-                          <span class="p">)</span>
-    
-    <span class="c1">## construct data frame with all necessary columns</span>
-    <span class="c1">## limit to non-missing data </span>
-    <span class="c1">## (if necessary) transform columns to ids</span>
-    <span class="n">other_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">event_col</span><span class="p">,</span> <span class="n">time_col</span><span class="p">,</span>
-                  <span class="n">group_id_col</span><span class="p">,</span> <span class="n">group_col</span><span class="p">,</span>
-                  <span class="n">timepoint_id_col</span><span class="p">,</span> <span class="n">timepoint_end_col</span><span class="p">,</span>
-                  <span class="n">sample_id_col</span><span class="p">,</span> <span class="n">sample_col</span><span class="p">]</span> <span class="c1">## list of possible columns to keep</span>
-    
-    <span class="n">other_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">other_cols</span><span class="p">))</span>
-    <span class="n">other_cols</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-    
-    <span class="k">if</span> <span class="n">other_cols</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">other_cols</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-        <span class="c1">## filter other inputs to non-missing observations on input covariates</span>
-        <span class="n">df_nonmiss</span> <span class="o">=</span> <span class="n">x_df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">other_cols</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">df_nonmiss</span> <span class="o">=</span> <span class="n">x_df</span>
+    <span class="k">if</span> <span class="n">input_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">input_data</span> <span class="o">=</span> <span class="n">SurvivalStanData</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+                                      <span class="n">formula</span><span class="o">=</span><span class="n">formula</span><span class="p">,</span>
+                                      <span class="n">time_col</span><span class="o">=</span><span class="n">time_col</span><span class="p">,</span>
+                                      <span class="n">event_col</span><span class="o">=</span><span class="n">event_col</span><span class="p">,</span> 
+                                      <span class="n">sample_id_col</span><span class="o">=</span><span class="n">sample_id_col</span><span class="p">,</span>
+                                      <span class="n">sample_col</span><span class="o">=</span><span class="n">sample_col</span><span class="p">,</span>
+                                      <span class="n">group_id_col</span><span class="o">=</span><span class="n">group_id_col</span><span class="p">,</span>
+                                      <span class="n">group_col</span><span class="o">=</span><span class="n">group_col</span><span class="p">,</span>
+                                      <span class="n">timepoint_id_col</span><span class="o">=</span><span class="n">timepoint_id_col</span><span class="p">,</span>
+                                      <span class="n">timepoint_end_col</span><span class="o">=</span><span class="n">timepoint_end_col</span><span class="p">,</span>
+                                      <span class="n">drop_intercept</span><span class="o">=</span><span class="n">drop_intercept</span><span class="p">,</span>
+                                      <span class="o">**</span><span class="n">stan_data</span>
+                                     <span class="p">)</span>
+    <span class="n">x_df</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">x_df</span>
+    <span class="n">df_nonmiss</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">df_nonmiss</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">drop_intercept</span><span class="p">:</span>
-        <span class="n">x_df</span> <span class="o">=</span> <span class="n">x_df</span><span class="o">.</span><span class="n">ix</span><span class="p">[:,</span> <span class="n">x_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">!=</span> <span class="s1">&#39;Intercept&#39;</span><span class="p">]</span>
-
-    <span class="c1">## prep input dictionary to pass to stan.fit</span>
-    <span class="n">survival_model_input_data</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_nonmiss</span><span class="o">.</span><span class="n">index</span><span class="p">),</span>
-        <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">x_df</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">(),</span>
-        <span class="s1">&#39;event&#39;</span><span class="p">:</span> <span class="n">df_nonmiss</span><span class="p">[</span><span class="n">event_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
-        <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_df</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span>
-    <span class="p">}</span>
-
-    <span class="k">if</span> <span class="n">time_col</span><span class="p">:</span>
-        <span class="n">survival_model_input_data</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_nonmiss</span><span class="p">[</span><span class="n">time_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-
-    <span class="c1">## construct timepoint ID vars &amp; add to input data</span>
-    <span class="k">if</span> <span class="n">timepoint_end_col</span> <span class="ow">and</span> <span class="ow">not</span><span class="p">(</span><span class="n">timepoint_id_col</span><span class="p">):</span>
-        <span class="n">timepoint_id_col</span> <span class="o">=</span> <span class="s1">&#39;timepoint_id&#39;</span>
-        <span class="n">df_nonmiss</span><span class="p">[</span><span class="n">timepoint_id_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_nonmiss</span><span class="p">[</span><span class="n">timepoint_end_col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span> <span class="o">+</span> <span class="mi">1</span>
-
-    <span class="k">if</span> <span class="n">timepoint_id_col</span><span class="p">:</span>
-        <span class="n">unique_timepoints</span> <span class="o">=</span> <span class="n">_prep_timepoint_dataframe</span><span class="p">(</span><span class="n">df_nonmiss</span><span class="p">,</span>
-                                                      <span class="n">timepoint_id_col</span> <span class="o">=</span> <span class="n">timepoint_id_col</span><span class="p">,</span>
-                                                      <span class="n">timepoint_end_col</span> <span class="o">=</span> <span class="n">timepoint_end_col</span>
-                                                      <span class="p">)</span>
-        <span class="n">timepoint_input_data</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;t_dur&#39;</span><span class="p">:</span> <span class="n">unique_timepoints</span><span class="p">[</span><span class="s1">&#39;t_dur&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;t_obs&#39;</span><span class="p">:</span> <span class="n">unique_timepoints</span><span class="p">[</span><span class="n">timepoint_end_col</span><span class="p">],</span>
-            <span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="n">df_nonmiss</span><span class="p">[</span><span class="n">timepoint_id_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
-            <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="n">timepoint_id_col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-        <span class="p">}</span>
-        <span class="n">survival_model_input_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">survival_model_input_data</span><span class="p">,</span> <span class="o">**</span><span class="n">timepoint_input_data</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">timepoint_end_col</span><span class="p">:</span>
-        <span class="c1"># not required for all models, leave in for legacy</span>
-        <span class="n">survival_model_input_data</span><span class="p">[</span><span class="s1">&#39;obs_t&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_nonmiss</span><span class="p">[</span><span class="n">timepoint_end_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-
-    <span class="c1">## construct sample ID var &amp; add to input data</span>
-    <span class="k">if</span> <span class="n">sample_col</span> <span class="ow">and</span> <span class="ow">not</span><span class="p">(</span><span class="n">sample_id_col</span><span class="p">):</span>
-        <span class="n">sample_id_col</span> <span class="o">=</span> <span class="s1">&#39;sample_id&#39;</span>
-        <span class="n">df_nonmiss</span><span class="p">[</span><span class="n">sample_id_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_nonmiss</span><span class="p">[</span><span class="n">sample_col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span> <span class="o">+</span> <span class="mi">1</span>
-
-    <span class="k">if</span> <span class="n">sample_id_col</span><span class="p">:</span>
-        <span class="n">sample_input_data</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="n">df_nonmiss</span><span class="p">[</span><span class="n">sample_id_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
-            <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="n">sample_id_col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-        <span class="p">}</span>
-        <span class="n">survival_model_input_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">survival_model_input_data</span><span class="p">,</span> <span class="o">**</span><span class="n">sample_input_data</span><span class="p">)</span>
- 
-    <span class="c1">## construct group ID var &amp; add to input data</span>
-    <span class="k">if</span> <span class="n">group_col</span> <span class="ow">and</span> <span class="ow">not</span><span class="p">(</span><span class="n">group_id_col</span><span class="p">):</span>
-        <span class="n">group_id_col</span> <span class="o">=</span> <span class="s1">&#39;group_id&#39;</span>
-        <span class="n">df_nonmiss</span><span class="p">[</span><span class="n">group_id_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_nonmiss</span><span class="p">[</span><span class="n">group_col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span> <span class="o">+</span> <span class="mi">1</span>
-
-    <span class="k">if</span> <span class="n">group_id_col</span><span class="p">:</span>
-        <span class="n">survival_model_input_data</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_nonmiss</span><span class="p">[</span><span class="n">group_id_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-        <span class="n">survival_model_input_data</span><span class="p">[</span><span class="s1">&#39;G&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="n">group_id_col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-        
-    <span class="k">if</span> <span class="n">stan_data</span><span class="p">:</span>
-        <span class="n">survival_model_input_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">survival_model_input_data</span><span class="p">,</span> <span class="o">**</span><span class="n">stan_data</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="n">make_inits</span><span class="p">:</span>
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="n">make_inits</span><span class="p">(</span><span class="n">survival_model_input_data</span><span class="p">))</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="n">make_inits</span><span class="p">(</span><span class="n">input_data</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
     
     <span class="n">survival_fit</span> <span class="o">=</span> <span class="n">FIT_FUN</span><span class="p">(</span>
         <span class="n">model_code</span> <span class="o">=</span> <span class="n">model_code</span><span class="p">,</span>
         <span class="n">file</span> <span class="o">=</span> <span class="n">file</span><span class="p">,</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">survival_model_input_data</span><span class="p">,</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span>
@@ -325,20 +275,15 @@
         <span class="n">beta_coefs</span> <span class="o">=</span> <span class="kc">None</span>
     
     <span class="c1">## prep by-group coefs if group specified</span>
-    <span class="k">if</span> <span class="n">group_id_col</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">input_data</span><span class="o">.</span><span class="n">group_id_col</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">group_col</span><span class="p">:</span>
-                <span class="n">grp_names</span> <span class="o">=</span> <span class="n">df_nonmiss</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
-                    <span class="o">~</span><span class="n">df_nonmiss</span><span class="p">[[</span><span class="n">group_id_col</span><span class="p">]]</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">group_id_col</span><span class="p">)[</span><span class="n">group_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">grp_names</span> <span class="o">=</span> <span class="n">df_nonmiss</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
-                    <span class="o">~</span><span class="n">df_nonmiss</span><span class="p">[[</span><span class="n">group_id_col</span><span class="p">]]</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">group_id_col</span><span class="p">)[</span><span class="n">group_id_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">grp_names</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">get_group_names</span><span class="p">()</span>
             <span class="n">grp_coefs</span> <span class="o">=</span> <span class="n">_extract_grp_coefs</span><span class="p">(</span><span class="n">survival_fit</span><span class="o">=</span><span class="n">survival_fit</span><span class="p">,</span>
                                            <span class="n">element</span><span class="o">=</span><span class="s1">&#39;grp_beta&#39;</span><span class="p">,</span>
                                            <span class="n">grp_coef_type</span><span class="o">=</span><span class="n">grp_coef_type</span><span class="p">,</span>
                                            <span class="n">grp_names</span><span class="o">=</span><span class="n">grp_names</span><span class="p">,</span>
                                            <span class="n">columns</span><span class="o">=</span><span class="n">x_df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
-                                           <span class="n">input_data</span><span class="o">=</span><span class="n">survival_model_input_data</span><span class="p">,</span>
+                                           <span class="n">input_data</span><span class="o">=</span><span class="n">input_data</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
                                            <span class="n">model_cohort</span><span class="o">=</span><span class="n">model_cohort</span>
                                           <span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
@@ -366,20 +311,196 @@
         <span class="s1">&#39;df&#39;</span><span class="p">:</span> <span class="n">df_nonmiss</span><span class="p">,</span>
         <span class="s1">&#39;x_df&#39;</span><span class="p">:</span> <span class="n">x_df</span><span class="p">,</span>
         <span class="s1">&#39;x_names&#39;</span><span class="p">:</span> <span class="n">x_df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
-        <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">survival_model_input_data</span><span class="p">,</span>
+        <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">input_data</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
         <span class="s1">&#39;fit&#39;</span><span class="p">:</span> <span class="n">survival_fit</span><span class="p">,</span>
         <span class="s1">&#39;coefs&#39;</span><span class="p">:</span> <span class="n">beta_coefs</span><span class="p">,</span>
         <span class="s1">&#39;grp_coefs&#39;</span><span class="p">:</span> <span class="n">grp_coefs</span><span class="p">,</span>
         <span class="s1">&#39;loo&#39;</span><span class="p">:</span> <span class="n">loo</span><span class="p">,</span>
         <span class="s1">&#39;model_cohort&#39;</span><span class="p">:</span> <span class="n">model_cohort</span><span class="p">,</span>
-        <span class="s1">&#39;df_all&#39;</span><span class="p">:</span> <span class="n">df</span><span class="p">,</span>
-        <span class="s1">&#39;sample_col&#39;</span><span class="p">:</span> <span class="n">sample_col</span><span class="p">,</span>
-        <span class="s1">&#39;sample_id_col&#39;</span><span class="p">:</span> <span class="n">sample_id_col</span><span class="p">,</span>
-        <span class="s1">&#39;timepoint_id_col&#39;</span><span class="p">:</span> <span class="n">timepoint_id_col</span><span class="p">,</span>
-        <span class="s1">&#39;timepoint_end_col&#39;</span><span class="p">:</span> <span class="n">timepoint_end_col</span><span class="p">,</span>
+        <span class="s1">&#39;df_all&#39;</span><span class="p">:</span> <span class="n">input_data</span><span class="o">.</span><span class="n">df</span><span class="p">,</span>
+        <span class="s1">&#39;sample_col&#39;</span><span class="p">:</span> <span class="n">input_data</span><span class="o">.</span><span class="n">sample_col</span><span class="p">,</span>
+        <span class="s1">&#39;sample_id_col&#39;</span><span class="p">:</span> <span class="n">input_data</span><span class="o">.</span><span class="n">sample_id_col</span><span class="p">,</span>
+        <span class="s1">&#39;timepoint_id_col&#39;</span><span class="p">:</span> <span class="n">input_data</span><span class="o">.</span><span class="n">timepoint_id_col</span><span class="p">,</span>
+        <span class="s1">&#39;timepoint_end_col&#39;</span><span class="p">:</span> <span class="n">input_data</span><span class="o">.</span><span class="n">timepoint_end_col</span><span class="p">,</span>
     <span class="p">}</span></div>
 
 
+<div class="viewcode-block" id="SurvivalStanData"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.survivalstan.SurvivalStanData">[docs]</a><span class="k">class</span> <span class="nc">SurvivalStanData</span><span class="p">:</span>
+    <span class="s1">&#39;Input data representing a survival model&#39;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">df</span><span class="p">,</span> <span class="n">formula</span><span class="p">,</span> <span class="n">event_col</span><span class="p">,</span>
+                 <span class="n">time_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">sample_id_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">group_id_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">timepoint_id_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timepoint_end_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">drop_intercept</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1">## capture input params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">formula</span> <span class="o">=</span> <span class="n">formula</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_col</span> <span class="o">=</span> <span class="n">event_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_col</span> <span class="o">=</span> <span class="n">time_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group_id_col</span> <span class="o">=</span> <span class="n">group_id_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group_col</span> <span class="o">=</span> <span class="n">group_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timepoint_id_col</span> <span class="o">=</span> <span class="n">timepoint_id_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timepoint_end_col</span> <span class="o">=</span> <span class="n">timepoint_end_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_id_col</span> <span class="o">=</span> <span class="n">sample_id_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_col</span> <span class="o">=</span> <span class="n">sample_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drop_intercept</span> <span class="o">=</span> <span class="n">drop_intercept</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">prep_df_nonmiss</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prep_input_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    
+    
+    <span class="k">def</span> <span class="nf">_prep_othercols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Update list of columns to keep, other than those generated by formula</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## construct data frame with all necessary columns</span>
+        <span class="c1">## limit to non-missing data </span>
+        <span class="c1">## (if necessary) transform columns to ids</span>
+        <span class="n">other_cols</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">event_col</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_col</span><span class="p">,</span>
+                      <span class="bp">self</span><span class="o">.</span><span class="n">group_id_col</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_col</span><span class="p">,</span>
+                      <span class="bp">self</span><span class="o">.</span><span class="n">timepoint_id_col</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timepoint_end_col</span><span class="p">,</span>
+                      <span class="bp">self</span><span class="o">.</span><span class="n">sample_id_col</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_col</span><span class="p">]</span>
+    
+        <span class="n">other_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">other_cols</span><span class="p">))</span> <span class="c1">## dedup</span>
+        <span class="n">other_cols</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>  <span class="c1">## remove &#39;none&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">other_cols</span> <span class="o">=</span> <span class="n">other_cols</span>
+        
+<div class="viewcode-block" id="SurvivalStanData.prep_df_nonmiss"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.survivalstan.SurvivalStanData.prep_df_nonmiss">[docs]</a>    <span class="k">def</span> <span class="nf">prep_df_nonmiss</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Create x_df and df_nonmiss </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prep_othercols</span><span class="p">()</span>
+        
+        <span class="c1">## input covariates given formula</span>
+        <span class="n">x_df</span> <span class="o">=</span> <span class="n">patsy</span><span class="o">.</span><span class="n">dmatrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="p">,</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span>
+                             <span class="n">return_type</span><span class="o">=</span><span class="s1">&#39;dataframe&#39;</span>
+                            <span class="p">)</span>
+    
+    
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">other_cols</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">other_cols</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="c1">## filter other inputs to non-missing observations on input covariates</span>
+            <span class="n">df_nonmiss</span> <span class="o">=</span> <span class="n">x_df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">other_cols</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df_nonmiss</span> <span class="o">=</span> <span class="n">x_df</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_intercept</span><span class="p">:</span>
+            <span class="n">x_df</span> <span class="o">=</span> <span class="n">x_df</span><span class="o">.</span><span class="n">ix</span><span class="p">[:,</span> <span class="n">x_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">!=</span> <span class="s1">&#39;Intercept&#39;</span><span class="p">]</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span> <span class="o">=</span> <span class="n">df_nonmiss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_df</span> <span class="o">=</span> <span class="n">x_df</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prep_timepoint_ids</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prep_sample_ids</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prep_group_ids</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_prep_event_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1">## prep input dictionary to pass to stan.fit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="o">.</span><span class="n">index</span><span class="p">),</span>
+            <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_df</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span>
+            <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_df</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">(),</span>
+            <span class="s1">&#39;event&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">event_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_col</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">time_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">timepoint_id_col</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timepoint_id_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_id_col</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_id_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_id_col</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">group_id_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SurvivalStanData.prep_input_data"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.survivalstan.SurvivalStanData.prep_input_data">[docs]</a>    <span class="k">def</span> <span class="nf">prep_input_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prep_event_data</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_id_col</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prep_sample_data</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">timepoint_id_col</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prep_timepoint_data</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_id_col</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prep_group_data</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">dict</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
+       
+    <span class="k">def</span> <span class="nf">_prep_timepoint_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; construct timepoint ID vars &amp; add to df_nonmiss</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">timepoint_end_col</span> <span class="ow">and</span> <span class="ow">not</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timepoint_id_col</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timepoint_id_col</span> <span class="o">=</span> <span class="s1">&#39;timepoint_id&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timepoint_id_col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timepoint_end_col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">_prep_sample_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; construct sample ID var &amp; add to df_nonmiss</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_col</span> <span class="ow">and</span> <span class="ow">not</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_id_col</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sample_id_col</span> <span class="o">=</span> <span class="s1">&#39;sample_id&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_id_col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">_prep_group_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; construct group ID var &amp; add to df_nonmiss</span>
+<span class="sd">        &#39;&#39;&#39;</span> 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_col</span> <span class="ow">and</span> <span class="ow">not</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_id_col</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">group_id_col</span> <span class="o">=</span> <span class="s1">&#39;group_id&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">group_id_col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">group_col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span> <span class="o">+</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="SurvivalStanData.get_group_names"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.survivalstan.SurvivalStanData.get_group_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_group_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_id_col</span><span class="p">:</span>
+            <span class="k">return</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        
+        <span class="c1"># which column should describe group names</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_col</span><span class="p">:</span>
+            <span class="n">grp_desc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_col</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">grp_desc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_id_col</span>
+            
+        <span class="c1"># group names in order of id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grp_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">group_id_col</span><span class="p">]]</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_id_col</span><span class="p">)[</span><span class="n">grp_desc</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">return</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grp_names</span><span class="p">)</span></div>
+           
+    <span class="k">def</span> <span class="nf">_prep_timepoint_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Add timepoint-id-related data to input vector</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">unique_timepoints</span> <span class="o">=</span> <span class="n">_prep_timepoint_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="p">,</span>
+                                                      <span class="n">timepoint_id_col</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timepoint_id_col</span><span class="p">,</span>
+                                                      <span class="n">timepoint_end_col</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timepoint_end_col</span>
+                                                     <span class="p">)</span>
+        <span class="n">timepoint_input_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;t_dur&#39;</span><span class="p">:</span> <span class="n">unique_timepoints</span><span class="p">[</span><span class="s1">&#39;t_dur&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;t_obs&#39;</span><span class="p">:</span> <span class="n">unique_timepoints</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timepoint_end_col</span><span class="p">],</span>
+            <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_timepoints</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">unique_timepoints</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timepoint_df</span> <span class="o">=</span> <span class="n">unique_timepoints</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">timepoint_input_data</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">_prep_sample_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Prep per-sample input data</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">sample_input_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_id_col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sample_input_data</span><span class="p">)</span>
+ 
+    
+    <span class="k">def</span> <span class="nf">_prep_group_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Prep per-group input data</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">group_input_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">group_id_col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">group_input_data</span><span class="p">)</span></div>
+    
+    
+    
 <span class="k">def</span> <span class="nf">_extract_grp_coefs</span><span class="p">(</span><span class="n">survival_fit</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">grp_coef_type</span><span class="p">,</span> <span class="n">grp_names</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">model_cohort</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Helper function to extract grp coefs summary data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -491,7 +612,8 @@
     <span class="n">t_durs</span> <span class="o">=</span> <span class="n">time_df</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">t_durs</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="n">timepoint_end_col</span><span class="p">:</span> <span class="s1">&#39;t_dur&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">time_df</span> <span class="o">=</span> <span class="n">time_df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t_durs</span><span class="p">)</span>
-    <span class="n">time_df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">time_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">timepoint_end_col</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">time_df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">time_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">timepoint_end_col</span><span class="p">])</span>
     <span class="k">return</span><span class="p">(</span><span class="n">time_df</span><span class="p">)</span>
 
 
@@ -534,9 +656,101 @@
     <span class="k">return</span><span class="p">(</span><span class="n">bs_data</span><span class="p">)</span></div>
 
 <span class="c1">## convert wide survival data to long format</span>
-<div class="viewcode-block" id="prep_data_long_surv"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.survivalstan.prep_data_long_surv">[docs]</a><span class="k">def</span> <span class="nf">prep_data_long_surv</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">time_col</span><span class="p">,</span> <span class="n">event_col</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; convert wide survival data to long format</span>
+<div class="viewcode-block" id="prep_data_long_surv"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.survivalstan.prep_data_long_surv">[docs]</a><span class="k">def</span> <span class="nf">prep_data_long_surv</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">time_col</span><span class="p">,</span> <span class="n">event_col</span><span class="p">,</span> <span class="n">sample_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">event_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Convert wide survival data df to long format, in preparation for modeling using PEM models.</span>
+<span class="sd">    </span>
+<span class="sd">        Returns a pandas DataFrame with original records duplicated for each unique failure time observed. </span>
+<span class="sd">            Each record will have two new columns: &#39;end_failure&#39; and &#39;end_time&#39;, indicating</span>
+<span class="sd">            the event status (`end_failure`) for each unique timepoint (`end_time`).</span>
+<span class="sd">        </span>
+<span class="sd">        Multiple events -- either per subject or multiple types of events per subject -- are  </span>
+<span class="sd">            supported via optional parameters sample_col and/or event_name.</span>
+<span class="sd">            </span>
+<span class="sd">            - If a sample_col is given, result will be de-duped so that </span>
+<span class="sd">            multiple events of the same type are handled correctly.</span>
+<span class="sd">            </span>
+<span class="sd">            - If an event_name column is given or if event_col is a list, </span>
+<span class="sd">            then multiple events will be processed. </span>
+<span class="sd">            </span>
+<span class="sd">            In this case, result will contain event status for each </span>
+<span class="sd">            event given. E.g. as for semi- or competing event data</span>
+<span class="sd">            with multiple event types.</span>
+
+<span class="sd">        **Parameters**:</span>
+<span class="sd">        </span>
+<span class="sd">            :param df: Input data containing survival time &amp; status for each subject</span>
+<span class="sd">            :type df: pandas.DataFrame</span>
+
+<span class="sd">            :param time_col: name of column containing time to censor/event</span>
+<span class="sd">            :type time_col: str</span>
+
+<span class="sd">            :param event_col: name of column containing status (1 or True: event, 0 or False: censor)</span>
+<span class="sd">            :type event_col: str</span>
+
+<span class="sd">            :param sample_col: (optional) column containing sample or subject identifier.</span>
+<span class="sd">            :type sample_col: str</span>
+
+<span class="sd">            :param event_name: (optional) column containing description of event type, if </span>
+<span class="sd">                more than one type of event is observed</span>
+<span class="sd">            :type event_name: str</span>
+
+<span class="sd">        **Returns**:</span>
+<span class="sd">        </span>
+<span class="sd">            :return: Dataframe with original records duplicated for each unique failure time observed. </span>
+<span class="sd">                Each record will have two new columns: &#39;end_failure&#39; and &#39;end_time&#39;, indicating</span>
+<span class="sd">                the timepoint-specific event status for each record.</span>
+<span class="sd">            :rtype: pandas.DataFrame</span>
+<span class="sd">        </span>
 <span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">## process multiple event_names, if given:</span>
+    <span class="k">if</span> <span class="n">event_name</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sample_col</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Sample col is required to process multiple events&#39;</span><span class="p">)</span>
+        <span class="n">df_events</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">df</span><span class="p">,</span>
+                                   <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="n">sample_col</span><span class="p">,</span> <span class="n">time_col</span><span class="p">],</span>
+                                   <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">event_name</span><span class="p">],</span>
+                                   <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="n">event_col</span><span class="p">],</span>
+                                   <span class="n">fill_value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">df_events</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">col_level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df_events</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">df_events</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">droplevel</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">event_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">event_name</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+        <span class="n">df_covars</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span>
+                           <span class="p">[</span><span class="n">column</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">event_name</span><span class="p">,</span> <span class="n">event_col</span><span class="p">]]</span>
+                          <span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">df_covars</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">sample_col</span><span class="p">,</span> <span class="n">time_col</span><span class="p">])</span> <span class="o">==</span> <span class="kc">False</span><span class="p">))</span>
+        <span class="n">df_multi</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_events</span><span class="p">,</span> <span class="n">df_covars</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="n">sample_col</span><span class="p">,</span> <span class="n">time_col</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df_multi</span> <span class="o">=</span> <span class="n">df</span>
+        <span class="n">event_cols</span> <span class="o">=</span> <span class="n">event_col</span>
+    
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event_cols</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Event col is given as a list; processing multi-event data&#39;</span><span class="p">)</span>
+        <span class="c1">## start with covariates per subject_id</span>
+        <span class="n">df_covars</span> <span class="o">=</span> <span class="n">df_multi</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> 
+                                 <span class="p">[</span><span class="n">column</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">df_multi</span><span class="o">.</span><span class="n">columns</span> 
+                                  <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">event_cols</span> <span class="ow">and</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">time_col</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">df_covars</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">df_covars</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">sample_col</span><span class="p">])</span> <span class="o">==</span> <span class="kc">False</span><span class="p">))</span>
+        <span class="c1">## merge in event-data for each event type</span>
+        <span class="n">ldf</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">event_cols</span><span class="p">:</span>
+            <span class="n">longdata</span> <span class="o">=</span> <span class="n">prep_data_long_surv</span><span class="p">(</span><span class="n">df_multi</span><span class="p">,</span>
+                                           <span class="n">event_col</span><span class="o">=</span><span class="n">event</span><span class="p">,</span>
+                                           <span class="n">time_col</span><span class="o">=</span><span class="n">time_col</span><span class="p">,</span>
+                                           <span class="n">sample_col</span><span class="o">=</span><span class="n">sample_col</span>
+                                           <span class="p">)</span>
+            <span class="n">longdata</span> <span class="o">=</span> <span class="n">longdata</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="n">sample_col</span><span class="p">,</span> <span class="s1">&#39;end_time&#39;</span><span class="p">,</span> <span class="s1">&#39;end_failure&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">longdata</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;end_failure&#39;</span><span class="p">:</span> <span class="s1">&#39;end_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">event</span><span class="p">)},</span>
+                            <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ldf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ldf</span> <span class="o">=</span> <span class="n">longdata</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ldf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">ldf</span><span class="p">,</span> <span class="n">longdata</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="n">sample_col</span><span class="p">,</span> <span class="s1">&#39;end_time&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>
+        <span class="n">with_covars</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">ldf</span><span class="p">,</span> <span class="n">df_covars</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">sample_col</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">with_covars</span>
+        
+    
     <span class="c1">## identify distinct failure/censor times</span>
     <span class="n">failure_times</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">time_col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
     <span class="n">ftimes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;end_time&#39;</span><span class="p">:</span> <span class="n">failure_times</span><span class="p">,</span> <span class="s1">&#39;key&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
@@ -544,6 +758,7 @@
     <span class="c1">## cross join failure times with each observation</span>
     <span class="n">df</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">dflong</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">ftimes</span><span class="p">,</span> <span class="n">on</span> <span class="o">=</span> <span class="s1">&#39;key&#39;</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">dflong</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
     
     <span class="c1">## identify end-time &amp; end-status for each sample*failure time</span>
     <span class="k">def</span> <span class="nf">gen_end_failure</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
@@ -565,7 +780,14 @@
 
     
     <span class="c1">## remove timepoints after failure/censor event</span>
-    <span class="n">dflong</span> <span class="o">=</span> <span class="n">dflong</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;end_time &lt;= </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time_col</span><span class="p">))</span>
+    <span class="n">dflong</span> <span class="o">=</span> <span class="n">dflong</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;end_time &lt;= </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time_col</span><span class="p">))</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="c1">## if sample_col is given, remove duplicates induced in case of multiple events</span>
+    <span class="k">if</span> <span class="n">sample_col</span><span class="p">:</span>
+        <span class="n">dflong</span><span class="p">[</span><span class="s1">&#39;_rank&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dflong</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">sample_col</span><span class="p">,</span> <span class="s1">&#39;end_time&#39;</span><span class="p">])[</span><span class="n">time_col</span><span class="p">]</span><span class="o">.</span><span class="n">rank</span><span class="p">()</span>
+        <span class="n">dflong</span> <span class="o">=</span> <span class="n">dflong</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;_rank == 1&#39;</span><span class="p">)</span>
+        <span class="k">del</span> <span class="n">dflong</span><span class="p">[</span><span class="s1">&#39;_rank&#39;</span><span class="p">]</span>
+    
     <span class="k">return</span><span class="p">(</span><span class="n">dflong</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="make_weibull_survival_model_inits"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.survivalstan.make_weibull_survival_model_inits">[docs]</a><span class="k">def</span> <span class="nf">make_weibull_survival_model_inits</span><span class="p">(</span><span class="n">stan_input_dict</span><span class="p">):</span>

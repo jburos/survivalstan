@@ -146,6 +146,8 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">patsy</span>
 
+<span class="c1">## -- generic/simple simulate data functions</span>
+
 <div class="viewcode-block" id="sim_data_exp"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.sim.sim_data_exp">[docs]</a><span class="k">def</span> <span class="nf">sim_data_exp</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">censor_time</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">      simulate true lifetimes (t) according to exponential model</span>
@@ -155,16 +157,16 @@
 
 <span class="sd">        N: (int) number of observations </span>
 <span class="sd">        censor_time: (float) uniform censor time for each observation</span>
-<span class="sd">		rate: (float, positive) hazard rate used to parameterize failure times</span>
+<span class="sd">        rate: (float, positive) hazard rate used to parameterize failure times</span>
 
-<span class="sd">	  Returns</span>
-<span class="sd">	  -------</span>
+<span class="sd">      Returns</span>
+<span class="sd">      -------</span>
 
-<span class="sd">	  pandas DataFrame with N observations, and 3 columns:</span>
-<span class="sd">	    - true_t: &quot;actual&quot; simulated failure time</span>
-<span class="sd">	    - t: observed failure/censor time, given censor_time</span>
-<span class="sd">	    - event: boolean indicating if failure event was observed (TRUE)</span>
-<span class="sd">	          or censored (FALSE)</span>
+<span class="sd">      pandas DataFrame with N observations, and 3 columns:</span>
+<span class="sd">        - true_t: &quot;actual&quot; simulated failure time</span>
+<span class="sd">        - t: observed failure/censor time, given censor_time</span>
+<span class="sd">        - event: boolean indicating if failure event was observed (TRUE)</span>
+<span class="sd">              or censored (FALSE)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">sample_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
             <span class="s1">&#39;true_t&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">exponential</span><span class="p">((</span><span class="mi">1</span><span class="o">/</span><span class="n">rate</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">)</span> 
@@ -220,6 +222,202 @@
     <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;true_t&#39;</span><span class="p">]</span>
     <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
     <span class="k">return</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span></div>
+
+<span class="c1">## -- simulate data for joint models</span>
+
+<span class="k">def</span> <span class="nf">_sim_jointmodel_inputs</span><span class="p">(</span><span class="n">N</span><span class="p">,</span>
+                    <span class="n">B_matrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                    <span class="n">sigma_00</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+                    <span class="n">sigma_01</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">,</span>
+                    <span class="n">sigma_10</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">,</span>
+                    <span class="n">sigma_11</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+                    <span class="n">sigma_v</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+                    <span class="n">meas_error_scale</span><span class="o">=</span><span class="mf">1.25</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Simulate parameter &amp; covariate values for data-generating process,</span>
+<span class="sd">        some of which are hard-coded. Hard-coded values can be overwritted by</span>
+<span class="sd">        passing named kwargs to this function.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns a dict of inputs for other sim-data functions in this module.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">## construct B_matrix if not provided</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">B_matrix</span><span class="p">:</span>
+        <span class="n">B1_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([[</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">sigma_00</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">sigma_01</span><span class="p">],</span>
+                              <span class="p">[</span><span class="n">sigma_10</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">sigma_11</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]])</span>
+        <span class="n">B_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+        <span class="n">B_matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">B1_matrix</span>
+        <span class="n">B_matrix</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">sigma_v</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1">## simulate subject-level parameters for random effects</span>
+    <span class="n">raneff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">cov</span><span class="o">=</span><span class="n">B_matrix</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">))</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">raneff</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">vi</span> <span class="o">=</span> <span class="n">raneff</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span>
+    
+    <span class="c1">## measurement error for longitudinal data simulation</span>
+    <span class="k">def</span> <span class="nf">meas_error</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">meas_error_scale</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">))</span>
+
+    <span class="c1">## simulate covariate values</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">binomial</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">X_l</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># covariate X for longitudinal submodel</span>
+    <span class="n">X_r</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># covariate X for recurrent events submodel</span>
+    <span class="n">X_t</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="c1"># covariate X for terminal event submodel</span>
+    
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;X&#39;</span><span class="p">:</span> <span class="n">X</span><span class="p">,</span>
+        <span class="s1">&#39;X_l&#39;</span><span class="p">:</span> <span class="n">X_l</span><span class="p">,</span>
+        <span class="s1">&#39;X_r&#39;</span><span class="p">:</span> <span class="n">X_r</span><span class="p">,</span>
+        <span class="s1">&#39;X_t&#39;</span><span class="p">:</span> <span class="n">X_t</span><span class="p">,</span>
+        <span class="s1">&#39;meas_error&#39;</span><span class="p">:</span> <span class="n">meas_error</span><span class="p">,</span>
+        <span class="s1">&#39;vi&#39;</span><span class="p">:</span> <span class="n">vi</span><span class="p">,</span>
+        <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="n">b</span><span class="p">,</span>
+        <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="n">N</span><span class="p">,</span>
+        <span class="s1">&#39;lambda_t_0&#39;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span>
+        <span class="s1">&#39;lambda_r_0&#39;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
+        <span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">2.6</span><span class="p">,</span>
+        <span class="s1">&#39;B_t&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([</span><span class="mf">0.1</span><span class="p">]),</span>
+        <span class="s1">&#39;B_r&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([</span><span class="mf">0.5</span><span class="p">]),</span>
+        <span class="s1">&#39;B_l&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span>
+        <span class="s1">&#39;eta_t&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span>
+        <span class="s1">&#39;eta_r&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span>
+        <span class="s1">&#39;censor&#39;</span><span class="p">:</span> <span class="mf">5.5</span><span class="p">,</span>
+        <span class="s1">&#39;meas_gap&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+        <span class="p">}</span>
+    
+    <span class="k">if</span> <span class="nb">dict</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+
+
+<span class="k">def</span> <span class="nf">_sim_jointmodel_terminal_events</span><span class="p">(</span><span class="n">lambda_t_0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">vi</span><span class="p">,</span> <span class="n">X_t</span><span class="p">,</span> <span class="n">B_t</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">eta_t</span><span class="p">,</span> <span class="n">censor</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Simulate data for terminating events</span>
+<span class="sd">        </span>
+<span class="sd">        Returns a dataframe containing:</span>
+<span class="sd">            - event_status (1:observed, 0:censor)</span>
+<span class="sd">            - event_time (time to event)</span>
+<span class="sd">            - index (subject_id)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">t_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="n">lambda_t_0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">alpha</span><span class="o">*</span><span class="n">vi</span> <span class="o">+</span> <span class="n">X_t</span><span class="o">*</span><span class="n">B_t</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">eta_t</span><span class="p">)),</span>
+                        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;death&#39;</span><span class="p">])</span>
+    <span class="n">t_df</span><span class="p">[</span><span class="s1">&#39;event_status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_df</span><span class="p">[</span><span class="s1">&#39;death&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">censor</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">t_df</span><span class="p">[</span><span class="s1">&#39;event_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_df</span><span class="p">[</span><span class="s1">&#39;death&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">censor</span> <span class="k">else</span> <span class="n">censor</span><span class="p">)</span>
+    <span class="n">t_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">t_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,[</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="s1">&#39;event_time&#39;</span><span class="p">,</span> <span class="s1">&#39;event_status&#39;</span><span class="p">]])</span>
+
+
+<span class="k">def</span> <span class="nf">_sim_jointmodel_recurrent_events</span><span class="p">(</span><span class="n">lambda_r_0</span><span class="p">,</span> <span class="n">vi</span><span class="p">,</span> <span class="n">X_r</span><span class="p">,</span> <span class="n">B_r</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">eta_r</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">t_df</span><span class="p">,</span> <span class="n">max_events</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Simulate data for recurrent events.</span>
+<span class="sd">    </span>
+<span class="sd">        Returns a data frame containing one obs for each recurrent event observed.</span>
+<span class="sd">        </span>
+<span class="sd">        Columns include:</span>
+<span class="sd">            - index (subject_id)</span>
+<span class="sd">            - recurrence_time (calendar time of recurrent event)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">r_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="n">lambda_r_0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">vi</span> <span class="o">+</span> <span class="n">X_r</span><span class="o">*</span><span class="n">B_r</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">eta_r</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">max_events</span><span class="p">)))</span>
+    <span class="n">r_df</span> <span class="o">=</span> <span class="n">r_df</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">r_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">r_df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">r_df</span><span class="p">,</span> <span class="n">id_vars</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="s1">&#39;recurrence_time&#39;</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">r_df2</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span>
+    <span class="n">r_df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">r_df2</span><span class="p">,</span> <span class="n">t_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>
+    <span class="n">r_df3</span> <span class="o">=</span> <span class="n">r_df2</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;recurrence_time &lt;= event_time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">r_df3</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,[</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="s1">&#39;recurrence_time&#39;</span><span class="p">]])</span>
+
+
+<span class="k">def</span> <span class="nf">_sim_jointmodel_longitudinal_biomarker</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">meas_gap</span><span class="p">,</span> <span class="n">t_df</span><span class="p">,</span> <span class="n">X_l</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">meas_error</span><span class="p">,</span> <span class="n">B_l</span><span class="p">,</span>
+                                    <span class="n">left_censor_at</span><span class="o">=-</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">max_visits</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Simulate data for longitudinal biomarker correlated with events</span>
+<span class="sd">    </span>
+<span class="sd">        Returns a data frame containing one obs for each longitudinal biomarker measure observed.</span>
+<span class="sd">        </span>
+<span class="sd">        Columns:</span>
+<span class="sd">            - index (subject_id)</span>
+<span class="sd">            - biomarker_time (time of biomarker measurement)</span>
+<span class="sd">            - biomarker_value (measured value of biomarker)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">l_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">max_visits</span><span class="p">))</span><span class="o">*</span><span class="n">meas_gap</span><span class="p">)</span>
+    <span class="n">l_df</span> <span class="o">=</span> <span class="n">l_df</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">l_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">l_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">l_df</span><span class="p">,</span> <span class="n">id_vars</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">],</span> <span class="n">value_name</span><span class="o">=</span><span class="s1">&#39;biomarker_time&#39;</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">l_df</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span>
+    
+    <span class="n">l_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">l_df</span><span class="p">,</span> <span class="n">t_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>
+    <span class="n">l_df</span> <span class="o">=</span> <span class="n">l_df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;biomarker_time &lt;= event_time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">_sim_biomarker_values</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">])</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;biomarker_time&#39;</span><span class="p">]</span>
+        <span class="n">X_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">X_l</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+        <span class="n">b_x</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">x_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="n">time</span><span class="p">])</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="n">epsilon</span> <span class="o">=</span> <span class="n">meas_error</span><span class="p">()</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">X_x</span><span class="o">*</span><span class="n">B_l</span> <span class="o">+</span> <span class="n">b_x</span><span class="o">*</span><span class="n">x_x</span> <span class="o">+</span> <span class="n">epsilon</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    
+    <span class="n">l_df</span><span class="p">[</span><span class="s1">&#39;biomarker_value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">l_df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">_sim_biomarker_values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">left_censor_at</span><span class="p">:</span>
+        <span class="n">l_df</span><span class="p">[</span><span class="s1">&#39;biomarker_value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">l_df</span><span class="p">[</span><span class="s1">&#39;biomarker_value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="n">left_censor_at</span> <span class="k">else</span> <span class="n">left_censor_at</span><span class="p">)</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">l_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="s1">&#39;biomarker_time&#39;</span><span class="p">,</span> <span class="s1">&#39;biomarker_value&#39;</span><span class="p">]])</span>
+
+
+<span class="k">def</span> <span class="nf">_prep_jointmodel_covariate_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Helper function to prepare subject-level covariate values (X) as a dataframe. </span>
+<span class="sd">        </span>
+<span class="sd">        Returns a dataframe containing one record per subject.</span>
+<span class="sd">        </span>
+<span class="sd">        Columns:</span>
+<span class="sd">            - index (subject_id)</span>
+<span class="sd">            - X1 (first simulated covariate)</span>
+<span class="sd">            - X2 (second simulated covariate)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">X_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;X1&#39;</span><span class="p">,</span><span class="s1">&#39;X2&#39;</span><span class="p">])</span>
+    <span class="n">X_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">X_df</span><span class="p">)</span>
+
+<div class="viewcode-block" id="sim_data_jointmodel"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.sim.sim_data_jointmodel">[docs]</a><span class="k">def</span> <span class="nf">sim_data_jointmodel</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Simulate data for joint model </span>
+<span class="sd">    </span>
+<span class="sd">        Returns</span>
+<span class="sd">        ---------</span>
+<span class="sd">        Dictionary of 4 ojects:</span>
+<span class="sd">        </span>
+<span class="sd">        - params: parameter values used to simulate data</span>
+<span class="sd">        - covars: dataframe of covariates per subject_id</span>
+<span class="sd">        - events: dataframe of multiple-event data, per subject_id</span>
+<span class="sd">        - biomarker: dataframe of longitudinal biomarker values simulated</span>
+<span class="sd">        </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">_sim_jointmodel_inputs</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">x_df</span> <span class="o">=</span> <span class="n">_prep_jointmodel_covariate_data</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">t_df</span> <span class="o">=</span> <span class="n">_sim_jointmodel_terminal_events</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">r_df</span> <span class="o">=</span> <span class="n">_sim_jointmodel_recurrent_events</span><span class="p">(</span><span class="n">t_df</span><span class="o">=</span><span class="n">t_df</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">l_df</span> <span class="o">=</span> <span class="n">_sim_jointmodel_longitudinal_biomarker</span><span class="p">(</span><span class="n">t_df</span><span class="o">=</span><span class="n">t_df</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+   
+    <span class="c1">## prepare data in survivalstan format</span>
+    <span class="n">t_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;event_status&#39;</span><span class="p">:</span> <span class="s1">&#39;event_value&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;event_time&#39;</span><span class="p">:</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="s1">&#39;subject_id&#39;</span><span class="p">},</span>
+            <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">t_df</span><span class="p">[</span><span class="s1">&#39;event_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;death&#39;</span>
+
+    <span class="n">r_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;recurrence_time&#39;</span><span class="p">:</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="s1">&#39;subject_id&#39;</span><span class="p">},</span>
+           <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">r_df</span><span class="p">[</span><span class="s1">&#39;event_value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">r_df</span><span class="p">[</span><span class="s1">&#39;event_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;new_lesion&#39;</span>
+
+    <span class="n">x_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="s1">&#39;subject_id&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">l_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="s1">&#39;subject_id&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">events</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">t_df</span><span class="p">,</span> <span class="n">r_df</span><span class="p">])</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">covars</span><span class="o">=</span><span class="n">x_df</span><span class="p">,</span> <span class="n">events</span><span class="o">=</span><span class="n">events</span><span class="p">,</span> <span class="n">biomarker</span><span class="o">=</span><span class="n">l_df</span><span class="p">)</span></div>
+
+
+
 
 </pre></div>
 
