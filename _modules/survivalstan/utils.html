@@ -983,7 +983,7 @@
 <span class="sd">        See ?pystan.summary for details about summary stats given.</span>
 <span class="sd">    </span>
 <span class="sd">        Parameters</span>
-<span class="sd">        -------</span>
+<span class="sd">        ----------</span>
 
 <span class="sd">        stan_fit: </span>
 <span class="sd">            StanFit object for which posterior draws are desired to be summarized</span>
@@ -1023,7 +1023,7 @@
     <span class="sd">&quot;&quot;&quot; Convenience function to print stan fit summary, for the set of parameters in `pars`.</span>
 
 <span class="sd">        Parameters</span>
-<span class="sd">        -------</span>
+<span class="sd">        ----------</span>
 
 <span class="sd">        stan_fit: </span>
 <span class="sd">            StanFit object for which posterior draws are desired to be summarized</span>
@@ -1040,7 +1040,7 @@
 <span class="sd">        Primary use case is to summarize Rhat estimates for set of parameters, as a quick check of convergence.</span>
 
 <span class="sd">        Parameters</span>
-<span class="sd">        -------</span>
+<span class="sd">        ----------</span>
 
 <span class="sd">        stan_fit: </span>
 <span class="sd">            StanFit object for which posterior draws are desired to be summarized</span>
@@ -1055,6 +1055,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid metric (</span><span class="si">{}</span><span class="s1">). Should be one of </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)))</span>
     <span class="n">sb</span><span class="o">.</span><span class="n">distplot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">metric</span><span class="p">])</span></div>
+
 </pre></div>
 
            </div>
