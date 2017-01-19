@@ -143,7 +143,7 @@
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
     
-<div class="viewcode-block" id="fit_stan_survival_model"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.survivalstan.fit_stan_survival_model">[docs]</a><span class="k">def</span> <span class="nf">fit_stan_survival_model</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="fit_stan_survival_model"><a class="viewcode-back" href="../../examples.html#survivalstan.survivalstan.fit_stan_survival_model">[docs]</a><span class="k">def</span> <span class="nf">fit_stan_survival_model</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                             <span class="n">formula</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                             <span class="n">event_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                             <span class="n">model_code</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -337,7 +337,7 @@
     <span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="SurvivalStanData"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.survivalstan.SurvivalStanData">[docs]</a><span class="k">class</span> <span class="nc">SurvivalStanData</span><span class="p">:</span>
+<div class="viewcode-block" id="SurvivalStanData"><a class="viewcode-back" href="../../examples.html#survivalstan.survivalstan.SurvivalStanData">[docs]</a><span class="k">class</span> <span class="nc">SurvivalStanData</span><span class="p">:</span>
     <span class="s1">&#39;Input data representing a survival model in survivalstan&#39;</span>
     
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -381,7 +381,7 @@
         <span class="n">other_cols</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>  <span class="c1">## remove &#39;none&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">other_cols</span> <span class="o">=</span> <span class="n">other_cols</span>
         
-<div class="viewcode-block" id="SurvivalStanData.prep_df_nonmiss"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.survivalstan.SurvivalStanData.prep_df_nonmiss">[docs]</a>    <span class="k">def</span> <span class="nf">prep_df_nonmiss</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SurvivalStanData.prep_df_nonmiss"><a class="viewcode-back" href="../../examples.html#survivalstan.survivalstan.SurvivalStanData.prep_df_nonmiss">[docs]</a>    <span class="k">def</span> <span class="nf">prep_df_nonmiss</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Create x_df and df_nonmiss </span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prep_othercols</span><span class="p">()</span>
@@ -430,7 +430,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_id_col</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">group_id_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SurvivalStanData.prep_input_data"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.survivalstan.SurvivalStanData.prep_input_data">[docs]</a>    <span class="k">def</span> <span class="nf">prep_input_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="SurvivalStanData.prep_input_data"><a class="viewcode-back" href="../../examples.html#survivalstan.survivalstan.SurvivalStanData.prep_input_data">[docs]</a>    <span class="k">def</span> <span class="nf">prep_input_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prep_event_data</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_id_col</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_prep_sample_data</span><span class="p">()</span>
@@ -462,7 +462,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">group_id_col</span> <span class="o">=</span> <span class="s1">&#39;group_id&#39;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">group_id_col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_nonmiss</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">group_col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span> <span class="o">+</span> <span class="mi">1</span>
 
-<div class="viewcode-block" id="SurvivalStanData.get_group_names"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.survivalstan.SurvivalStanData.get_group_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_group_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SurvivalStanData.get_group_names"><a class="viewcode-back" href="../../examples.html#survivalstan.survivalstan.SurvivalStanData.get_group_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_group_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_id_col</span><span class="p">:</span>
             <span class="k">return</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
         
@@ -629,7 +629,7 @@
     <span class="k">return</span><span class="p">(</span><span class="n">time_df</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="extract_grp_baseline_hazard"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.survivalstan.extract_grp_baseline_hazard">[docs]</a><span class="k">def</span> <span class="nf">extract_grp_baseline_hazard</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">timepoint_id_col</span> <span class="o">=</span> <span class="s1">&#39;timepoint_id&#39;</span><span class="p">,</span> <span class="n">timepoint_end_col</span> <span class="o">=</span> <span class="s1">&#39;end_time&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="extract_grp_baseline_hazard"><a class="viewcode-back" href="../../examples.html#survivalstan.survivalstan.extract_grp_baseline_hazard">[docs]</a><span class="k">def</span> <span class="nf">extract_grp_baseline_hazard</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">timepoint_id_col</span> <span class="o">=</span> <span class="s1">&#39;timepoint_id&#39;</span><span class="p">,</span> <span class="n">timepoint_end_col</span> <span class="o">=</span> <span class="s1">&#39;end_time&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; If model results contain a grp_baseline object, extract &amp; summarize it</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -655,7 +655,7 @@
     <span class="n">end_times</span> <span class="o">=</span> <span class="n">df_nonmiss</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">df_nonmiss</span><span class="p">[[</span><span class="n">timepoint_id_col</span><span class="p">]]</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">timepoint_id_col</span><span class="p">)[[</span><span class="n">timepoint_end_col</span><span class="p">,</span> <span class="n">timepoint_id_col</span><span class="p">]]</span>
     <span class="k">return</span><span class="p">(</span><span class="n">end_times</span><span class="p">)</span>
 
-<div class="viewcode-block" id="extract_baseline_hazard"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.survivalstan.extract_baseline_hazard">[docs]</a><span class="k">def</span> <span class="nf">extract_baseline_hazard</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;baseline&#39;</span><span class="p">,</span> <span class="n">timepoint_id_col</span> <span class="o">=</span> <span class="s1">&#39;timepoint_id&#39;</span><span class="p">,</span> <span class="n">timepoint_end_col</span> <span class="o">=</span> <span class="s1">&#39;end_time&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="extract_baseline_hazard"><a class="viewcode-back" href="../../examples.html#survivalstan.survivalstan.extract_baseline_hazard">[docs]</a><span class="k">def</span> <span class="nf">extract_baseline_hazard</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="s1">&#39;baseline&#39;</span><span class="p">,</span> <span class="n">timepoint_id_col</span> <span class="o">=</span> <span class="s1">&#39;timepoint_id&#39;</span><span class="p">,</span> <span class="n">timepoint_end_col</span> <span class="o">=</span> <span class="s1">&#39;end_time&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; If model results contain a baseline object, extract &amp; summarize it</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">## TODO check if baseline hazard is computable</span>
@@ -668,7 +668,7 @@
     <span class="k">return</span><span class="p">(</span><span class="n">bs_data</span><span class="p">)</span></div>
 
 <span class="c1">## convert wide survival data to long format</span>
-<div class="viewcode-block" id="prep_data_long_surv"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.survivalstan.prep_data_long_surv">[docs]</a><span class="k">def</span> <span class="nf">prep_data_long_surv</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">time_col</span><span class="p">,</span> <span class="n">event_col</span><span class="p">,</span> <span class="n">sample_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="prep_data_long_surv"><a class="viewcode-back" href="../../examples.html#survivalstan.survivalstan.prep_data_long_surv">[docs]</a><span class="k">def</span> <span class="nf">prep_data_long_surv</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">time_col</span><span class="p">,</span> <span class="n">event_col</span><span class="p">,</span> <span class="n">sample_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                         <span class="n">event_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Convert wide survival dataframe (df) to long format, in preparation for modeling using PEM models.</span>
 <span class="sd">    </span>
@@ -792,7 +792,7 @@
     
     <span class="k">return</span><span class="p">(</span><span class="n">dflong</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="make_weibull_survival_model_inits"><a class="viewcode-back" href="../../survivalstan.html#survivalstan.survivalstan.make_weibull_survival_model_inits">[docs]</a><span class="k">def</span> <span class="nf">make_weibull_survival_model_inits</span><span class="p">(</span><span class="n">stan_input_dict</span><span class="p">):</span>
+<div class="viewcode-block" id="make_weibull_survival_model_inits"><a class="viewcode-back" href="../../examples.html#survivalstan.survivalstan.make_weibull_survival_model_inits">[docs]</a><span class="k">def</span> <span class="nf">make_weibull_survival_model_inits</span><span class="p">(</span><span class="n">stan_input_dict</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
         <span class="n">m</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;tau_s_raw&#39;</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>

@@ -89,10 +89,11 @@
 <li class="toctree-l1"><a class="reference internal" href="home.html">Survivalstan</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Usage.html">Getting started</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Worked examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="examples/Example-using-pem_survival_model.html">PEM survival model with unstructuredhazard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples/Test pem_survival_model_gamma with simulated data.html">PEM survival model with gammahazard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples/Test pem_survival_model_randomwalk with simulated data.html">PEM survival model with randomwalkhazard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html">PEM survival model with time-dependenteffects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Example-using-pem_survival_model.html">PEM survival model: unstructuredhazard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test pem_survival_model_gamma with simulated data.html">PEM survival model: gammahazard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test pem_survival_model_randomwalk with simulated data.html">PEM survival model: randomwalkhazard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html">PEM survival model: time-dependenteffects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html">User-supplied PEM survival model with gammahazard</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Survivalstan API</a></li>
@@ -183,7 +184,7 @@ data.</p>
 <a class="reference external" href="https://gitter.im/survivalstan">gitter</a>.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="examples/Example-using-pem_survival_model.html">PEM survival model with unstructuredhazard</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/Example-using-pem_survival_model.html">PEM survival model: unstructuredhazard</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="examples/Example-using-pem_survival_model.html#The-model">The model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples/Example-using-pem_survival_model.html#Stan-code-for-the-model">Stan code for the model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples/Example-using-pem_survival_model.html#Simulate-survival-data">Simulate survival data</a></li>
@@ -197,14 +198,24 @@ data.</p>
 <li class="toctree-l2"><a class="reference internal" href="examples/Example-using-pem_survival_model.html#Use-plotly-to-summarize-posterior-predicted-values">Use plotly to summarize posterior predicted values</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="examples/Test pem_survival_model_gamma with simulated data.html">PEM survival model with gammahazard</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/Test pem_survival_model_randomwalk with simulated data.html">PEM survival model with randomwalkhazard</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html">PEM survival model with time-dependenteffects</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/Test pem_survival_model_gamma with simulated data.html">PEM survival model: gammahazard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/Test pem_survival_model_randomwalk with simulated data.html">PEM survival model: randomwalkhazard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html">PEM survival model: time-dependenteffects</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html#superficial-check-of-convergence">superficial check of convergence</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html#summarize-coefficient-estimates">summarize coefficient estimates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html#posterior-predictive-checks">posterior-predictive checks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html#summarize-time-varying-effect-of-sex-on-survival">summarize time-varying effect of sex on survival</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples/Test pem_survival_model_timevarying with simulated data.html#accessing-lower-level-functions-for-plotting-effects-over-time">accessing lower-level functions for plotting effects over time</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html">User-supplied PEM survival model with gammahazard</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#Simulate-survival-data">Simulate survival data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#Explore-simulated-data">Explore simulated data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#model1:-original-spec">model1: original spec</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#model2:-alternate-version-of-surv_gamma_lpdf">model2: alternate version of surv_gamma_lpdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#model3:-use-log_mix-inside-surv_gamma_lpdf">model3: use <code class="docutils literal"><span class="pre">log_mix</span></code> inside surv_gamma_lpdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#model4:-vectorize-surv_gamma_lpdf">model4: vectorize surv_gamma_lpdf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/Test new_gamma_survival_model with simulated data.html#compare-coefficient-estimates-for-each-model-spec">compare coefficient estimates for each model spec</a></li>
 </ul>
 </li>
 </ul>
