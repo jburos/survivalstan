@@ -56,7 +56,7 @@ Support
 
 If you are having issues or questions, please let us know.
 
-Please submit an issue `github <http://github.com/hammerlab/survivalstan/issues`_ or via `gitter <https://gitter.im/survivalstan>`_ 
+Please submit an issue `github <http://github.com/hammerlab/survivalstan/issues>`_ or via `gitter <https://gitter.im/survivalstan>`_ 
 
 License
 -------
